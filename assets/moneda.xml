@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<monedas>
+
+    <item>
+        <title>Peso</title>
+        <capacidad>500</capacidad>
+    </item>
+    <item>
+        <title>Dolar</title>
+        <capacidad>3000</capacidad>
+    </item>
+    <item>  
+        <title>Euro</title>
+        <capacidad>900</capacidad>
+    </item>
+
+</monedas>

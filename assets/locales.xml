@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<locaciones>
+
+    <item>
+        <title>ESTADIO CALIENTE</title>
+        <capacidad>12000</capacidad>
+        <lugar>TIJUANA,BAJA CAL.NORTE, MEXICO</lugar>
+    </item>
+    <item>
+        <title>PLAZA DE TOROS DE MEXICALI</title>
+        <capacidad>11000</capacidad>
+        <lugar>MEXICALI,BAJA CAL. NORTE,MEXICO</lugar>
+    </item>
+    <item>  
+        <title>ESTADIO DE BE ISBOL DE SONORA (NARANJEROS)</title>
+        <capacidad>15000</capacidad>
+        <lugar>HERMOSILLO,SON,MEXICO</lugar>
+    </item>
+
+    <item>
+        <title>ARENA MONTERREY</title>
+        <capacidad>17599</capacidad>
+        <lugar>MONTERREY ,NL ,MEXICO</lugar>
+    </item>
+    <item>
+	<title>AUDITORIO BANAMEX</title>
+	<capacidad>4900</capacidad>
+        <lugar>MONTERREY ,NL ,MEXICO</lugar>
+    </item>
+    <item>
+	 <title>ESTADIO UNIVERSITARIO DE NL</title>
+        <capacidad>43000</capacidad>
+        <lugar>MONTERREY ,NL ,MEXICO</lugar>
+    </item>
+    
+     <item>
+    	 <title>ESTADIO CORONA</title>
+        <capacidad>30000</capacidad>
+        <lugar>TORREON,COHAUILA,MEXICO</lugar>
+    </item>
+     <item>
+    	 <title>ESTADIO 20 DE NOV</title>
+        <capacidad>10000</capacidad>
+        <lugar>AGUASCALIENTES,AGU,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>EL DOMO</title>
+        <capacidad>11000</capacidad>
+        <lugar>SLP,SLP ,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>EL DOMO DE LA FERIA</title>
+        <capacidad>5240</capacidad>
+        <lugar>LEON,GTO,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>POLIFORUM</title>
+        <capacidad>5000</capacidad>
+        <lugar>LEON,GTO,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>EXPLANADA DEL POLIFORUM</title>
+        <capacidad>10000</capacidad>
+        <lugar>LEON,GTO,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>ESTADIO LUIS PIRATA FUENTE</title>
+        <capacidad>26316</capacidad>
+        <lugar>VER,VERACRUZ,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>WTC VERACRUZ</title>
+        <capacidad>5000</capacidad>
+        <lugar>VER,VERACRUZ,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>ESTADIO JALISCO </title>
+        <capacidad>63187</capacidad>
+        <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>ESTADIO OMNILIFE</title>
+        <capacidad>49850</capacidad>
+        <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
+    </item>
+    
+    <item>
+    	 <title>ESTADIO 3 DE MARZO</title>
+        <capacidad>25000</capacidad>
+        <lugar>ZAPOPAN,JAL,MEXICO</lugar>
+    </item>
+    
+    <item>
+    	 <title>EXPLANADA DE VFG</title>
+        <capacidad>40000</capacidad>
+        <lugar>TLAJOMULCO,JAL,MEXICO</lugar>
+    </item>
+    
+    <item>
+    	 <title>ARENA VFG</title>
+        <capacidad>10500</capacidad>
+        <lugar>TLAJOMULCO,JAL,MEXICO</lugar>
+    </item>
+    
+        <item>
+    	 <title>AUDITORIO TELMEX</title>
+        <capacidad>11500</capacidad>
+        <lugar>ZAPOPAN,JAL,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>ESTUDUO CABARET (CALLE "2")</title>
+        <capacidad>2600</capacidad>
+        <lugar>ZAPOPAN,JAL,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>TEATRO DIANA</title>
+        <capacidad>2439</capacidad>
+        <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>FORUM MUNDO IMPERIAL</title>
+        <capacidad>4000</capacidad>
+        <lugar>ACAPULCO,GRO,MEX</lugar>
+    </item>
+        <item>
+    	 <title>ESTADIO DE CHIAPAS</title>
+        <capacidad>25508</capacidad>
+        <lugar>TUXTLA ,CHIAPAS,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>ESTADIO KUKULKAN</title>
+        <capacidad>13600</capacidad>
+        <lugar>MERIDA,YUCATAN,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>ESTADIO ANDRES QUINTANA ROO</title>
+        <capacidad>20000</capacidad>
+        <lugar>CANCUN ,QUINTANA ROO,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>AUDITORIO SIGLO XXI</title>
+        <capacidad>4200</capacidad>
+        <lugar>PUEBLA ,PUEBLA, MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>ESPACIO UNIVERSTARIO DE CULTURA</title>
+        <capacidad>3500</capacidad>
+        <lugar>PUEBLA ,PUEBLA, MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>AUDITORIO JOSEFA ORTIZ DE DOMINGUEZ</title>
+        <capacidad>4700</capacidad>
+        <lugar>QUERETARO,QRO,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>EXPO GANADERA DE TABASCO</title>
+        <capacidad>3800</capacidad>
+        <lugar>VILLA HERNMOSA, TAB,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>ESTADIO AZTECA</title>
+        <capacidad>104000</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>AUDITORIO NACIONAL</title>
+        <capacidad>9000</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>FORO SOL</title>
+        <capacidad>53000</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>AUTÓDROMO HNS RGZ CURVA 4</title>
+        <capacidad>65000</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>PALACIO DE LOS DEPORTES</title>
+        <capacidad>18500</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>PEPSI CENTER WTC</title>
+        <capacidad>7500</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>EL PLAZA CONDESA</title>
+        <capacidad>2200</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>JOSÉ CUERVO SALÓN</title>
+        <capacidad>3500</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>EXPO BANCOMER</title>
+        <capacidad>12000</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+        <item>
+    	 <title>ARENA CMX</title>
+        <capacidad>22500</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>CCCULTURAL 1</title>
+        <capacidad>2200</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+    	 <title>CCCULTURAL  2</title>
+        <capacidad>1200</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+            <item>
+    	 <title>TEATRO ALDAMA</title>
+        <capacidad>1570</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+            <item>
+    	 <title>TEATRO TELCEL</title>
+        <capacidad>1400</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+            <item>
+    	 <title>AUDITORIO GOTA DE PLATA</title>
+        <capacidad>2000</capacidad>
+        <lugar>PACHUCA,HIDALGO,MEXICO</lugar>
+    </item>
+     <item>
+    	 <title>CIRCO VOLADOR</title>
+        <capacidad>2800</capacidad>
+        <lugar>DF,MEXICO</lugar>
+    </item>
+</locaciones>

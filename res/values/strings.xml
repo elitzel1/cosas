@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MerchSys</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_new">Add Product</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="name">Live Shows Merchandising</string>
+    <string name="action_accept">Accept</string>
+
+    <!-- Evento -->
+    <string name="evento_nombre">Name: </string>
+    <string name="evento_artista">Artist: </string>
+    <string name="evento_local">Local: </string>
+    <string name="hint_local">Elije un local</string>
+    <string name="evento_capacidad">Capacidad</string>
+    <string name="evento_fecha">Date</string>
+    <string name="continuar">Continue</string>
+    <string name="otro">Other</string>
+    <string name="hint_date">dd/mm/yy</string>
+    <string name="hint_evento">Nombre del evento</string>
+    <string name="evento_tipo_moneda">Tipo de moneda</string>
+    <string name="hint_artista">Nombre del artista</string>
+    <!-- Imagenes -->
+    <string name="cnt">Content</string>
+
+    <!-- DialogoProductos -->
+    <string name="btn_cancelar">Cancel</string>
+    <string name="btn_aceptar">Accept</string>
+    <string name="name_product">Product</string>
+    <string name="cantidad">Amount</string>
+    <string name="talla">Size</string>
+    <string name="impuestos">TAXES</string>
+    <string name="im_nombre">Name:</string>
+    <string name="im_por">%</string>
+    <string name="ck_talla">Por talla</string>
+    <string name="comision">COMISIONES</string>
+    <string name="mas">+</string>
+    <string name="menos">-</string>
+    <string name="preciod">Price</string>
+    <string name="por">%</string>
+    <string name="din">$</string>
+    <string name="hint_taxes">Nombre del impuesto</string>
+    <string name="hint_comision">Elija comision</string>
+    <string name="hint_tipo">Tipo de producto</string>
+
+    <!-- ActivityProductos -->
+    <string name="articulos">Articulos</string>
+    <string name="precio">Precio</string>
+    <string name="adicionales">Adicionales</string>
+    <string name="total">Total</string>
+    <string name="t_adicionales">No se pueden agregar más adicionales</string>
+    <string name="error">error</string>
+    <string name="stand">Stand</string>
+    
+    <!-- Errores -->
+    <string name="sin_artista">Escriba el nombre de un artista</string>
+    <string name="sin_evento">Datos incompletos, falta nombre del evento</string>
+    <string name="sin_lugar">Datos incompletos, falta nombre de lugar</string>
+    <string name="sin_capacidad">Datos incompletos, falta capacidad</string>
+    <string name="sin_fecha">Datos incompletos, falta fecha</string>
+    <string name="title_activity_activity_productos">ActivityProductos</string>
+    <string name="sin_impuestos">Faltan los impuestos del producto</string>
+    <string name="sin_comisiones">Faltan las comisiones del producto</string>
+    <string name="sin_nombre_producto">Falta el nombre del producto</string>
+    <string name="sin_precio">Falta el precio del producto</string>
+    <string name="sin_cantidad">Falta la cantidad del producto</string>
+    <string name="sin_tipo">Falta tipo del producto</string>
+    <string name="sin_cantidad_valida">Cantidad no valida</string>
+    <string name="sin_precio_valido">Precio no valido</string>
+    
+
+    <!-- Menu Contextual -->
+    <string name="m_eliminar">Delete</string>
+    <string name="m_actualizar">Update</string>
+    <string name="m_detalles">Details</string>
+    <string name="title_activity_stand">StandActivity</string>
+    <string name="title_menu">Elija opción</string>
+    <string name="m_comision">Cambiar comision</string>
+    <string name="m_cortesia">Agregar Cortesia</string>
+
+    <!-- Stands -->
+    <string name="cierre">Cierre</string>
+    <string name="cierre_dia">Cierre del día</string>
+    <string name="encargado">Encargado</string>
+    <string name="s_producto">Producto</string>
+    <string name="s_cantidad">Cantidad</string>
+    <string name="s_cantidad_stand">Cantidad Stand</string>
+    <string name="s_comision">Comision</string>
+    <string name="nombre_emp">Nombre empleado</string>
+    <string name="r_neto">After taxes</string>
+    <string name="r_bruto">Before taxes</string>
+    <string name="a_prod">Agregar Producto</string>
+    <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
+    <string name="title_activity_activity_cierre_stand">Cierre Stand</string>
+    
+    <!-- Cierre Stand -->
+    <string name="efectivo">Efectivo: </string>
+    <string name="tarjeta">Tarjeta: </string>
+    <string name="voucher">Vouchers: </string>
+    <string name="prod_no">Productos no vendidos</string>
+    <string name="cortesias">Cortesias</string>
+
+</resources>

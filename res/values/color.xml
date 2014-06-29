@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="azul">#347af0</color>
+    <color name="azul_fuerte">#13519b</color>
+    <color name="blanco">#FFFFFF</color>
+    <color name="gris">#20808080</color>
+    <color name="azul_claro">#66d3dcea</color>
+    <color name="azul_live">#216bd6</color>
+    <color name="transparent">#00000000</color>
+    <color name="azul_textos">#0a3866</color>
+</resources>
