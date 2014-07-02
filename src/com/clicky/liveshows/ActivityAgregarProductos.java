@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.clicky.liveshows.adapters.AdapterListaAgregaProductos;
 import com.clicky.liveshows.database.DBAdapter;
+import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Product;
 
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 public class ActivityAgregarProductos extends Activity {
 	int id;
+	Comisiones comision;
 	private DBAdapter dbHelper;
 	List<Product> products;
 	AdapterListaAgregaProductos adapter;
@@ -44,6 +46,14 @@ public class ActivityAgregarProductos extends Activity {
 		dbHelper = new DBAdapter(this);
 		dbHelper.open();
 
+		Cursor cursorStand = dbHelper.fetchStand(id);
+		if(cursorStand.moveToFirst()){
+			comision = new Comisiones();
+			comision.setName("Stand"+cursorStand.getString(1));
+			comision.setCantidad(cursorStand.getInt(3));
+			comision.setIva(cursorStand.getString(4));
+			comision.setTipo(cursorStand.getString(5));
+		}
 		HashMap<Integer, String> artistas  = new HashMap<Integer, String>();
 		Cursor c = dbHelper.fetchAllArtistas();
 		if(c.moveToFirst()){
@@ -107,22 +117,27 @@ public class ActivityAgregarProductos extends Activity {
 			//
 			//	NavUtils.navigateUpFromSameTask(this);
 			finish();
+			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		case R.id.action_accept:
 		
-				dbHelper.open();
-				for(int i = 0;i<adapter.getCount();i++){
-					int c = adapter.getItem(i).getCantidad()-adapter.getItem(i).getCantidadStand();
-					if(0<=c){
-						if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
-							dbHelper.createStandProducto(id, adapter.getItem(i).getId(), 0, adapter.getItem(i).getCantidadStand());	
-							Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
-						}else{
-						}
+			dbHelper.open();
+			for(int i = 0;i<adapter.getCount();i++){
+				int c = adapter.getItem(i).getCantidad()-adapter.getItem(i).getCantidadStand();
+				if(0<=c && adapter.getItem(i).getCantidadStand() > 0){
+					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
+							long comId = dbHelper.createImpuesto(comision.getName(), "comision_stand", comision.getCantidad(), comision.getIva(), comision.getTipo());
+							if(comId != -1)
+								dbHelper.createStandProducto(id, adapter.getItem(i).getId(), 0, adapter.getItem(i).getCantidadStand(),(int)comId);	
+						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
+					}else{
 					}
 				}
-				dbHelper.close();
+			}
+			dbHelper.close();
+			setResult(RESULT_OK);
 			finish();
+			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

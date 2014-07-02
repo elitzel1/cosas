@@ -1,9 +1,7 @@
 package com.clicky.liveshows.database;
 
 import android.content.Context;
-import android.content.pm.FeatureInfo;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
@@ -75,6 +73,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colStandIdSP="stand_id";
 	static final String colProductoIdSP="producto_id";
 	static final String colFechaIdSP="fecha_id";
+	static final String colImpuestoProdId ="taxes_id";
 	
 	
 	public DataBaseHelper(Context context) {
@@ -135,7 +134,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		
 		String SQL_PRODUCTOS_STAND ="CREATE TABLE "+TABLE_STAND_PROD+ " ("+colIdStandProd+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
 				colStandIdSP+" INTEGER NOT NULL, "+
-		colCantidadSP+" INTEGER NOT NULL, "+colFechaIdSP+" INTEGER NOT NULL, "+colProductoIdSP+" INTEGER NOT NULL, foreign KEY ("
+		colCantidadSP+" INTEGER NOT NULL, "+colFechaIdSP+" INTEGER NOT NULL, "+colProductoIdSP+" INTEGER NOT NULL, "
+				+colImpuestoProdId+" INTEGER NOT NULL, foreign KEY ("
 				+colProductoIdSP+") REFERENCES "+TABLE_PRODCUT+" ("+colIdProduct+"))";
 		database.execSQL(SQL_PRODUCTOS_STAND);
 		

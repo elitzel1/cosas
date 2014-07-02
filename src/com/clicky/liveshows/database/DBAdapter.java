@@ -64,6 +64,7 @@ public class DBAdapter {
 		static final String colStandIdSP="stand_id";
 		static final String colProductoIdSP="producto_id";
 		static final String colFechaIdSP="fecha_id";
+		static final String colImpuestoProdId ="taxes_id";
 		
 		//TABLA IMPUESTO
 		static final String TABLE_TAXES ="TTaxes";
@@ -148,8 +149,8 @@ public class DBAdapter {
 			return database.insert(TABLE_STAND, null, initialValues);
 		}
 		
-		public long createStandProducto(int stand, int producto, int fecha, int cantidad){
-			ContentValues initialValues=createContentValuesStandProd(producto, stand, fecha, cantidad);
+		public long createStandProducto(int stand, int producto, int fecha, int cantidad, int comision){
+			ContentValues initialValues=createContentValuesStandProd(producto, stand, fecha, cantidad,comision);
 			return database.insert(TABLE_STAND_PROD, null, initialValues);
 		}
 		
@@ -260,6 +261,12 @@ public class DBAdapter {
 					null, null);
 		}
 		
+		public Cursor fetchStand(int rowId){
+			return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand
+			}, colIdStand + "=" +rowId, null, null,
+			null, null);
+		}
+		
 		//Returna un Cursor que contiene la info del item
 		public Cursor fetchEvento(long rowId) throws SQLException {
 			Cursor mCursor = database.query(true, TABLE_EVENTO, new String[] {
@@ -322,14 +329,14 @@ public class DBAdapter {
 		
 		public Cursor fetchStandProduct(long rowId) throws SQLException{
 			Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-					colFechaIdSP, colProductoIdSP}, colStandIdSP + "=" + rowId,null, null, null, null, null);
+					colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId,null, null, null, null, null);
 			return mCursor;
 		}
 		
 		public Cursor fetchStandProductAll(long rowId, long rowStandId) throws SQLException{
 			String []args = {colProductoIdSP + "=" + rowId,colStandIdSP + "=" + rowStandId};
 			Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-					colFechaIdSP, colProductoIdSP},null,args, null, null, null, null);
+					colFechaIdSP, colProductoIdSP, colImpuestoProdId},null,args, null, null, null, null);
 			return mCursor;
 		}
 		
@@ -340,7 +347,7 @@ public class DBAdapter {
 		}
 		
 		public Cursor fetchImpuestos(long rowId) throws SQLException{
-			Cursor mCursor = database.query(true, TABLE_TAXES_PRODUCT, new String[] { colIdTaxes,colNombreT,
+			Cursor mCursor = database.query(true, TABLE_TAXES, new String[] { colIdTaxes,colNombreT,
 					colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso}, colIdTaxes + "=" + rowId,null, null, null, null, null);
 			return mCursor;
 		}
@@ -406,12 +413,13 @@ public class DBAdapter {
 		}
 		
 		
-		private ContentValues createContentValuesStandProd(int producto,int stand, int fecha, int cantidad){
+		private ContentValues createContentValuesStandProd(int producto,int stand, int fecha, int cantidad, int comision){
 			ContentValues values = new ContentValues();
 			values.put(colStandIdSP, stand);
 			values.put(colProductoIdSP, producto);
 			values.put(colFechaIdSP,fecha);
 			values.put(colCantidadSP, cantidad);
+			values.put(colImpuestoProdId,comision);
 			return values;
 		}
 		

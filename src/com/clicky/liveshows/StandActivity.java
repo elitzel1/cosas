@@ -13,9 +13,7 @@ import com.clicky.liveshows.utils.Stand;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
@@ -30,6 +28,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	private DBAdapter dbHelper;
 	Product product;
 	Stand stand;
+	protected final int CIERRE = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +45,9 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar(String name) {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-			getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
-			getActionBar().setTitle(name);
-		
+		getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
+		getActionBar().setTitle(name);
 	}
 
 	@Override
@@ -72,6 +69,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
+			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		case R.id.action_new:
 			newProduct();
@@ -87,15 +85,6 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 
 	@Override
 	public void setStand(String nombre, String encargado, Comisiones com) {
-		// TODO Auto-generated method stub
-
-		String iva = "";
-		if(com.getIva().contentEquals("before taxes")){
-			iva="16";
-			com.setIva("16");
-		}else{
-			com.setIva("0");
-		}
 		dbHelper.open();
 		long id= dbHelper.createStand(nombre, com.getCantidad(), com.getIva(), com.getTipo(), encargado);
 		if(id==-1){
@@ -127,19 +116,23 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		
 	}
 	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if (requestCode == CIERRE) {
+	        if (resultCode == Activity.RESULT_OK) {
+	        	Intent  i = new Intent(this,MainActivity.class);
+	    		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	    		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+	    		startActivity(i);
+	        	finish();
+	        }
+	    }
+	}
+	
 	public void borrarTodo(View v){
-		dbHelper.open();
-		dbHelper.deleteTodo();
-		dbHelper.close();
-		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
-		SharedPreferences.Editor edit = prefs.edit();
-		edit.putInt("evento", 0);
-		edit.commit();
-		Intent  i = new Intent(this,MainActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		startActivity(i);
-		finish();
+		Intent i = new Intent(StandActivity.this,ActivityCierreDia.class);
+		startActivityForResult(i, CIERRE);
+		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
 
 	@Override
@@ -157,7 +150,11 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 				String tipo = cursor.getString(5);
 				Comisiones com = new Comisiones("vendedor", comision, iva, tipo);
 				newStand(id, nombre, encargado, com);
-			}while(cursor.moveToNext());
+				if(cursor.isFirst()){
+					Stand first = new Stand(id,nombre, encargado, com);
+					onStandSeleccionado(first);
+				}
+		}while(cursor.moveToNext());
 		}else{
 		}
 		cursor.close();

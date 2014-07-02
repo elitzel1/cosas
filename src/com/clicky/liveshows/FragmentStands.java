@@ -67,7 +67,6 @@ public class FragmentStands extends Fragment {
 		list.add(stand);
 		a.notifyDataSetChanged();
 	}
-	
 	public interface onStandSelected {
 		public void onStandSeleccionado(Stand s);
 	}

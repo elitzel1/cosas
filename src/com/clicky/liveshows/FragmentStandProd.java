@@ -27,11 +27,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class FragmentStandProd extends Fragment {
 
+	LinearLayout empty;
 	TextView txtNombre;
 	TextView txtEncargado;
 	TextView txtComision;
@@ -47,6 +49,8 @@ public class FragmentStandProd extends Fragment {
 	protected static final int CONTEXTMENU_CHANGECOMISION = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
+	
+	protected static final int PRODUCTOS = 0;
 
 	public interface OnNewAdicional{
 		public void onSetAdicional(Product product,int position,Stand stand);
@@ -72,19 +76,21 @@ public class FragmentStandProd extends Fragment {
 		adapter = new AdapterStandProduct(getActivity(), R.layout.item_producto_stand, items);
 	}
 	@Override
-	public View onCreateView(LayoutInflater inflater, 
-			ViewGroup container, 
-			Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_stand_prod, container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.fragment_stand_prod, container, false); 
+		
+		empty = (LinearLayout)v.findViewById(R.id.vacio);
+		txtEncargado = (TextView)v.findViewById(R.id.txtEncargado);
+		txtComision = (TextView)v.findViewById(R.id.txtComision);
+		list=(ListView)v.findViewById(R.id.listStandProd);
+		
+		return v;
 	}
 
 	@Override
 	public void onActivityCreated(Bundle state) {
 		super.onActivityCreated(state);
 
-		txtEncargado = (TextView)getView().findViewById(R.id.txtEncargado);
-		txtComision = (TextView)getView().findViewById(R.id.txtComision);
-		list=(ListView)getView().findViewById(R.id.listStandProd);
 		list.setAdapter(adapter);
 
 		list.setOnItemClickListener(new OnItemClickListener() {
@@ -134,24 +140,35 @@ public class FragmentStandProd extends Fragment {
 				b.putInt("id_stand",(int)s.getId());
 				i.putExtra("extra", b);
 				startActivity(i);
+				getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 			}
 		});
 
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data){
+		if (requestCode == PRODUCTOS) {
+	        if (resultCode == Activity.RESULT_OK) {
+	        	setStand(s);
+	        }
+	    }
+	}
+	
 	public void setStand(Stand s){
 		this.s=s;
+		empty.setVisibility(View.GONE);
 		Comisiones com = s.getComision();
 		txtEncargado.setText(s.getEncargado());
 		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getIva());//CORREGIR AQUI
 		items.clear();
 		adapter.notifyDataSetChanged();
 		db.open();
-		int idCom = (int)db.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
-		if(idCom==-1){
+		//int idCom = (int)db.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
+		//if(idCom == -1){
 
-		}else{
-			com.setId(idCom);
+		//}else{
+		//	com.setId(idCom);
 			List<Comisiones> comisiones = new ArrayList<Comisiones>();
 			comisiones.add(com);
 
@@ -166,13 +183,13 @@ public class FragmentStandProd extends Fragment {
 					Cursor cursor = db.fetchProducto(idProd);
 					if(cursor.moveToFirst()){
 						do{
-							int id = cursor.getInt(0);
+							//int id = cursor.getInt(0);
 							String nombre = cursor.getString(1);
 							String tipo = cursor.getString(2);
 							String talla = cursor.getString(6);
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
-							db.createImpuestoProducto(id, idCom);
+							//db.createImpuestoProducto(id, idCom);
 							p.setNombre(nombre);
 							p.setTipo(tipo);
 							p.setTalla(talla);
@@ -191,7 +208,7 @@ public class FragmentStandProd extends Fragment {
 			}
 
 			c.close();
-		}
+		//}
 		db.close();
 	}
 
@@ -207,7 +224,8 @@ public class FragmentStandProd extends Fragment {
 			b.putString("nombre", s.getName());
 			b.putInt("id",(int)s.getId());
 			i.putExtra("stand",b);
-			startActivity(i);
+			startActivityForResult(i, PRODUCTOS);
+			getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 		}
 	}
 

@@ -22,7 +22,6 @@ import com.clicky.liveshows.adapters.AdapterProduct;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Adicionales;
 import com.clicky.liveshows.utils.Comisiones;
-import com.clicky.liveshows.utils.Local;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
 
@@ -298,7 +297,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		}else{//PROBAR ESTO
 			for(Taxes tax : p.getTaxes()){
 				long idRowT = dbHelper.createImpuesto(tax.getName(),"taxes",tax.getAmount());
-				if(idRowT==-1){
+				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
 						
 					}else{
@@ -311,7 +310,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			
 			for(Comisiones com : p.getComisiones()){
 				long idRowT = dbHelper.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
-				if(idRowT==-1){
+				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
 						
 					}else{
@@ -498,6 +497,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		Intent i = new Intent(this,StandActivity.class);
 		i.putExtra("evento", nameEvento);
 		startActivity(i);
+		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
 	
 	public void makeToastDialog(int msg){

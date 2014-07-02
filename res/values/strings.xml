@@ -21,6 +21,7 @@
     <string name="hint_evento">Nombre del evento</string>
     <string name="evento_tipo_moneda">Tipo de moneda</string>
     <string name="hint_artista">Nombre del artista</string>
+    
     <!-- Imagenes -->
     <string name="cnt">Content</string>
 
@@ -80,6 +81,7 @@
     <string name="m_cortesia">Agregar Cortesia</string>
 
     <!-- Stands -->
+    <string name="vacio">No hay Stands</string>
     <string name="cierre">Cierre</string>
     <string name="cierre_dia">Cierre del día</string>
     <string name="encargado">Encargado</string>
@@ -93,6 +95,7 @@
     <string name="a_prod">Agregar Producto</string>
     <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
     <string name="title_activity_activity_cierre_stand">Cierre Stand</string>
+    <string name="title_activity_activity_cierre_dia">Cierre Día</string>
     
     <!-- Cierre Stand -->
     <string name="efectivo">Efectivo: </string>
@@ -100,5 +103,15 @@
     <string name="voucher">Vouchers: </string>
     <string name="prod_no">Productos no vendidos</string>
     <string name="cortesias">Cortesias</string>
+    <string name="lbl_total">Total</string>
+    <string name="lbl_faltan">Faltan</string>
+    <string name="lbl_comision">Comision</string>
+    
+    <!-- Cierre dia -->
+    <string name="viaticos">Viáticos</string>
+    <string name="reportes">Reportes</string>
+    <string name="hint_concepto">Concept</string>
+    <string name="hint_cantidad">Amount</string>
+    
 
 </resources>
