@@ -52,26 +52,28 @@
             android:id="@+id/textView4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/articulos"
-            android:textStyle="bold"
-            android:textColor="@color/azul_fuerte" />
+            android:textColor="@color/azul_fuerte"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/precio"
-            android:textStyle="bold"
-            android:textColor="@color/azul_fuerte" />
+            android:textColor="@color/azul_fuerte"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/cantidad"
+            android:text="@string/cantidad_disponible"
             android:textStyle="bold"
             android:textColor="@color/azul_fuerte" />
 
@@ -79,19 +81,22 @@
             android:id="@+id/textView7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/adicionales"
-            android:textStyle="bold"
-            android:textColor="@color/azul_fuerte" />
+            android:textColor="@color/azul_fuerte"
+            android:textStyle="bold" />
         
         <TextView
             android:id="@+id/textView8"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/total"
-            android:textStyle="bold"
-            android:textColor="@color/azul_fuerte" />
+            android:textColor="@color/azul_fuerte"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
     <ListView

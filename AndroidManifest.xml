@@ -52,12 +52,22 @@
         <activity
             android:name="com.clicky.liveshows.ActivityCierreStand"
             android:label="@string/title_activity_activity_cierre_stand"
-            android:parentActivityName="com.clicky.liveshows.StandActivity" android:screenOrientation="sensorLandscape">
+            android:parentActivityName="com.clicky.liveshows.StandActivity"
+            android:screenOrientation="sensorLandscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.clicky.liveshows.StandActivity" />
         </activity>
-        <activity android:name="com.clicky.liveshows.ActivityCierreDia" android:screenOrientation="sensorLandscape" android:parentActivityName="com.clicky.liveshows.StandActivity" android:label="@string/title_activity_activity_cierre_dia"></activity>
+        <activity
+            android:name="com.clicky.liveshows.ActivityCierreDia"
+            android:label="@string/title_activity_activity_cierre_dia"
+            android:parentActivityName="com.clicky.liveshows.StandActivity"
+            android:screenOrientation="sensorLandscape" >
+        </activity>
+        <activity
+            android:name="com.clicky.liveshows.Preferencias"
+            android:label="@string/title_activity_preferencias" >
+        </activity>
     </application>
 
 </manifest>

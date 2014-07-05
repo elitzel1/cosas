@@ -22,7 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colLugar = "lugar";
 	static final String colCapacidad = "capacidad";
 	
-	//TABLA ARTISTA
+	//TABLA FECHA
 	static final String TABLE_FECHA = "TFecha";
 	static final String colIdFecha = "fecha_id";
 	static final String colFecha = "fecha";

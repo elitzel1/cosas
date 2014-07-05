@@ -21,7 +21,7 @@
     <string name="hint_evento">Nombre del evento</string>
     <string name="evento_tipo_moneda">Tipo de moneda</string>
     <string name="hint_artista">Nombre del artista</string>
-    
+
     <!-- Imagenes -->
     <string name="cnt">Content</string>
 
@@ -53,7 +53,8 @@
     <string name="t_adicionales">No se pueden agregar más adicionales</string>
     <string name="error">error</string>
     <string name="stand">Stand</string>
-    
+    <string name="cantidad_disponible">Amount Available</string>
+
     <!-- Errores -->
     <string name="sin_artista">Escriba el nombre de un artista</string>
     <string name="sin_evento">Datos incompletos, falta nombre del evento</string>
@@ -69,7 +70,8 @@
     <string name="sin_tipo">Falta tipo del producto</string>
     <string name="sin_cantidad_valida">Cantidad no valida</string>
     <string name="sin_precio_valido">Precio no valido</string>
-    
+    <string name="err_divisas">Error al guardar la divisa</string>
+    <string name="err_divisa_noval">Divisa no valida</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -96,7 +98,7 @@
     <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
     <string name="title_activity_activity_cierre_stand">Cierre Stand</string>
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
-    
+
     <!-- Cierre Stand -->
     <string name="efectivo">Efectivo: </string>
     <string name="tarjeta">Tarjeta: </string>
@@ -106,13 +108,12 @@
     <string name="lbl_total">Total</string>
     <string name="lbl_faltan">Faltan</string>
     <string name="lbl_comision">Comision</string>
-    
+
     <!-- Cierre dia -->
     <string name="viaticos">Viáticos</string>
     <string name="reportes">Reportes</string>
     <string name="hint_concepto">Concept</string>
     <string name="hint_cantidad">Amount</string>
-    
 
     <!-- Detalles PRod -->
     <string name="d_nombre">NOMBRE: </string>
@@ -123,4 +124,14 @@
     <string name="d_artista">ARTISTA: </string>
     <string name="d_cortesias">CORTESIAS: </string>
     <string name="d_adicionales">ADICIONALES </string>
+    <string name="title_activity_preferencias">Preferencias</string>
+    
+    <!-- Preferencias -->
+	<string name="p_divisas">DIVISAS</string>
+	<string name="p_dolar">Dolar</string>
+	<string name="p_euro">Euro</string>
+	<string name="p_comisiones">COMISIONES</string>
+	<string name="p_tarjeta">Tarjeta de crédito</string>
+	<string name="p_divisa_g">Divisa guardada</string>
+	
 </resources>

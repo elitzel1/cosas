@@ -83,7 +83,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		products = new ArrayList<Product>();
 		tipos = new ArrayList<TipoProduct>();
 		setXML();
-		
+
 		list = (ListView)findViewById(R.id.listArticulos);
 		adapter = new AdapterProduct(this, R.layout.item_lista_producto, products);
 		list.setAdapter(adapter);
@@ -94,7 +94,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
-			//	menu.add(R.string.title_menu);
+				//	menu.add(R.string.title_menu);
 				menu.add(0, CONTEXTMENU_UPDATEITEM,1,R.string.m_actualizar);
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
@@ -105,7 +105,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		dbHelper = new DBAdapter(this);
 		dbHelper.open();
 		cursor = dbHelper.fetchAllEvento();
-		
+
 		if(cursor.moveToFirst()){
 			do{
 				idEvento = cursor.getInt(0);
@@ -170,27 +170,66 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 					}while(cursorA.moveToNext());
 				}
 				cursorA.close();
+
+				List<Comisiones> list_com=null;
+				List<Taxes> list_tax=null;
+				list_com = new ArrayList<Comisiones>();
+				list_tax = new ArrayList<Taxes>();
+
+				List<Integer> id_impuestos = new ArrayList<Integer>();
+				Cursor cursorI=dbHelper.fetchProductImpuestoProd(id);
+				if(cursorI.moveToNext()){
+					do{
+						id_impuestos.add(cursorI.getInt(1));
+					}while(cursorI.moveToNext());
+				}
+				cursorI.close();
+				
+				for(int j=0;j<id_impuestos.size();j++){
+					Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
+					
+					if(cursorPI.moveToNext()){
+					do{
+						//taxes
+						//comision
+						//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+						String nombreI = cursorPI.getString(1);
+						String porcentaje = cursorPI.getString(2);
+						String tipoImpuesto = cursorPI.getString(3);
+						if(tipoImpuesto.contentEquals("comision")){
+							String iva = cursorPI.getString(4);
+							String tipoPeso = cursorPI.getString(5);
+							list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+						}else{
+
+							list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+						}
+					}while(cursorPI.moveToNext());	
+					}
+				}
 				Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
 				p.setTotalCantidad(cantidadTotal);
 				p.setCortesias(cortesias);
 				p.setId(id);
+				p.setComisiones(list_com);
+				p.setTaxes(list_tax);
 				addProduct(p, a);
 				Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
 			}while(cursorProd.moveToNext());
 			cursorProd.close();
-			
+
 		}
-//
-//		Cursor curAd= dbHelper.fetchAllAdicional();
-//		if(curAd.moveToFirst()){
-//			do{
-//				int id = curAd.getInt(0);
-//				int can = curAd.getInt(1);
-//				String nombre = curAd.getString(2);
-//				int idP = curAd.getInt(3);
-//				Log.i("ADICIONALESSSSS", ""+id+" "+can+" "+nombre+" "+idP);
-//			}while(curAd.moveToNext());
-//		}
+		//
+		//		Cursor curAd= dbHelper.fetchAllAdicional();
+		//		if(curAd.moveToFirst()){
+		//			do{
+		//				int id = curAd.getInt(0);
+		//				int can = curAd.getInt(1);
+		//				String nombre = curAd.getString(2);
+		//				int idP = curAd.getInt(3);
+		//				Log.i("ADICIONALESSSSS", ""+id+" "+can+" "+nombre+" "+idP);
+		//			}while(curAd.moveToNext());
+		//		}
 		dbHelper.close();
 
 		Collections.sort(dates, new Comparator<Date>() {
@@ -225,13 +264,17 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			newProduct();
 			return true;
 		case R.id.action_settings:
-			//   openSettings();
+			   openSettings();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
+	private void openSettings(){
+		Intent i = new Intent(this,Preferencias.class);
+		startActivity(i);
+	}
 	private void setupActionBar(){
 		getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
 	}
@@ -264,24 +307,24 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	private String[] toArray(ArrayList<TipoProduct> aTipos){
 		String[] array = new String[aTipos.size()];
-		
+
 		for(int i = 0 ;i<aTipos.size();i++){
 			array[i] = aTipos.get(i).getNombre();
 		}
-		
+
 		return array;
 	}
-	
+
 	private int[] toArrayI(ArrayList<TipoProduct> aTipos){
 		int[] array = new int[aTipos.size()];
-		
+
 		for(int i = 0 ;i<aTipos.size();i++){
 			array[i] = aTipos.get(i).getImage();
 		}
-		
+
 		return array;
 	}
-	
+
 	@Override
 	public void articuloNuevo(Product p, int idImag){
 		int band = 0;
@@ -299,25 +342,25 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				long idRowT = dbHelper.createImpuesto(tax.getName(),"taxes",tax.getAmount());
 				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
-						
+
 					}else{
-						
+
 					}
 				}else{
-					
+
 				}
 			}
-			
+
 			for(Comisiones com : p.getComisiones()){
 				long idRowT = dbHelper.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
 				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
-						
+
 					}else{
-						
+
 					}
 				}else{
-					
+
 				}
 			}
 			p.setId((int)idRow);
@@ -375,7 +418,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		}else{
 			item.setId_imagen(0);
 		}
-		
+
 		if(adicionales!=null){
 			item.setAdicional(adicionales);
 			Log.i("ADICIONALEs", ""+adicionales.size());
@@ -466,7 +509,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_UPDATEITEM:
-		//	showDetails(menuInfo.position);
+			//	showDetails(menuInfo.position);
 			return true;
 
 		case CONTEXTMENU_DETALLEITEM:
@@ -482,7 +525,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			dialogA.setArguments(params);
 			dialogA.show(getFragmentManager(), "diagCor");
 			return true;
-			
+
 		}
 
 		return false;
@@ -492,7 +535,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		Product p = products.get(position);
 		List<Comisiones> list_comisiones= p.getComisiones();
 		List<Taxes> list_taxes = p.getTaxes();
-		
+
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct(p);
 		dialog.show(getFragmentManager(), "Detalles");
@@ -502,29 +545,29 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		//Artista
 		//img id
 		//Tipo
-		
-		
+
+
 	}
-	
+
 	public Product getProduct(Product p){
 		return p;
 	}
-	
+
 	private void makeToast(int resource){
 		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	public void toStand(View v){
 		Intent i = new Intent(this,StandActivity.class);
 		i.putExtra("evento", nameEvento);
 		startActivity(i);
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
-	
+
 	public void makeToastDialog(int msg){
 		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	@Override
 	public void setCortesia(String cortesia, int position) {
 		// TODO Auto-generated method stub
@@ -537,11 +580,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			p.setCantidad(cantidad);
 			dbHelper.updateCortesia(p.getId(), cantidad, p.getCortesias());
 		}else{
-			
+
 		}
 		dbHelper.close();
 	}
-	
+
 	private void setXML(){
 		XmlPullParserFactory pullParserFactory;
 		try {
@@ -562,7 +605,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException
 	{
 		int eventType = parser.getEventType();
@@ -587,7 +630,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 							currentLocal.setImage(R.drawable.werelupe);
 						}
 						else{
-						currentLocal.setImage(idr);
+							currentLocal.setImage(idr);
 						}
 					}  
 				}
@@ -606,7 +649,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	public class TipoProduct{
 		String name;
 		int image;
-		
+
 		public TipoProduct(){}
 		public TipoProduct(String name, int image){
 			this.name=name;
