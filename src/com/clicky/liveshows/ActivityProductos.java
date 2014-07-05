@@ -466,13 +466,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_UPDATEITEM:
-			//           	 db.open();
-			//           	 	String actualiza=list.getAdapter().getItem(menuInfo.position).toString();
-			//              	  	long ida= db.getContact(actualiza);
-			//              	  	Log.i("ID", "Id: "+ida+" nombre: "+actualiza);
-			//              	  db.close();
+		//	showDetails(menuInfo.position);
 			return true;
 
+		case CONTEXTMENU_DETALLEITEM:
+			showDetails(menuInfo.position);
+			return true;
 
 		case CONTEXTMENU_ADDCORTESIA:
 			DialogSetCortesia dialogA = new DialogSetCortesia();
@@ -489,6 +488,28 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		return false;
 	}
 
+	private void showDetails(int position){
+		Product p = products.get(position);
+		List<Comisiones> list_comisiones= p.getComisiones();
+		List<Taxes> list_taxes = p.getTaxes();
+		
+		DialogDetails dialog = new DialogDetails();
+		dialog.setProduct(p);
+		dialog.show(getFragmentManager(), "Detalles");
+		//Nombre
+		//Cantidad
+		//Tallas
+		//Artista
+		//img id
+		//Tipo
+		
+		
+	}
+	
+	public Product getProduct(Product p){
+		return p;
+	}
+	
 	private void makeToast(int resource){
 		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
 	}

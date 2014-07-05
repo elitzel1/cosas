@@ -38,6 +38,7 @@ public class DialogStand extends DialogFragment {
 			listener=(OnStandNuevo)activity;	
 		}catch(ClassCastException e){}
 	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());

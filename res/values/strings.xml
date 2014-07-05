@@ -114,4 +114,13 @@
     <string name="hint_cantidad">Amount</string>
     
 
+    <!-- Detalles PRod -->
+    <string name="d_nombre">NOMBRE: </string>
+    <string name="d_tipo">TIPO: </string>
+    <string name="d_talla">TALLA: </string>
+    <string name="d_precio">PRECIO: </string>
+    <string name="d_cantidad">CANIDAD: </string>
+    <string name="d_artista">ARTISTA: </string>
+    <string name="d_cortesias">CORTESIAS: </string>
+    <string name="d_adicionales">ADICIONALES </string>
 </resources>
