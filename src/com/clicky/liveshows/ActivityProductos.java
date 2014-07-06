@@ -488,11 +488,37 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			dialogA.show(getFragmentManager(), "diagCor");
 			return true;
 			
+		case CONTEXTMENU_DETALLEITEM:
+			showDetails(menuInfo.position);
+			return true;
+			
 		}
 
 		return false;
 	}
 
+	private void showDetails(int position){
+		Product p = products.get(position);
+		List<Comisiones> list_comisiones = p.getComisiones();
+		List<Taxes> list_taxes = p.getTaxes();
+		
+		
+		Bundle params = new Bundle();
+		params.putString("tipo", p.getTipo());
+		params.putString("nombre", p.getNombre());
+		params.putString("precio", p.getPrecio());
+		params.putString("talla", p.getTalla());
+		params.putInt("cantidad", p.getCantidad());
+		params.putString("artista", p.getArtista());
+		params.putInt("foto", p.getId_imagen());
+		
+		DialogProductDetails dialog = new DialogProductDetails();
+		dialog.setArguments(params);
+		dialog.show(getFragmentManager(), "detalles");
+		
+		
+	}
+	
 	private void makeToast(int resource){
 		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
 	}

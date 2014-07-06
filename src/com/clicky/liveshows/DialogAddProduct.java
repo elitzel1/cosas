@@ -186,7 +186,7 @@ public class DialogAddProduct extends DialogFragment {
 					spinnerTallas.setVisibility(View.INVISIBLE);
 					editTalla = (EditText)view.findViewById(R.id.editTalla);
 					editTalla.setVisibility(View.VISIBLE);
-					enableTallas=false;
+					enableOtraTalla=false;
 				}
 				
 			}
@@ -317,6 +317,7 @@ public class DialogAddProduct extends DialogFragment {
 							com = editTalla.getEditableText().toString();
 						}
 						else{
+							listener.makeToastDialog(R.string.sin_talla);
 							return;
 						}
 				}
@@ -329,6 +330,8 @@ public class DialogAddProduct extends DialogFragment {
 								countTallas++;
 								
 								addView(com,editCantidadTallas.getEditableText().toString(), countTallas, mLinearTallas);
+							}else{
+								listener.makeToastDialog(R.string.sin_cantidad);
 							}
 			//			}
 					if(visibleTallaMenos==false){
@@ -498,8 +501,6 @@ public class DialogAddProduct extends DialogFragment {
 					p.setComisiones(list_comisiones);
 					p.setTaxes(list_taxes);
 					listener.articuloNuevo(p, idImagen);
-					//	listener.articuloNuevo(nombre, spinnerTipos.getSelectedItem().toString(), cantidad,spinnerArtistas.getSelectedItem().toString(),
-					//		precio,list_taxes,list_comisiones,cantidad,path,idImagen,"");
 				}
 				dismiss();	
 			}

@@ -67,6 +67,7 @@
     <string name="sin_precio">Falta el precio del producto</string>
     <string name="sin_cantidad">Falta la cantidad del producto</string>
     <string name="sin_tipo">Falta tipo del producto</string>
+    <string name="sin_talla">Falta la talla del producto</string>
     <string name="sin_cantidad_valida">Cantidad no valida</string>
     <string name="sin_precio_valido">Precio no valido</string>
     
@@ -147,5 +148,13 @@
 		<item>PERMISOS Y TRAMITES</item>
 		<item>OTROS</item>
     </string-array>
+    
+    <!-- Details Product-->
+    <string name="d_tipo">Tipo: </string>
+    <string name="d_nombre">Nombre: </string>
+    <string name="d_precio">Precio: </string>
+    <string name="d_cantidad">Cantidad: </string>
+    <string name="d_artista">Artista: </string>
+    <string name="d_talla">Talla: </string>
 
 </resources>
