@@ -3,6 +3,7 @@ package com.clicky.liveshows;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -204,7 +206,9 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		TextView txtEvento = (TextView)findViewById(R.id.txtArtistaP);
 		txtEvento.setText(nameEvento);
 		TextView txtFecha = (TextView)findViewById(R.id.txtFechaP);
-		txtFecha.setText(dates.get(0).toString());
+		
+		DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
+		txtFecha.setText(df.format(dates.get(0)));
 
 
 

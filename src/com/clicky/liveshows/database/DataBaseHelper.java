@@ -65,6 +65,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colComisionStand="comision";
 	static final String colIVAStand="iva";
 	static final String colTipoCStand = "tipo_comision";
+	static final String colCantidadEfectivo = "cantidad_efectivo";
+	static final String colCantidadTarjeta = "cantidad_tarjeta";
+	static final String colCantidadVoucher = "cantidad_voucher";
 	
 	//TABLA STAND PRODUCTO
 	static final String TABLE_STAND_PROD="TStand_Prod";
@@ -76,17 +79,25 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colImpuestoProdId ="taxes_id";
 	
 	
-	public DataBaseHelper(Context context) {
-		super(context, DATABASE_NAME, null,DATABASE_VERSION);
-		// TODO Auto-generated constructor stub
-	}
-	
 	//TABLA ADICIONAL
 	static final String TABLE_ADICIONAL ="TAdicional";
 	static final String colIdAdicional ="adicional_id";
 	static final String colCantidadA="cantidad";
 	static final String colNombreA="nombre";
 	static final String colProductoIdA="producto_id";
+	
+	//TABLA VENTA PRODUCTO
+	static final String TABLE_SALES_PRODUCT = "TSalesProduct";
+	static final String colIdSales = "sales_id";
+	static final String colCantidadVP = "cantidad";
+	static final String colCortesiasVP = "cortesias";
+	static final String colStandFK = "stand_id";
+	static final String colStandProdFK = "stand_prod_id";
+	
+	public DataBaseHelper(Context context) {
+		super(context, DATABASE_NAME, null,DATABASE_VERSION);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
@@ -129,7 +140,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		database.execSQL(SQL_ADICIONALES);
 		
 		String SQL_STAND ="CREATE TABLE "+TABLE_STAND+ " ("+colIdStand+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-		colNombreStand+" TEXT NOT NULL, "+colNombreEmpleado+" TEXT NOT NULL, "+colComisionStand+" INTEGER NOT NULL, "+colIVAStand+" TEXT NOT NULL, "+colTipoCStand+" TEXT NOT NULL)";
+		colNombreStand+" TEXT NOT NULL, "+colNombreEmpleado+" TEXT NOT NULL, "+colComisionStand+" INTEGER NOT NULL, "
+				+colIVAStand+" TEXT NOT NULL, "+colTipoCStand+" TEXT NOT NULL, "+colCantidadEfectivo+" REAL, "
+				+colCantidadTarjeta+" REAL, "+colCantidadVoucher+" REAL)";
 		database.execSQL(SQL_STAND);
 		
 		String SQL_PRODUCTOS_STAND ="CREATE TABLE "+TABLE_STAND_PROD+ " ("+colIdStandProd+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
@@ -138,6 +151,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 				+colImpuestoProdId+" INTEGER NOT NULL, foreign KEY ("
 				+colProductoIdSP+") REFERENCES "+TABLE_PRODCUT+" ("+colIdProduct+"))";
 		database.execSQL(SQL_PRODUCTOS_STAND);
+		
+		String SQL_VENTAS_PRODUCTOS ="CREATE TABLE "+TABLE_SALES_PRODUCT+ " ("+colIdSales+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
+				colStandIdSP+" INTEGER NOT NULL, "+
+		colCantidadVP+" INTEGER NOT NULL, "+colCortesiasVP+" INTEGER, "+colStandFK+" INTEGER NOT NULL, "
+				+colStandProdFK+" INTEGER NOT NULL, foreign KEY ("
+				+colStandProdFK+") REFERENCES "+TABLE_STAND_PROD+" ("+colIdStandProd+"))";
+		database.execSQL(SQL_VENTAS_PRODUCTOS);
 		
 		
 	}
@@ -154,6 +174,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS "+TABLE_ADICIONAL);
 		db.execSQL("DROP TABLE IF EXISTS "+TABLE_STAND);
 		db.execSQL("DROP TABLE IF EXISTS "+TABLE_STAND_PROD);
+		db.execSQL("DROP TABLE IF EXISTS "+TABLE_SALES_PRODUCT);
 		
 		onCreate(db);
 	}

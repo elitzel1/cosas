@@ -56,6 +56,9 @@ public class DBAdapter {
 		static final String colComisionStand="comision";
 		static final String colIVAStand="iva";
 		static final String colTipoCStand = "tipo_comision";
+		static final String colCantidadEfectivo = "cantidad_efectivo";
+		static final String colCantidadTarjeta = "cantidad_tarjeta";
+		static final String colCantidadVoucher = "cantidad_voucher";
 		
 		//TABLA STAND PRODUCTO
 		static final String TABLE_STAND_PROD="TStand_Prod";
@@ -80,6 +83,14 @@ public class DBAdapter {
 		static final String colIdTaxesCK ="taxes_id";
 		static final String colIdProductCK ="product_id";
 		static final String colIdTaxesProductId="taxes_product_id";
+		
+		//TABLA VENTA PRODUCTO
+		static final String TABLE_SALES_PRODUCT = "TSalesProduct";
+		static final String colIdSales = "sales_id";
+		static final String colCantidadVP = "cantidad";
+		static final String colCortesiasVP = "cortesias";
+		static final String colStandFK = "stand_id";
+		static final String colStandProdFK = "stand_prod_id";
 		
 		private Context context;
 		private SQLiteDatabase database;
@@ -153,7 +164,10 @@ public class DBAdapter {
 			ContentValues initialValues=createContentValuesStandProd(producto, stand, fecha, cantidad,comision);
 			return database.insert(TABLE_STAND_PROD, null, initialValues);
 		}
-		
+		public long createVentaProducto(int stand, int producto_stand, int cantidad, int cortesias){
+			ContentValues initialValues = createContentValuesVentaProd(stand, producto_stand,cantidad,cortesias);
+			return database.insert(TABLE_SALES_PRODUCT, null, initialValues);
+		}
 		
 		//Actualiza la tarea
 	/*	public boolean updateTodo(long rowId, String category, String summary,
@@ -185,6 +199,11 @@ public class DBAdapter {
 			ContentValues updateValues = createContentValuesUpdateCantidadCortesia(cantidadTotal,cantidad);
 			return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
 		}
+		public boolean updateStandCierre(long rowId,double efectivo,double tarjeta,double voucher){
+			ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,tarjeta,voucher);
+			return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
+		}
+		
 		//Borra la tarea
 		public boolean deleteEvento(long rowId) {
 			return database.delete(TABLE_EVENTO, colIdEvento + "=" + rowId, null) > 0;
@@ -356,7 +375,14 @@ public class DBAdapter {
 			Cursor mCursor = database.query(true, TABLE_PRODCUT, new String[] {colCortesia}, colIdProduct + "=" + rowId,null, null, null, null, null);
 			return mCursor;
 		}
-
+		
+		public Cursor fetchVentas(long rowId) throws SQLException{
+			Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,
+			colCantidadVP, colCortesiasVP}, colStandFK+" = "+rowId,null, null, null, null, null);
+			return mCursor;
+		}
+		
+		//Content Values
 		private ContentValues createContentValues(String name, String lugar,
 				String capacidad) {
 			ContentValues values = new ContentValues();
@@ -423,6 +449,15 @@ public class DBAdapter {
 			return values;
 		}
 		
+		private ContentValues createContentValuesVentaProd(int stand, int producto_stand, int cantidad, int cortesias){
+			ContentValues values = new ContentValues();
+			values.put(colStandFK, stand);
+			values.put(colStandProdFK, producto_stand);
+			values.put(colCantidadVP, cantidad);
+			values.put(colCortesiasVP, cortesias);
+			return values;
+		}
+		
 		private ContentValues createContentValuesUpdate(int cantidadTotal, int cantidad){
 			ContentValues values = new ContentValues();
 			values.put(colCantidadTotal, cantidadTotal);
@@ -471,6 +506,14 @@ public class DBAdapter {
 			ContentValues values = new ContentValues();
 			values.put(colCantidad, cantidad);
 			values.put(colCortesia, cortesias);
+			return values;
+		}
+		
+		private ContentValues createContentValuesUpdateStandCierre(double efectivo,double tarjeta,double voucher){
+			ContentValues values = new ContentValues();
+			values.put(colCantidadEfectivo, efectivo);
+			values.put(colCantidadTarjeta, tarjeta);
+			values.put(colCantidadVoucher, voucher);
 			return values;
 		}
 }
