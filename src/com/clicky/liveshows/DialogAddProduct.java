@@ -187,7 +187,7 @@ public class DialogAddProduct extends DialogFragment {
 					spinnerTallas.setVisibility(View.INVISIBLE);
 					editTalla = (EditText)view.findViewById(R.id.editTalla);
 					editTalla.setVisibility(View.VISIBLE);
-					enableTallas=false;
+					enableOtraTalla=false;
 				}
 				
 			}
@@ -276,6 +276,7 @@ public class DialogAddProduct extends DialogFragment {
 
 		mLinearTallas = (LinearLayout)view.findViewById(R.id.listTallas);
 		mLinearTallas.setOrientation(LinearLayout.VERTICAL);
+		
 		/**Agregar cantidad por tallas**/
 		checkTalla.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -289,18 +290,13 @@ public class DialogAddProduct extends DialogFragment {
 					editCantidad.setVisibility(View.INVISIBLE);
 					mLinearTallas.setVisibility(View.VISIBLE);
 					list_tallas = new ArrayList<Talla>();
-//					for(int i =0;i<tallas.length;i++){
-//						addViewTallas(tallas[i],i);
-//					}
 					enableTallas=true;
 				}else
 				{
 					enableTallas=false;
 					editCantidad.setVisibility(View.VISIBLE);
 					((LinearLayout)view.findViewById(R.id.linearTalla)).setVisibility(View.GONE);
-//					if(countTallas>0){
-//						deletLayouts();
-//					}
+
 				}
 			}
 		}); 
@@ -472,26 +468,13 @@ public class DialogAddProduct extends DialogFragment {
 
 				if(enableTallas){
 					for(int i = 0;i<list_tallas.size();i++){
-			/*			LinearLayout temp = (LinearLayout) mLinearTallas.findViewById(i);
-						EditText edit = (EditText)temp.getChildAt(1);
-						if(edit.getEditableText()!=null){
-							if(!edit.getEditableText().toString().contentEquals("")){
-								if(Integer.parseInt(edit.getEditableText().toString())>0){*/
 									//Nombre, Tipo, cantidadTalla, artista, precio, impuestos, comisiones, path,idimagen, talla
 									Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, list_tallas.get(i).getTalla(),Integer.parseInt(list_tallas.get(i).getCantidad()),list_comisiones ,path);
-							//		p.setTotalCantidad(Integer.parseInt(edit.getEditableText().toString()));
 									p.setTotalCantidad(Integer.parseInt(list_tallas.get(i).getCantidad()));
 									p.setComisiones(list_comisiones);
 									p.setTaxes(list_taxes);
 									listener.articuloNuevo(p, idImagen);
-									//	listener.articuloNuevo(nombre, spinnerTipos.getSelectedItem().toString(), edit.getEditableText().toString(),spinnerArtistas.getSelectedItem().toString(),precio,list_taxes,taxes,path,idImagen,tallas[i]);
-						/*		}
-								else{
-									return;
-								}
-							}
-						}*/
-
+				
 					}
 
 				}else{
@@ -500,9 +483,7 @@ public class DialogAddProduct extends DialogFragment {
 					p.setComisiones(list_comisiones);
 					p.setTaxes(list_taxes);
 					listener.articuloNuevo(p, idImagen);
-					//	listener.articuloNuevo(nombre, spinnerTipos.getSelectedItem().toString(), cantidad,spinnerArtistas.getSelectedItem().toString(),
-					//		precio,list_taxes,list_comisiones,cantidad,path,idImagen,"");
-				}
+						}
 				dismiss();	
 			}
 		});

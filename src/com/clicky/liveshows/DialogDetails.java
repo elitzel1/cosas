@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +66,7 @@ public class DialogDetails extends DialogFragment {
 		txtCantidad = (TextView)view.findViewById(R.id.txtCantidad);
 		txtArtista = (TextView)view.findViewById(R.id.txtArtista);
 		txtCortesias = (TextView)view.findViewById(R.id.txtCortesias);
-
+		img = (ImageView)view.findViewById(R.id.imgProdD);
 		txtNombre.setText(product.getNombre());
 		txtTipo.setText(product.getTipo());
 		if(product.getTalla().contentEquals("")){
@@ -76,6 +78,12 @@ public class DialogDetails extends DialogFragment {
 		txtCantidad.setText(""+product.getCantidad());
 		txtArtista.setText(product.getArtista());
 		txtCortesias.setText(""+product.getCortesias());
+		
+		if(product.getId_imagen()==0){
+			setPic(product.getPath_imagen());
+		}else
+			img.setImageResource(product.getId_imagen());
+		
 		
 		if(product.getAdicionalSize()>0){
 			for(Adicionales adicional:product.getAdicional()){
@@ -127,6 +135,40 @@ public class DialogDetails extends DialogFragment {
 
 		layout.addView(linear);
 		layout.invalidate();
+	}
+	
+	private void setPic(String mCurrentPhotoPath) {
+
+		/* There isn't enough memory to open up more than a couple camera photos */
+		/* So pre-scale the target bitmap into which the file is decoded */
+
+		/* Get the size of the ImageView */
+		int targetW = img.getWidth();
+		int targetH = img.getHeight();
+
+		/* Get the size of the image */
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true; //obtenemos el bitmap sin guardarlo en memoria
+		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Convertimos el file en imagen.
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		
+		/* Figure out which way needs to be reduced less */
+		int scaleFactor = 1;
+		if ((targetW > 0) || (targetH > 0)) {
+			scaleFactor = Math.min(photoW/targetW, photoH/targetH);	
+		}
+
+		/* Set bitmap options to scale the image decode target */
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor; //Reduce la imagen si sacleFactor>1
+		bmOptions.inPurgeable = true; //Elimina la foto si requiere memoria.
+
+		/* Decode the JPEG file into a Bitmap */
+		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Obtenemos la foto
+		
+		/* Associate the Bitmap to the ImageView */
+		img.setImageBitmap(bitmap);
 	}
 
 }

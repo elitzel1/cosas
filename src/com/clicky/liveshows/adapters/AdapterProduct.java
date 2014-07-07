@@ -64,7 +64,7 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 		holder.txtPrecio.setText(product.getPrecio());
 		holder.txtCantidad.setText(""+product.getCantidad());
 		if(product.getAdicionalSize()>0){
-		holder.txtAdicional.setText(""+product.getAdicionalA(0).getCantidad());
+		holder.txtAdicional.setText(""+product.getAdicionalSize());
 		}else
 			holder.txtAdicional.setText("");
 		holder.txtArtista.setText(product.getArtista());
