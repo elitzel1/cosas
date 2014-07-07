@@ -54,6 +54,9 @@
     <string name="error">error</string>
     <string name="stand">Stand</string>
     <string name="cantidad_disponible">Amount Available</string>
+    <string name="textdivisa">Aún no ingresa tipo de cambio</string>
+    <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
+    <string name="album_name">Merch</string>
 
     <!-- Errores -->
     <string name="sin_artista">Escriba el nombre de un artista</string>
@@ -72,6 +75,8 @@
     <string name="sin_precio_valido">Precio no valido</string>
     <string name="err_divisas">Error al guardar la divisa</string>
     <string name="err_divisa_noval">Divisa no valida</string>
+    <string name="err_com">Error al guardar la comisión de la tarjeta</string>
+    <string name="err_com_noval">Comisión no valida</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -133,5 +138,6 @@
 	<string name="p_comisiones">COMISIONES</string>
 	<string name="p_tarjeta">Tarjeta de crédito</string>
 	<string name="p_divisa_g">Divisa guardada</string>
+	<string name="p_comision_g">Comisión guardada</string>
 	
 </resources>

@@ -5,10 +5,9 @@ import java.util.List;
 
 import com.clicky.liveshows.R;
 import com.clicky.liveshows.utils.Product;
+import com.clicky.liveshows.utils.SDImageLoader;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +20,14 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 	Context context;
 	int resource;
 	List<Product> items;
-	
+	SDImageLoader sdim;
 	public AdapterProduct(Context context, int resource, List<Product> items) {
 		super(context, resource, items);
 
 		this.context=context;
 		this.resource=resource;
 		this.items = items;
-		// TODO Auto-generated constructor stub
+		 sdim =new SDImageLoader();
 	}
 	
 	public View getView(int position,View convertView,ViewGroup parent ){
@@ -71,51 +70,20 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 		holder.txtArtista.setText(product.getArtista());
 		if(product.getId_imagen()==0){
 			File imgFile = new File(product.getPath_imagen());
+
 				if(imgFile.exists())
 				{
-				   Bitmap myBitmap = ShrinkBitmap(imgFile.getAbsolutePath(), 100, 100);
-						//   BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-				   holder.imgTipo.setImageBitmap(myBitmap);
+				sdim.load(product.getPath_imagen(), holder.imgTipo);
+		
 				}
 		}
 		else
 			holder.imgTipo.setImageResource(product.getId_imagen());
 		
-//		List<Adicionales> adicionales = product.getAdicional();
-//		int suma = 0;
-//		for(int i= 0;i<adicionales.size();i++){
-//			suma = suma+adicionales.get(i).getCantidad();
-//		}
-	//	holder.txtTotal.setText(""+(product.getCantidad()+suma));
 		holder.txtTotal.setText(""+product.getTotalCantidad());
 		return view;
 	}
-	
-	
-	Bitmap ShrinkBitmap(String file, int width, int height){
-		   
-	     BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
-	        bmpFactoryOptions.inJustDecodeBounds = true;
-	        Bitmap bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
-	         
-	        int heightRatio = (int)Math.ceil(bmpFactoryOptions.outHeight/(float)height);
-	        int widthRatio = (int)Math.ceil(bmpFactoryOptions.outWidth/(float)width);
-	         
-	        if (heightRatio > 1 || widthRatio > 1)
-	        {
-	         if (heightRatio > widthRatio)
-	         {
-	          bmpFactoryOptions.inSampleSize = heightRatio;
-	         } else {
-	          bmpFactoryOptions.inSampleSize = widthRatio; 
-	         }
-	        }
-	         
-	        bmpFactoryOptions.inJustDecodeBounds = false;
-	        bitmap = BitmapFactory.decodeFile(file, bmpFactoryOptions);
-	     return bitmap;
-	    }
-	
+
 	static class ViewHolder{
 		TextView txtNombre;
 		TextView txtTalla;
@@ -126,5 +94,9 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 		ImageView imgTipo;
 		TextView txtTotal;
 	}
+	
+	
+	
+	 
 
 }

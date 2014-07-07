@@ -16,6 +16,7 @@ import android.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -257,8 +258,9 @@ public class DialogAddProduct extends DialogFragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(editTaxes.getEditableText()!=null)
-					if(!editTaxes.getEditableText().toString().equals("")){
+					if(!editTaxes.getEditableText().toString().contentEquals("")){
 						String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
+						if(!amount.contentEquals(""))
 						if(Integer.parseInt(amount)>0){
 							list_taxes.add(new Taxes(editTaxes.getEditableText().toString(),Integer.parseInt(amount)));
 							countT++;
@@ -522,13 +524,48 @@ public class DialogAddProduct extends DialogFragment {
 	public void setImage(String path){
 		File imgFile = new File(path);
 		this.path=path;
+		Log.i("ALBUMDIA", ""+path);
 		if(imgFile.exists())
 		{
-			Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-			img.setImageBitmap(myBitmap);
+			setPic(imgFile.getAbsolutePath());
 			enableSpinner  = false;
 			idImagen=0;
+			Log.i("ALBUMDIA", ""+imgFile.getAbsolutePath());
 		}
+	}
+	
+	private void setPic(String mCurrentPhotoPath) {
+
+		/* There isn't enough memory to open up more than a couple camera photos */
+		/* So pre-scale the target bitmap into which the file is decoded */
+
+		/* Get the size of the ImageView */
+		int targetW = img.getWidth();
+		int targetH = img.getHeight();
+
+		/* Get the size of the image */
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true; //obtenemos el bitmap sin guardarlo en memoria
+		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Convertimos el file en imagen.
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		
+		/* Figure out which way needs to be reduced less */
+		int scaleFactor = 1;
+		if ((targetW > 0) || (targetH > 0)) {
+			scaleFactor = Math.min(photoW/targetW, photoH/targetH);	
+		}
+
+		/* Set bitmap options to scale the image decode target */
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor; //Reduce la imagen si sacleFactor>1
+		bmOptions.inPurgeable = true; //Elimina la foto si requiere memoria.
+
+		/* Decode the JPEG file into a Bitmap */
+		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Obtenemos la foto
+		
+		/* Associate the Bitmap to the ImageView */
+		img.setImageBitmap(bitmap);
 	}
 
 	private void setImage(int position){
@@ -589,28 +626,7 @@ public class DialogAddProduct extends DialogFragment {
 	}
 
 /*
-	private void addViewTallas(String talla,int i){
-		countTallas=i;
-		LinearLayout linear = new LinearLayout(getActivity());
-		linear.setId(countTallas);
-		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		linear.setOrientation(LinearLayout.HORIZONTAL);
-		TextView txt = new TextView(getActivity());
-		EditText edit = new EditText(getActivity());
-		txt.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.8f));
-		edit.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.2f));
-		//		edit.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT));
-		edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-		edit.setId(i);
-		txt.setText(talla);
-		txt.setTextColor(getResources().getColor(R.color.azul));
-		txt.setLayoutParams(params2);
-		linear.addView(txt);
-		linear.addView(edit);
-		mLinearTallas.addView(linear);
-		mLinearTallas.invalidate();
-	}
-
+	
 	private void deletLayouts(){
 		for(int j =0;j<=countTallas;j++){
 			final LinearLayout temp = (LinearLayout) mLinearTallas.findViewById(j);

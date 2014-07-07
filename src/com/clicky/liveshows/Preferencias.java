@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 public class Preferencias extends Activity {
 	EditText editDivisa;
+	EditText editComision;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,15 +23,24 @@ public class Preferencias extends Activity {
 		setupActionBar();
 
 		editDivisa = (EditText)findViewById(R.id.editDivisas);
+		editComision = (EditText)findViewById(R.id.editCredito);
+		
 		TextView txtDivisas = (TextView)findViewById(R.id.txtDivisa);
 		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
 		String div=prefs.getString("moneda", "");
+		float divisa = prefs.getFloat("divisa", 0);
+		float comisiion = prefs.getFloat("comision_tarjeta", 0);
+		
+		editComision.setText(""+comisiion);
+		
 		if(div.contentEquals("Peso")){
 			editDivisa.setEnabled(false);
 		}else{
 			if(div.contentEquals("Dolar")){
+				editDivisa.setText(""+divisa);
 				txtDivisas.setText("Dolar");
 			}else{
+				editDivisa.setText(""+divisa);
 				txtDivisas.setText("Euro");
 			}
 		}
@@ -58,7 +69,8 @@ public class Preferencias extends Activity {
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			NavUtils.navigateUpFromSameTask(this);
+		//	NavUtils.navigateUpFromSameTask(this);
+			finish();
 			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		case R.id.action_accept:
@@ -70,7 +82,7 @@ public class Preferencias extends Activity {
 
 	private void saveData(){
 
-		EditText editComision = (EditText)findViewById(R.id.editCredito);
+		
 
 		if(editDivisa.getEditableText()!=null){
 			if(!editDivisa.getEditableText().toString().contentEquals("")){
@@ -79,6 +91,7 @@ public class Preferencias extends Activity {
 					SharedPreferences.Editor editor = prefs.edit();
 					editor.putFloat("divisa",Float.parseFloat(editDivisa.getEditableText().toString()));
 					editor.commit();
+					makeToast(R.string.p_divisa_g);
 				}else{
 					makeToast(R.string.err_divisa_noval);
 					return;
@@ -92,7 +105,27 @@ public class Preferencias extends Activity {
 			return;
 		}
 		
-		makeToast(R.string.p_divisa_g);
+		if(editComision.getEditableText()!=null){
+			if(!editComision.getEditableText().toString().contentEquals("")){
+				if(Float.parseFloat(editComision.getEditableText().toString())>0){
+					SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+					SharedPreferences.Editor editor = prefs.edit();
+					editor.putFloat("comision_tarjeta",Float.parseFloat(editDivisa.getEditableText().toString()));
+					editor.commit();
+					makeToast(R.string.p_comision_g);
+				}else{
+					makeToast(R.string.err_com_noval);
+					return;
+				}
+			}else{
+				makeToast(R.string.err_com);
+				return;
+			}
+		}else{
+			makeToast(R.string.err_com);
+			return;
+		}
+		
 		finish();
 	}
 	

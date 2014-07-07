@@ -21,6 +21,8 @@ import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.adapters.AdapterProduct;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Adicionales;
+import com.clicky.liveshows.utils.AlbumStorageDirFactory;
+import com.clicky.liveshows.utils.BaseAlbumDirFactory;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
@@ -30,7 +32,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -70,6 +74,13 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	protected static final int CONTEXTMENU_UPDATEITEM = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
+	
+	private static final String JPEG_FILE_PREFIX = "IMG_";
+	private static final String JPEG_FILE_SUFFIX = ".jpg";
+	private AlbumStorageDirFactory mAlbumStorageDirFactory = null;
+	private String albumPath=null;
+	private String mCurrentPhotoPath;
+	
 	@SuppressLint("UseSparseArrays")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -184,27 +195,27 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 					}while(cursorI.moveToNext());
 				}
 				cursorI.close();
-				
+
 				for(int j=0;j<id_impuestos.size();j++){
 					Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
-					
-					if(cursorPI.moveToNext()){
-					do{
-						//taxes
-						//comision
-						//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
-						String nombreI = cursorPI.getString(1);
-						String porcentaje = cursorPI.getString(2);
-						String tipoImpuesto = cursorPI.getString(3);
-						if(tipoImpuesto.contentEquals("comision")){
-							String iva = cursorPI.getString(4);
-							String tipoPeso = cursorPI.getString(5);
-							list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
-						}else{
 
-							list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
-						}
-					}while(cursorPI.moveToNext());	
+					if(cursorPI.moveToNext()){
+						do{
+							//taxes
+							//comision
+							//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+							String nombreI = cursorPI.getString(1);
+							String porcentaje = cursorPI.getString(2);
+							String tipoImpuesto = cursorPI.getString(3);
+							if(tipoImpuesto.contentEquals("comision")){
+								String iva = cursorPI.getString(4);
+								String tipoPeso = cursorPI.getString(5);
+								list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+							}else{
+
+								list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+							}
+						}while(cursorPI.moveToNext());	
 					}
 				}
 				Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
@@ -219,17 +230,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			cursorProd.close();
 
 		}
-		//
-		//		Cursor curAd= dbHelper.fetchAllAdicional();
-		//		if(curAd.moveToFirst()){
-		//			do{
-		//				int id = curAd.getInt(0);
-		//				int can = curAd.getInt(1);
-		//				String nombre = curAd.getString(2);
-		//				int idP = curAd.getInt(3);
-		//				Log.i("ADICIONALESSSSS", ""+id+" "+can+" "+nombre+" "+idP);
-		//			}while(curAd.moveToNext());
-		//		}
+
 		dbHelper.close();
 
 		Collections.sort(dates, new Comparator<Date>() {
@@ -244,7 +245,30 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		txtEvento.setText(nameEvento);
 		TextView txtFecha = (TextView)findViewById(R.id.txtFechaP);
 		txtFecha.setText(dates.get(0).toString());
+		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+		String div=prefs.getString("moneda", "");
+		float divisa = prefs.getFloat("divisa", 0);
+		float comision = prefs.getFloat("comision_tarjeta", 0);
+		
+		TextView txtDivisa = (TextView)findViewById(R.id.txtDivisas);
+		TextView txtTarCom = (TextView)findViewById(R.id.txtTarjetaCom);
+		
+		if(comision<=0){
 
+			txtTarCom.setText(R.string.textcom);
+		}else{
+			txtTarCom.setText("Comisión Tarjeta: "+comision);
+		}
+		
+		if(div.contentEquals("Peso")){
+			txtDivisa.setText(div);
+		}else{
+			if(divisa <= 0){
+				txtDivisa.setText(R.string.textdivisa);
+			}else{
+				txtDivisa.setText(div+" = "+divisa+" MXN");
+			}
+		}
 
 
 	}
@@ -264,7 +288,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			newProduct();
 			return true;
 		case R.id.action_settings:
-			   openSettings();
+			openSettings();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -369,20 +393,76 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		dbHelper.close();
 	}
 
-	public void takePicture(View view){
+	
+	/* Photo album for this application */
+	private String getAlbumName() {
+		return getString(R.string.album_name);
+	}
+
+	/*Se obtiene la dirección del albúm*/
+	private File getAlbumDir() {
+		File storageDir = null;
+		
+		/*Verificamos si el almacenamiento externo esta Montado*/
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			
+			/*Obtenemos el nombre de la nueva Carpeta, donde se guardarán las imagenes*/
+			storageDir = mAlbumStorageDirFactory.getAlbumStorageDir(getAlbumName());
+			
+			/*Comprobamos que no sea nula la variable*/
+			if (storageDir != null) {
+				if (! storageDir.mkdirs()) {	//Creamos la Carpeta
+				Log.i("Directorio: ", ""+storageDir);
+					if (! storageDir.exists()){ //Comprobamos que se creará realmente
+						Log.d("CameraSample", "failed to create directory");
+						return null;
+					}
+				}
+			}
+			
+		} else {
+			Log.v(getString(R.string.app_name), "External storage is not mounted READ/WRITE.");
+		}
+		albumPath = storageDir.getAbsolutePath();
+		Log.i("AlbumPath", albumPath);
+		return storageDir;
+	}
+	
+	private File createImageFile() throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_"; //Nombre de la imagen
+		File albumF = getAlbumDir(); //Obtenemos el directorio donde se guardará
+//		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF); //Guardamos temporalmente
+			//la imagen indicando el sufijo, y el album, y el prefijo(Nombre de la imagen)
+		File imageF = new File(Environment
+				.getExternalStorageDirectory(),imageFileName+JPEG_FILE_SUFFIX); //Guardamos temporalmente
+		
+		return imageF;
+	}
+	
+	private File setUpPhotoFile() throws IOException {
+		
+		File f = createImageFile();	//Llamamos el metodo para crear temporalmente la imagen
+		mCurrentPhotoPath = f.getAbsolutePath(); //Obtenemos la ruta
+		
+		return f;
+	}
+
+	
+	public void takePicture(View view) throws IOException{
+
+		mAlbumStorageDirFactory = new BaseAlbumDirFactory();
 		Intent mIntent = null;
 		if(isPackageExists("com.google.android.camera")){
 			mIntent= new Intent();
 			mIntent.setPackage("com.google.android.camera");
 			mIntent.setAction(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			mIntent.putExtra("output", Uri.fromFile(new File(Environment
-					.getExternalStorageDirectory(), "/myImage" + ".jpg")));
+			mIntent.putExtra("output", Uri.fromFile(setUpPhotoFile()));
 		}else{
 			mIntent = new Intent(
 					android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			mIntent.putExtra("output", Uri.fromFile(new File(Environment
-					.getExternalStorageDirectory(), "/myImage" + ".jpg")));
-
+			mIntent.putExtra("output", Uri.fromFile(setUpPhotoFile()));
 			Log.i("in onMenuItemSelected",
 					"Result code = "
 							+ Environment.getExternalStorageDirectory());
@@ -437,9 +517,13 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			switch (requestCode) {
 			case CAMERA_ACTIVITY:
 				//do your stuff here, i am just calling the path of stored image
-				String filePath = Environment.getExternalStorageDirectory()
-				+ "/myImage" + ".jpg";
-				dialog.setImage(filePath);
+//				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//				String imageFileName = JPEG_FILE_PREFIX + timeStamp +JPEG_FILE_SUFFIX; //Nombre de la imagen
+//				//		Log.i("ALBUM", ""+getAlbumDir().getAbsolutePath());
+//				Log.i("ALBUM", ""+imageFileName);
+//				String filePath = Environment.getExternalStorageDirectory()+imageFileName;
+//				Log.i("ALBUM", ""+filePath);
+				dialog.setImage(mCurrentPhotoPath);
 			}
 		}
 	}
@@ -539,14 +623,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct(p);
 		dialog.show(getFragmentManager(), "Detalles");
-		//Nombre
-		//Cantidad
-		//Tallas
-		//Artista
-		//img id
-		//Tipo
-
-
 	}
 
 	public Product getProduct(Product p){
