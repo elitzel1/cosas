@@ -153,7 +153,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		database.execSQL(SQL_PRODUCTOS_STAND);
 		
 		String SQL_VENTAS_PRODUCTOS ="CREATE TABLE "+TABLE_SALES_PRODUCT+ " ("+colIdSales+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-				colStandIdSP+" INTEGER NOT NULL, "+
 		colCantidadVP+" INTEGER NOT NULL, "+colCortesiasVP+" INTEGER, "+colStandFK+" INTEGER NOT NULL, "
 				+colStandProdFK+" INTEGER NOT NULL, foreign KEY ("
 				+colStandProdFK+") REFERENCES "+TABLE_STAND_PROD+" ("+colIdStandProd+"))";

@@ -352,10 +352,9 @@ public class DBAdapter {
 			return mCursor;
 		}
 		
-		public Cursor fetchStandProductAll(long rowId, long rowStandId) throws SQLException{
-			String []args = {colProductoIdSP + "=" + rowId,colStandIdSP + "=" + rowStandId};
+		public Cursor fetchStandProductAll(long rowId) throws SQLException{
 			Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-					colFechaIdSP, colProductoIdSP, colImpuestoProdId},null,args, null, null, null, null);
+					colFechaIdSP, colProductoIdSP, colImpuestoProdId},colIdStandProd+" = "+rowId,null, null, null, null, null);
 			return mCursor;
 		}
 		

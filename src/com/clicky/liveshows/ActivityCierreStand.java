@@ -14,10 +14,10 @@ import com.clicky.liveshows.utils.Taxes;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,13 +30,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityCierreStand extends Activity implements OnItemClickListener,OnCortesiaListener, TextWatcher {
+public class ActivityCierreStand extends Activity implements OnItemClickListener,OnCortesiaListener {
 
 	private DBAdapter dbHelper;
 	List<Product> products;
 	AdapterCloseStand adapter;
 	int id;
-	TextView txtTotal,txtComision,txtAPagar;
+	TextView txtTotal,txtComision;
 	EditText editEfectivo,editTarjeta,editVoucher;
 
 	@SuppressLint("UseSparseArrays")
@@ -51,7 +51,6 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 
 		txtTotal=(TextView)findViewById(R.id.txtTotal);
 		txtComision = (TextView)findViewById(R.id.txtComisiones);
-		txtAPagar = (TextView)findViewById(R.id.txtAPagar);
 		editEfectivo = (EditText)findViewById(R.id.editEfec);
 		editTarjeta = (EditText)findViewById(R.id.editCre);
 		editVoucher = (EditText)findViewById(R.id.editVou);
@@ -59,12 +58,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		ListView list=(ListView)findViewById(R.id.listCierre);
 		
 		txtTotal.setText("$"+String.format("%.2f",0.0));
-		txtAPagar.setText("$"+String.format("%.2f",0.0));
 		txtComision.setText("$"+String.format("%.2f",0.0));
-		
-		editEfectivo.addTextChangedListener(this);
-		editTarjeta.addTextChangedListener(this);
-		editVoucher.addTextChangedListener(this);
 		
 		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products);
 		list.setAdapter(adapter);
@@ -94,7 +88,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				int idProd = c.getInt(3);
 				int idComision = c.getInt(4);
 				p.setCantidadStand(cantidad);
-				p.setId(idProd);
+				p.setId(c.getInt(0));
 				List<Comisiones> listCom = new ArrayList<Comisiones>();
 				List<Taxes> listTax = new ArrayList<Taxes>();
 				Cursor cursorCom = dbHelper.fetchImpuestos(idComision);
@@ -169,7 +163,6 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 					if(p.getProdNo() >= 0){
 						total += (p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio()));
 						comision += setComision((p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio())),p.getComisiones(),p.getTaxes());
-						aPagar(total);
 						txtTotal.setText("$"+String.format("%.2f",total));
 						txtComision.setText("$"+String.format("%.2f",comision));
 					}
@@ -238,30 +231,6 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		dbHelper.close();
 	}
 
-	@Override
-	public void afterTextChanged(Editable arg0) {
-		double cantidad = 0.0;
-		if(!editEfectivo.getText().toString().equals(""))
-			cantidad += Double.parseDouble(editEfectivo.getText().toString());
-		if(!editTarjeta.getText().toString().equals(""))
-			cantidad += Double.parseDouble(editTarjeta.getText().toString());
-		if(!editVoucher.getText().toString().equals(""))
-			cantidad += Double.parseDouble(editVoucher.getText().toString());
-		double total = Double.parseDouble(txtTotal.getText().toString().substring(1));
-		aPagar(total-cantidad);
-	}
-	@Override
-	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-			int arg3) {
-	}
-	@Override
-	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-	}
-	
-	private void aPagar(double total){
-		txtAPagar.setText("$"+String.format("%.2f",total));
-	}
-	
 	private double setComision(double total,List<Comisiones> comisiones,List<Taxes> taxes){
 		double comision = 0.0;
 		Comisiones vendedor =comisiones.get(0);
@@ -293,12 +262,37 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		
 		return comision;
 	}
-	private void validaCierre(){
-		if(Double.parseDouble(txtAPagar.getText().toString().substring(1)) != 0){
-			Toast.makeText(this, "Verifica que esten bien tus datos", Toast.LENGTH_SHORT).show();
-		}else{
-			finish();
-			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+	private void cierreProds(){
+		dbHelper.open();
+		for(int i = 0; i < products.size(); i++){
+			Product prod = products.get(i);
+			long venta = dbHelper.createVentaProducto(id,prod.getId() , (prod.getCantidadStand() - prod.getProdNo()), prod.getCortesias());
+			if(venta == -1){
+				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+			}
 		}
+		dbHelper.close();
+	}
+	private void validaCierre(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.alert_cierre);
+		builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				cierreProds();
+				finish();
+				overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+			
 	}
 }

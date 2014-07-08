@@ -7,6 +7,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
+    <string name="accept">Yes</string>
+    <string name="cancel">No</string>
 
     <!-- Evento -->
     <string name="evento_nombre">Name: </string>
@@ -107,6 +109,7 @@
     <string name="lbl_total">Total</string>
     <string name="lbl_faltan">Faltan</string>
     <string name="lbl_comision">Comision</string>
+    <string name="alert_cierre">Are you sure?</string>
     
     <!-- Cierre dia -->
     <string name="viaticos">Gastos Operativos</string>
@@ -125,7 +128,6 @@
     <string name="interno">Interno</string>
     <string name="venue">Venue</string>
     <string name="enviar_mail">Send Mail</string>
-    <string name="alert_cierre">Seguro que desea cerrar el dia?</string>
     <string-array name="gastos">
         <item>LONAS	</item>
 		<item>GASOLINA PARA CARRETERA</item>
@@ -148,6 +150,7 @@
 		<item>PERMISOS Y TRAMITES</item>
 		<item>OTROS</item>
     </string-array>
+    
     
     <!-- Details Product-->
     <string name="d_tipo">Tipo: </string>

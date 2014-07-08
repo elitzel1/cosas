@@ -9,6 +9,8 @@ import jxl.CellView;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.format.Alignment;
+import jxl.format.Border;
+import jxl.format.BorderLineStyle;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -131,6 +133,7 @@ public class Excel {
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break;
 	        case 4:
@@ -140,6 +143,7 @@ public class Excel {
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
 		    	headerFormat.setAlignment(Alignment.RIGHT);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break;
 	        case 5:
@@ -150,9 +154,37 @@ public class Excel {
 		    	//center align the cells' contents
 		    	headerFormat.setFont(headerFont);
 		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		    	headerFormat.setAlignment(Alignment.RIGHT);
 		        newCell.setCellFormat(headerFormat);
 		        break;
+	        case 6:
+		    	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
+		    	headerFormat = new WritableCellFormat(headerFont);
+		    	//center align the cells' contents
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
+		        newCell.setCellFormat(headerFormat);
+		        break; 
+	        case 7:
+		    	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
+		    	headerFormat = new WritableCellFormat(headerFont);
+		    	//center align the cells' contents
+		    	headerFormat.setWrap(true);
+		        newCell.setCellFormat(headerFormat);
+		        break; 
+	        case 8:
+		    	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
+		    	headerFormat = new WritableCellFormat(headerFont);
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
+		        newCell.setCellFormat(headerFormat);
+		        break;  
+		        
 	    }
 	 
 	    sheet.addCell(newCell);
