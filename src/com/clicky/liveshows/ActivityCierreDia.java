@@ -168,7 +168,7 @@ public class ActivityCierreDia extends Activity{
 				cursorA.close();
 				Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
 				p.setTotalCantidad(cantidadTotal);
-				p.setCortesias(cortesias);
+				//p.setCortesias(cortesias);
 				p.setId(id);
 				p.setProdNo(0);
 				addProduct(p, a);

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/azul_claro"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txtTitleDialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/azul_textos"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtProdAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/azul" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Spinner
+            android:id="@+id/spinnerTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="visible" />
+
+        <EditText
+            android:id="@+id/editAdicional"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/cantidad"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/btnAceptarA"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/azul"
+            android:text="@string/btn_aceptar"
+            android:textColor="@color/blanco"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnCancelarA"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/azul_fuerte"
+            android:text="@string/btn_cancelar"
+            android:textColor="@color/blanco"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -20,14 +20,22 @@ public class Product {
 	int id_imagen;
 	String path_imagen;
 	int prodNo; //Productos no vendidos
-	int cortesias;
+	List<Cortesias> cortesias;
 	
-	public int getCortesias() {
+	public List<Cortesias> getCortesias() {
 		return cortesias;
 	}
 
-	public void setCortesias(int cortesias) {
+	public void setCortesias(List<Cortesias> cortesias) {
 		this.cortesias = cortesias;
+	}
+	
+	public int sizeCortesias(){
+		return cortesias.size();
+	}
+	
+	public void addCortesia(Cortesias cortesia){
+		cortesias.add(cortesia);
 	}
 
 	public int getProdNo() {
@@ -42,13 +50,15 @@ public class Product {
 		adicional = new ArrayList<Adicionales>();
 		comisiones = new ArrayList<Comisiones>();
 		taxes = new ArrayList<Taxes>();
+		cortesias = new ArrayList<Cortesias>();
 	}
 	
 	public Product(String nombre, String tipo, String artista, String precio, String talla, int cantidad, List<Comisiones> comisiones, String path_img)
 	{
 		adicional = new ArrayList<Adicionales>();
-		comisiones = new ArrayList<Comisiones>();
+		this.comisiones = new ArrayList<Comisiones>();
 		taxes=new ArrayList<Taxes>();
+		cortesias = new ArrayList<Cortesias>();
 		this.nombre=nombre;
 		this.tipo=tipo;
 		this.artista=artista;

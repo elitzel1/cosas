@@ -64,8 +64,8 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		}
 
 		String oldText2=""+item.getCortesias();
-		if(item.getCortesias()>0){
-		}
+//		if(item.getCortesias()>0){
+//		}
 		
 		holder.editCantidad.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {

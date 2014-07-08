@@ -72,7 +72,10 @@
     <string name="sin_talla">Falta la talla del producto</string>
     <string name="sin_cantidad_valida">Cantidad no valida</string>
     <string name="sin_precio_valido">Precio no valido</string>
-    
+    <string name="err_divisas">Error al guardar la divisa</string>
+    <string name="err_divisa_noval">Divisa no valida</string>
+    <string name="err_com">Error al guardar la comisión de la tarjeta</string>
+    <string name="err_com_noval">Comisión no valida</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -152,12 +155,24 @@
     </string-array>
     
     
-    <!-- Details Product-->
-    <string name="d_tipo">Tipo: </string>
-    <string name="d_nombre">Nombre: </string>
-    <string name="d_precio">Precio: </string>
-    <string name="d_cantidad">Cantidad: </string>
-    <string name="d_artista">Artista: </string>
-    <string name="d_talla">Talla: </string>
-
+    <!-- Detalles PRod -->
+    <string name="d_nombre">NOMBRE: </string>
+    <string name="d_tipo">TIPO: </string>
+    <string name="d_talla">TALLA: </string>
+    <string name="d_precio">PRECIO: </string>
+    <string name="d_cantidad">CANTIDAD: </string>
+    <string name="d_artista">ARTISTA: </string>
+    <string name="d_cortesias">CORTESIAS: </string>
+    <string name="d_adicionales">ADICIONALES </string>
+    <string name="title_activity_preferencias">Preferencias</string>
+    
+    <!-- Preferencias -->
+	<string name="p_divisas">DIVISAS</string>
+	<string name="p_dolar">Dolar</string>
+	<string name="p_euro">Euro</string>
+	<string name="p_comisiones">COMISIONES</string>
+	<string name="p_tarjeta">Tarjeta de crédito</string>
+	<string name="p_divisa_g">Divisa guardada</string>
+	<string name="p_comision_g">Comisión guardada</string>
+	
 </resources>

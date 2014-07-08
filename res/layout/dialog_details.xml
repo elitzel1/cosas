@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btnAceptar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/azul"
+            android:text="@string/btn_aceptar"
+            android:textColor="@color/blanco" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" >
+
+                <ImageView
+                    android:id="@+id/imgProdD"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/cnt"
+                    android:src="@drawable/teeshirt" />
+            </FrameLayout>
+
+            <TableLayout
+                android:id="@+id/TableLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_nombre"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtNombre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_tipo"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtTipo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Text"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/rowTalla"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_talla"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtTalla"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Text"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_precio"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtPrecio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Text"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_cantidad"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtCantidad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Text"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_artista"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtArtista"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium Text"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+        <TableRow
+            android:id="@+id/tableRow7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp" >
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/d_cortesias"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/azul_textos" 
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txtCortesias"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medium Text"
+                android:textColor="@color/azul"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </TableRow>
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/d_adicionales"
+             android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/azul_textos" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/azul_textos" />
+
+        <LinearLayout
+            android:id="@+id/listAdicionales"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+             android:textStyle="bold"
+            android:text="@string/comision"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/azul_textos" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/azul_textos" />
+
+        <LinearLayout
+            android:id="@+id/listComisiones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/impuestos"
+             android:textStyle="bold"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/azul_textos" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/azul_textos" />
+
+        <LinearLayout
+            android:id="@+id/listImpuestos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
