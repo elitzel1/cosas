@@ -8,6 +8,7 @@ import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.adapters.AdapterCloseStand;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
 
@@ -38,7 +39,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	int id;
 	TextView txtTotal,txtComision,txtAPagar;
 	EditText editEfectivo,editTarjeta,editVoucher;
-
+	
 	@SuppressLint("UseSparseArrays")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,9 +136,25 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 					String artista = artistas.get(cursor.getInt(9));
 					String tipo = cursor.getString(2);
 					String talla = cursor.getString(6);
-					int cortesias = cursor.getInt(7);
 					String precio = cursor.getString(7);
 					int cantidadTotal = cursor.getInt(5);
+					
+					List<Comisiones> list_com=null;
+					List<Taxes> list_tax=null;
+					list_com = new ArrayList<Comisiones>();
+					list_tax = new ArrayList<Taxes>();
+
+					List<Cortesias> cortesias = null;
+					Cursor cursorCortesias = dbHelper.fetchCortesias(id);
+					if(cursorCortesias.moveToFirst()){
+						cortesias= new ArrayList<Cortesias>();
+						do{
+							String tipoC = cursorCortesias.getString(1);
+							int cantidadC =cursorCortesias.getInt(2);
+							cortesias.add(new Cortesias(tipoC, cantidadC));
+						}while(cursorCortesias.moveToNext());
+					}
+					
 					p.setNombre(nombre);
 					p.setArtista(artista);
 					p.setCortesias(cortesias);
@@ -229,12 +246,23 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	}
 
 	@Override
-	public void setCortesia(String cortesia, int position) {
+	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
 		Product p = products.get(position);
-		p.setCortesias(Integer.parseInt(cortesia));
+		p.addCortesia(cortesia);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		dbHelper.open();
+		int total=p.getCantidad()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
+		if((total)>0){
+
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId())>=0){
+				int cantidad = total;
+				p.setCantidad(cantidad);
+				dbHelper.updateProducto(p.getId(), cantidad);
+			}
+		}else{
+
+		}
 		dbHelper.close();
 	}
 

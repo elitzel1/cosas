@@ -49,16 +49,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_nombre"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtNombre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
 
                 <TableRow
@@ -71,17 +71,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_tipo"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtTipo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Medium Text"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
 
                 <TableRow
@@ -94,17 +94,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_talla"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtTalla"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Medium Text"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
 
                 <TableRow
@@ -117,17 +117,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_precio"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtPrecio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Medium Text"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
 
                 <TableRow
@@ -140,17 +140,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_cantidad"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtCantidad"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Medium Text"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
 
                 <TableRow
@@ -163,27 +163,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/d_artista"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/azul_textos"
-                        android:textStyle="bold"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtArtista"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Medium Text"
-                        android:textColor="@color/azul"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/azul" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>
 
-        <TableRow
-            android:id="@+id/tableRow7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp" >
+      
 
             <TextView
                 android:id="@+id/textView16"
@@ -191,17 +186,34 @@
                 android:layout_height="wrap_content"
                 android:text="@string/d_cortesias"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/azul_textos" 
-                android:textStyle="bold"/>
+                android:textColor="@color/azul_textos"
+                android:textStyle="bold" 
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/azul_textos" />
 
             <TextView
                 android:id="@+id/txtCortesias"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Medium Text"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/azul"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </TableRow>
+                android:visibility="gone" />
+            
+        <LinearLayout
+            android:id="@+id/listCortesias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="vertical" >
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView15"
@@ -210,9 +222,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:text="@string/d_adicionales"
-             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/azul_textos" />
+            android:textColor="@color/azul_textos"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -220,6 +232,16 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:background="@color/azul_textos" />
+
+        <TextView
+            android:id="@+id/txtNoAdicionales"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/azul"
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/listAdicionales"
@@ -235,10 +257,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
-             android:textStyle="bold"
             android:text="@string/comision"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/azul_textos" />
+            android:textColor="@color/azul_textos"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"
@@ -262,9 +284,9 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
             android:text="@string/impuestos"
-             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/azul_textos" />
+            android:textColor="@color/azul_textos"
+            android:textStyle="bold" />
 
         <View
             android:layout_width="match_parent"

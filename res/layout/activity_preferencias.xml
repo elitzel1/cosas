@@ -41,10 +41,7 @@
 
             <requestFocus />
         </EditText>
-
     </TableRow>
-
-  
 
     <View
         android:layout_width="match_parent"
@@ -58,9 +55,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/p_comisiones"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/azul_textos"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium"  />
+        android:textStyle="bold" />
 
     <TableRow
         android:id="@+id/tableRow2"
@@ -81,7 +78,66 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal" />
-
     </TableRow>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/azul_textos" />
+    	<TextView
+	    android:id="@+id/textView8"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="@string/d_cortesias"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textColor="@color/azul_textos"
+	    android:textStyle="bold" />
+	
+<TableRow
+    android:id="@+id/tableRow3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/txtCortesias"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/p_opc_uno"
+        android:textColor="@color/azul_fuerte"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editOp1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"/>
+</TableRow>
+<TableRow
+    android:id="@+id/tableRow4"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <TextView
+        android:id="@+id/txtCortesiasdos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/p_opc_dos"
+        android:textColor="@color/azul_fuerte"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editOp2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"/>
+
+</TableRow>
+
 </LinearLayout>
+
+
+

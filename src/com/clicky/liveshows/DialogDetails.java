@@ -2,6 +2,7 @@ package com.clicky.liveshows;
 
 import com.clicky.liveshows.utils.Adicionales;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
 
@@ -44,7 +45,7 @@ public class DialogDetails extends DialogFragment {
 			ac=activity;
 		}catch(ClassCastException e){}
 	}
-	
+
 	public void setProduct(Product product){
 		this.product=product;
 	}
@@ -58,6 +59,7 @@ public class DialogDetails extends DialogFragment {
 		Button btnAceptar = (Button)view.findViewById(R.id.btnAceptar);
 		LinearLayout listAdicionales= (LinearLayout)view.findViewById(R.id.listAdicionales);
 		LinearLayout listComisiones = (LinearLayout)view.findViewById(R.id.listComisiones);
+		LinearLayout listCortesias =(LinearLayout)view.findViewById(R.id.listCortesias);
 		LinearLayout listTaxes = (LinearLayout)view.findViewById(R.id.listImpuestos);
 		txtNombre = (TextView)view.findViewById(R.id.txtNombre);
 		txtTipo = (TextView)view.findViewById(R.id.txtTipo);
@@ -77,32 +79,44 @@ public class DialogDetails extends DialogFragment {
 		txtPrecio.setText(product.getPrecio());
 		txtCantidad.setText(""+product.getCantidad());
 		txtArtista.setText(product.getArtista());
-		txtCortesias.setText(""+product.getCortesias());
-		
+
 		if(product.getId_imagen()==0){
 			setPic(product.getPath_imagen());
 		}else
 			img.setImageResource(product.getId_imagen());
-		
-		
+
+		if(product.sizeCortesias()>0){
+			for(Cortesias cortesia:product.getCortesias()){
+				addView(cortesia.getTipo(), ""+cortesia.getAmount(), listCortesias);
+			}
+		}else{
+			txtCortesias.setVisibility(View.VISIBLE);
+			txtCortesias.setText(R.string.d_no_cor);
+		}
+
 		if(product.getAdicionalSize()>0){
 			for(Adicionales adicional:product.getAdicional()){
 				addView(adicional.getNombre(), ""+adicional.getCantidad(), listAdicionales);
 			}
+		}else
+		{
+			TextView txtAd= (TextView)view.findViewById(R.id.txtNoAdicionales);
+			txtAd.setVisibility(View.VISIBLE);
+			txtAd.setText(R.string.d_no_adi);
 		}
-		
+
 		if(product.getComisiones().size()>0){
 			for(Comisiones com:product.getComisiones()){
 				addView(com.getName(), ""+com.getCantidad(), listComisiones);
 			}
 		}
-		
+
 		if(product.getTaxes().size()>0){
 			for(Taxes tax:product.getTaxes()){
 				addView(tax.getName(), ""+tax.getAmount(), listTaxes);
 			}
 		}
-		
+
 		dialog.setView(view);
 
 		btnAceptar.setOnClickListener(new OnClickListener() {
@@ -116,7 +130,7 @@ public class DialogDetails extends DialogFragment {
 
 		return dialog.create();
 	}
-	
+
 	private void addView(String text,String amout, LinearLayout layout){
 		LinearLayout linear = new LinearLayout(getActivity());
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.5f);
@@ -136,39 +150,42 @@ public class DialogDetails extends DialogFragment {
 		layout.addView(linear);
 		layout.invalidate();
 	}
-	
-	private void setPic(String mCurrentPhotoPath) {
+
+	private void setPic(String mCurrentPhotoPath)  {
 
 		/* There isn't enough memory to open up more than a couple camera photos */
 		/* So pre-scale the target bitmap into which the file is decoded */
+		try{
+			/* Get the size of the ImageView */
+			int targetW = img.getWidth();
+			int targetH = img.getHeight();
 
-		/* Get the size of the ImageView */
-		int targetW = img.getWidth();
-		int targetH = img.getHeight();
+			/* Get the size of the image */
+			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+			bmOptions.inJustDecodeBounds = true; //obtenemos el bitmap sin guardarlo en memoria
+			BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Convertimos el file en imagen.
+			int photoW = bmOptions.outWidth;
+			int photoH = bmOptions.outHeight;
 
-		/* Get the size of the image */
-		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-		bmOptions.inJustDecodeBounds = true; //obtenemos el bitmap sin guardarlo en memoria
-		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Convertimos el file en imagen.
-		int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-		
-		/* Figure out which way needs to be reduced less */
-		int scaleFactor = 1;
-		if ((targetW > 0) || (targetH > 0)) {
-			scaleFactor = Math.min(photoW/targetW, photoH/targetH);	
+			/* Figure out which way needs to be reduced less */
+			int scaleFactor = 1;
+			if ((targetW > 0) || (targetH > 0)) {
+				scaleFactor = Math.min(photoW/targetW, photoH/targetH);	
+			}
+
+			/* Set bitmap options to scale the image decode target */
+			bmOptions.inJustDecodeBounds = false;
+			bmOptions.inSampleSize = scaleFactor; //Reduce la imagen si sacleFactor>1
+			bmOptions.inPurgeable = true; //Elimina la foto si requiere memoria.
+
+			/* Decode the JPEG file into a Bitmap */
+			Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Obtenemos la foto
+
+			/* Associate the Bitmap to the ImageView */
+			img.setImageBitmap(bitmap);
+		}catch(OutOfMemoryError e){
+			img.setImageResource(R.drawable.lupeb);
 		}
-
-		/* Set bitmap options to scale the image decode target */
-		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor; //Reduce la imagen si sacleFactor>1
-		bmOptions.inPurgeable = true; //Elimina la foto si requiere memoria.
-
-		/* Decode the JPEG file into a Bitmap */
-		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions); //Obtenemos la foto
-		
-		/* Associate the Bitmap to the ImageView */
-		img.setImageBitmap(bitmap);
 	}
 
 }

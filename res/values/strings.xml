@@ -77,6 +77,8 @@
     <string name="err_divisa_noval">Divisa no valida</string>
     <string name="err_com">Error al guardar la comisión de la tarjeta</string>
     <string name="err_com_noval">Comisión no valida</string>
+    <string name="err_op_uno">Error al guardar la opción 1 de cortesia</string>
+    <string name="err_op_dos">Error al guardar la opción 2 de cortesia</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -127,8 +129,10 @@
     <string name="d_precio">PRECIO: </string>
     <string name="d_cantidad">CANIDAD: </string>
     <string name="d_artista">ARTISTA: </string>
-    <string name="d_cortesias">CORTESIAS: </string>
+    <string name="d_cortesias">CORTESIAS </string>
+    <string name="d_no_cor">No hay cortesias</string>
     <string name="d_adicionales">ADICIONALES </string>
+    <string name="d_no_adi">No hay adicionales</string>
     <string name="title_activity_preferencias">Preferencias</string>
     
     <!-- Preferencias -->
@@ -139,5 +143,9 @@
 	<string name="p_tarjeta">Tarjeta de crédito</string>
 	<string name="p_divisa_g">Divisa guardada</string>
 	<string name="p_comision_g">Comisión guardada</string>
+	<string name="p_opc_uno">Opción uno</string>
+	<string name="p_opc_dos">Opción dos</string>
+	<string name="p_op_guar">Opción uno guardada</string>
+	<string name="p_op_guar_d">Opción dos guardada</string>
 	
 </resources>

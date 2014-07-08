@@ -8,6 +8,7 @@ import com.clicky.liveshows.FragmentStands.onFragmentCreate;
 import com.clicky.liveshows.FragmentStands.onStandSelected;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
 
@@ -225,27 +226,27 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	}
 
 	@Override
-	public void setCortesia(String cortesia, int position) {
+	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
 		Product p = product;
+		p.addCortesia(cortesia);
+		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		dbHelper.open();
-//		if((p.getCantidad()-Integer.parseInt(cortesia))>0){
-//			if(dbHelper.updateProducto(p.getId(), p.getCantidad()-Integer.parseInt(cortesia))){
-//				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
-//						((FragmentStandProd)getFragmentManager().
-//							findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
-//						Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());	
-//				}else{
-//					Log.i("ERROR","StandProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
-//				}
-//			}else{
-//				Log.i("ERROR","UpdateProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
-//			}
-//		}else{
-//			Log.i("ERROR","operacion"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
-//		}
+		int total=p.getCantidadStand()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
+		if((total)>0){
+
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId())>=0){
+				int cantidad = total;
+				p.setCantidadStand(cantidad);
+				dbHelper.updateProducto(p.getId(), cantidad);
+				dbHelper.updateStandProducto(p.getId(),stand.getId(), cantidad);
+			}
+		}else{
+
+		}
 		dbHelper.close();
 	}
+
 
 
 }
