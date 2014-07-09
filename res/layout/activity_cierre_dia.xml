@@ -81,12 +81,95 @@
 	            android:paddingLeft="8dp"
 	            android:contentDescription="@string/cnt"
 	            android:onClick="removeViatico"
+	            android:visibility="invisible"
 	            android:src="@drawable/menos" />
 	        
 	    </LinearLayout>
 	    
 	    <LinearLayout
-            android:id="@+id/listVisticos"
+            android:id="@+id/listGastos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+        
+	    <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/lbl_sueldos"
+	        android:textColor="@color/azul_textos"
+	        android:textStyle="bold"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	    
+	    <View 
+	        android:layout_width="match_parent"
+	        android:layout_height="1dp"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginBottom="5dp"
+	        android:background="@color/azul_textos"/>
+	    
+	    <LinearLayout 
+	        android:id="@+id/layoutSueldos"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal">
+	        
+	        <Spinner
+		        android:id="@+id/spinnerSueldo"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="0.4"
+		        android:entries="@array/sueldos"
+		        android:inputType="text" />
+	        
+	        <EditText
+		        android:id="@+id/editSueldo"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="0.4"
+		        android:hint="@string/hint_cantidad"
+		        android:inputType="numberDecimal" />
+	        
+	        <RadioGroup
+	            android:id="@+id/comprobanteSueldo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+
+	            <RadioButton 
+	                android:id="@+id/radioFacS"
+	                android:text="@string/factura"
+	                android:checked="true" />
+	            <RadioButton 
+	                android:id="@+id/radioNotaS"
+	                android:text="@string/nota"
+	                android:tag="1" />
+	        </RadioGroup>
+	            
+	        <ImageView
+		        android:id="@+id/btnAgregarComisionSueldo"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center_vertical"
+		        android:paddingLeft="8dp"
+		        android:contentDescription="@string/cnt"
+		        android:onClick="addSueldo"
+		        android:src="@drawable/mas" />
+	        
+	        <ImageView
+	            android:id="@+id/btnEliminarComisionSueldo"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical"
+	            android:paddingLeft="8dp"
+	            android:contentDescription="@string/cnt"
+	            android:onClick="removeSueldo"
+	            android:visibility="invisible"
+	            android:src="@drawable/menos" />
+	        
+	    </LinearLayout>
+	    
+	    <LinearLayout
+            android:id="@+id/listSueldos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >

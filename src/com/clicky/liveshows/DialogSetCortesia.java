@@ -10,6 +10,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,12 +60,12 @@ public class DialogSetCortesia extends DialogFragment {
 		
 		
 
-		SharedPreferences prefs = getActivity().getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		String op1=prefs.getString("op1", "OTHER");
 		String op2=prefs.getString("op2", "OTHER");
 		String tiposCortesia[]=null;
 		if(op1.contentEquals(op2)){
-		tiposCortesia = new String[]{"DAMAGE","COMPS VENUE","COMPS OFFICE PRODUCTION",op1};
+			tiposCortesia = new String[]{"DAMAGE","COMPS VENUE","COMPS OFFICE PRODUCTION",op1};
 		}else{
 			tiposCortesia = new String[]{"DAMAGE","COMPS VENUE","COMPS OFFICE PRODUCTION",op1,op2};
 		}

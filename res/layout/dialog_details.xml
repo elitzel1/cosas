@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/btnAceptar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/azul"
-            android:text="@string/btn_aceptar"
-            android:textColor="@color/blanco" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+    <Button
+        android:id="@+id/btnAceptar"
+       	android:layout_width="match_parent"
+       	android:layout_height="wrap_content"
+       	android:background="@color/azul"
+       	android:text="@string/btn_aceptar"
+       	android:textColor="@color/blanco" />
+        
+        <ScrollView 
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content" >
+    		
+            <LinearLayout 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:padding="8dp" >
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -57,6 +63,7 @@
                         android:id="@+id/txtNombre"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
@@ -79,8 +86,8 @@
                         android:id="@+id/txtTipo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium Text"
                         android:textColor="@color/azul"
+                        android:paddingLeft="8dp"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
 
@@ -102,7 +109,7 @@
                         android:id="@+id/txtTalla"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium Text"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
@@ -125,7 +132,7 @@
                         android:id="@+id/txtPrecio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium Text"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
@@ -148,7 +155,7 @@
                         android:id="@+id/txtCantidad"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium Text"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
@@ -171,37 +178,42 @@
                         android:id="@+id/txtArtista"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Medium Text"
+                        android:paddingLeft="8dp"
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>
 
-        <TableRow
-            android:id="@+id/tableRow7"
+       <TextView
+           android:id="@+id/textView16"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:paddingLeft="8dp"
+           android:text="@string/d_cortesias"
+           android:textAppearance="?android:attr/textAppearanceMedium"
+           android:textColor="@color/azul_textos" 
+           android:textStyle="bold"/>
+       
+		<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/azul_textos" />
+		
+		<LinearLayout
+            android:id="@+id/listCortesias"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp" >
-
-            <TextView
-                android:id="@+id/textView16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/d_cortesias"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/azul_textos" 
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/txtCortesias"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Medium Text"
-                android:textColor="@color/azul"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </TableRow>
+            android:layout_marginRight="10dp"
+            android:orientation="vertical" >
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView15"
@@ -219,13 +231,18 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/azul_textos" />
 
         <LinearLayout
             android:id="@+id/listAdicionales"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical" >
         </LinearLayout>
 
@@ -245,13 +262,18 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/azul_textos" />
 
         <LinearLayout
             android:id="@+id/listComisiones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical" >
         </LinearLayout>
 
@@ -271,15 +293,20 @@
             android:layout_height="1dp"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/azul_textos" />
 
         <LinearLayout
             android:id="@+id/listImpuestos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:orientation="vertical" >
         </LinearLayout>
-    </LinearLayout>
-
-</ScrollView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

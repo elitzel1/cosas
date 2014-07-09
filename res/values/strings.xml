@@ -4,6 +4,7 @@
     <string name="app_name">MerchSys</string>
     <string name="action_settings">Settings</string>
     <string name="action_new">Add Product</string>
+    <string name="action_print">Print</string>
     <string name="hello_world">Hello world!</string>
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
@@ -55,7 +56,11 @@
     <string name="t_adicionales">No se pueden agregar más adicionales</string>
     <string name="error">error</string>
     <string name="stand">Stand</string>
-    
+    <string name="cantidad_disponible">Amount Available</string>
+    <string name="textdivisa">Aún no ingresa tipo de cambio</string>
+    <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
+    <string name="album_name">Merch</string>
+
     <!-- Errores -->
     <string name="sin_artista">Escriba el nombre de un artista</string>
     <string name="sin_evento">Datos incompletos, falta nombre del evento</string>
@@ -69,13 +74,14 @@
     <string name="sin_precio">Falta el precio del producto</string>
     <string name="sin_cantidad">Falta la cantidad del producto</string>
     <string name="sin_tipo">Falta tipo del producto</string>
-    <string name="sin_talla">Falta la talla del producto</string>
     <string name="sin_cantidad_valida">Cantidad no valida</string>
     <string name="sin_precio_valido">Precio no valido</string>
     <string name="err_divisas">Error al guardar la divisa</string>
     <string name="err_divisa_noval">Divisa no valida</string>
     <string name="err_com">Error al guardar la comisión de la tarjeta</string>
     <string name="err_com_noval">Comisión no valida</string>
+    <string name="err_op_uno">Error al guardar la opción 1 de cortesia</string>
+    <string name="err_op_dos">Error al guardar la opción 2 de cortesia</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -116,6 +122,7 @@
     
     <!-- Cierre dia -->
     <string name="viaticos">Gastos Operativos</string>
+    <string name="lbl_sueldos">Sueldos/Bonos/Comisiones</string>
     <string name="nota">Nota</string>
     <string name="factura">Factura</string>
     <string name="reportes">Reportes</string>
@@ -153,6 +160,12 @@
 		<item>PERMISOS Y TRAMITES</item>
 		<item>OTROS</item>
     </string-array>
+    <string-array name="sueldos">
+        <item>BONO GERENCIAL</item>
+		<item>SUELDO CHOFER</item>
+		<item>MONTAJE/DESMONTAJE</item>
+		<item>OTRO</item>
+    </string-array>
     
     
     <!-- Detalles PRod -->
@@ -174,5 +187,9 @@
 	<string name="p_tarjeta">Tarjeta de crédito</string>
 	<string name="p_divisa_g">Divisa guardada</string>
 	<string name="p_comision_g">Comisión guardada</string>
+	<string name="p_opc_uno">Opción uno</string>
+	<string name="p_opc_dos">Opción dos</string>
+	<string name="p_op_guar">Opción uno guardada</string>
+	<string name="p_op_guar_d">Opción dos guardada</string>
 	
 </resources>

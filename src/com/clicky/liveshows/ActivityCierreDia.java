@@ -70,10 +70,10 @@ public class ActivityCierreDia extends Activity{
 	int posVenue=0;
 	String evento,fecha,local;
 	
-	private LinearLayout layoutViaticos,layoutReportes;
-	private EditText editCantidad;
-	private Spinner spinnerGasto,spinVenue;
-	private RadioGroup radioComprobante;
+	private LinearLayout layoutViaticos,layoutSueldos,layoutReportes;
+	private EditText editCantidad,editCantSueldos;
+	private Spinner spinnerGasto,spinnerSueldos,spinVenue;
+	private RadioGroup radioComprobante,radioComprobanteSueldos;
 
 	private static String mailValidation = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+
 			"[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -93,11 +93,15 @@ public class ActivityCierreDia extends Activity{
 		gastos = new ArrayList<Gastos>();
 		sueldos = new ArrayList<Gastos>();
 		
-		layoutViaticos = (LinearLayout)findViewById(R.id.listVisticos);
+		layoutViaticos = (LinearLayout)findViewById(R.id.listGastos);
+		layoutSueldos = (LinearLayout)findViewById(R.id.listSueldos);
 		layoutReportes = (LinearLayout)findViewById(R.id.layoutReportes);
 		spinnerGasto = (Spinner)findViewById(R.id.spinnerGasto);
+		spinnerSueldos = (Spinner)findViewById(R.id.spinnerSueldo);
 		editCantidad = (EditText)findViewById(R.id.editViatico);
+		editCantSueldos = (EditText)findViewById(R.id.editSueldo);
 		radioComprobante = (RadioGroup)findViewById(R.id.comprobante);
+		radioComprobanteSueldos = (RadioGroup)findViewById(R.id.comprobanteSueldo);
 		
 		spinVenue = (Spinner)findViewById(R.id.spinVenue);
 		
@@ -149,10 +153,9 @@ public class ActivityCierreDia extends Activity{
 				int cantidad = cursorProd.getInt(4);
 				int cantidadTotal=cursorProd.getInt(5);
 				String talla = cursorProd.getString(6);
-				int cortesias = cursorProd.getInt(7);
-				String precio = cursorProd.getString(8);
-				int idEvento = cursorProd.getInt(9);
-				int idArtista = cursorProd.getInt(10);
+				String precio = cursorProd.getString(7);
+				int idEvento = cursorProd.getInt(8);
+				int idArtista = cursorProd.getInt(9);
 
 				List<Adicionales> a = null;
 				Cursor cursorA = dbHelper.fetchAdicional(id);
@@ -260,7 +263,7 @@ public class ActivityCierreDia extends Activity{
 				if(cant > 0){
 					String comprobante = ((RadioButton)findViewById(tipoComprobante)).getText().toString();
 					gastos.add(new Gastos(concepto,cant,comprobante));
-					addView(concepto,cantidad,comprobante);
+					addView(concepto,cantidad,comprobante,0);
 					if(gastos.size() == 1){
 						findViewById(R.id.btnEliminarComision).setVisibility(View.VISIBLE);
 					}
@@ -281,6 +284,40 @@ public class ActivityCierreDia extends Activity{
 			gastos.remove(gastos.size()-1);
 			if(gastos.isEmpty())
 				findViewById(R.id.btnEliminarComision).setVisibility(View.INVISIBLE);
+		}
+	}
+	
+	public void addSueldo(View v){
+		String concepto = ((TextView)spinnerSueldos.getSelectedView()).getText().toString();
+		String cantidad = editCantSueldos.getText().toString();
+		int tipoComprobante = radioComprobanteSueldos.getCheckedRadioButtonId();
+		if(!concepto.equals("")){
+			if(!cantidad.contentEquals("")){
+				double cant = Double.parseDouble(cantidad);
+				if(cant > 0){
+					String comprobante = ((RadioButton)findViewById(tipoComprobante)).getText().toString();
+					sueldos.add(new Gastos(concepto,cant,comprobante));
+					addView(concepto,cantidad,comprobante,1);
+					if(sueldos.size() == 1){
+						findViewById(R.id.btnEliminarComisionSueldo).setVisibility(View.VISIBLE);
+					}
+					editCantSueldos.setText("");
+				}else
+					makeToast(R.string.sin_cantidad_valida);
+			}else
+				makeToast(R.string.sin_viatico);
+		}else
+			makeToast(R.string.sin_concepto);
+	}
+	
+	public void removeSueldo(View v){
+		if(sueldos.size() > 0){
+			final LinearLayout temp = (LinearLayout)layoutSueldos.findViewById(sueldos.size());
+			temp.removeAllViews();
+			layoutSueldos.removeView(temp);
+			sueldos.remove(sueldos.size()-1);
+			if(sueldos.isEmpty())
+				findViewById(R.id.btnEliminarComisionSueldo).setVisibility(View.INVISIBLE);
 		}
 	}
 	
@@ -311,9 +348,12 @@ public class ActivityCierreDia extends Activity{
 		}
 	}
 	
-	private void addView(String concepto, String cantidad,String comprobante){
+	private void addView(String concepto, String cantidad,String comprobante,int tipo){
 		LinearLayout linear = new LinearLayout(this);
-		linear.setId(gastos.size());
+		if(tipo == 0)
+			linear.setId(gastos.size());
+		else if(tipo == 1)
+			linear.setId(sueldos.size());
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.5f);
 		linear.setOrientation(LinearLayout.HORIZONTAL);
 		
@@ -335,8 +375,13 @@ public class ActivityCierreDia extends Activity{
 		txtB.setLayoutParams(params2);
 		linear.addView(txtB);
 
-		layoutViaticos.addView(linear);
-		layoutViaticos.invalidate();
+		if(tipo == 0){
+			layoutViaticos.addView(linear);
+			layoutViaticos.invalidate();
+		}else if(tipo == 1){
+			layoutSueldos.addView(linear);
+			layoutSueldos.invalidate();
+		}
 	}
 	
 	private void addReporte(String artista){

@@ -20,15 +20,15 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 	Context context;
 	int resource;
 	List<Product> items;
+	int[] cortesias;
 
 	
-	public AdapterCloseStand(Context context, int resource,
-			List<Product> objects) {
+	public AdapterCloseStand(Context context, int resource,List<Product> objects,int[] cortesias) {
 		super(context, resource, objects);
-		// TODO Auto-generated constructor stub
 		this.context=context;
 		this.resource=resource;
 		this.items=objects;
+		this.cortesias = cortesias;
 	}
 	
 	public View getView(int position, View convertView, ViewGroup parent){
@@ -45,6 +45,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 			holder.txtSize = (TextView)view.findViewById(R.id.txtTallaRopa);
 			holder.txtCantidad = (TextView)view.findViewById(R.id.txtCantidadProducto);
 			holder.editCantidad = (EditText)view.findViewById(R.id.editNumeroProductos);
+			holder.txtCortesias = (TextView)view.findViewById(R.id.txtCortesias);
 			view.setTag(holder);
 		}else holder = (ViewHolder) view.getTag();
 
@@ -57,16 +58,13 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		holder.txtArtista.setText(item.getArtista());
 		holder.txtCantidad.setText(""+item.getCantidadStand());
 		holder.editCantidad.setId(position);
+		holder.txtCortesias.setText(""+cortesias[position]);
 		
 		String oldText = ""+item.getProdNo();
 		if(item.getCantidad()>0){
 			holder.editCantidad.setText(oldText); 
 		}
 
-		String oldText2=""+item.getCortesias();
-//		if(item.getCortesias()>0){
-//		}
-		
 		holder.editCantidad.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus){
@@ -106,6 +104,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		TextView txtArtista;
 		TextView txtCantidad;
 		EditText editCantidad;
+		TextView txtCortesias;
 
 	}
 

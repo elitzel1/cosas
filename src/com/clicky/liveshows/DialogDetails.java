@@ -2,6 +2,7 @@ package com.clicky.liveshows;
 
 import com.clicky.liveshows.utils.Adicionales;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
 
@@ -32,7 +33,6 @@ public class DialogDetails extends DialogFragment {
 	TextView txtPrecio;
 	TextView txtCantidad;
 	TextView txtArtista;
-	TextView txtCortesias;
 	TableRow rowTallas;
 	ImageView img;
 	Product product;
@@ -56,7 +56,8 @@ public class DialogDetails extends DialogFragment {
 
 		view = inflater.inflate(R.layout.dialog_details,null);
 		Button btnAceptar = (Button)view.findViewById(R.id.btnAceptar);
-		LinearLayout listAdicionales= (LinearLayout)view.findViewById(R.id.listAdicionales);
+		LinearLayout listCortesias = (LinearLayout)view.findViewById(R.id.listCortesias);
+		LinearLayout listAdicionales = (LinearLayout)view.findViewById(R.id.listAdicionales);
 		LinearLayout listComisiones = (LinearLayout)view.findViewById(R.id.listComisiones);
 		LinearLayout listTaxes = (LinearLayout)view.findViewById(R.id.listImpuestos);
 		txtNombre = (TextView)view.findViewById(R.id.txtNombre);
@@ -65,7 +66,6 @@ public class DialogDetails extends DialogFragment {
 		txtPrecio = (TextView)view.findViewById(R.id.txtPrecio);
 		txtCantidad = (TextView)view.findViewById(R.id.txtCantidad);
 		txtArtista = (TextView)view.findViewById(R.id.txtArtista);
-		txtCortesias = (TextView)view.findViewById(R.id.txtCortesias);
 		img = (ImageView)view.findViewById(R.id.imgProdD);
 		txtNombre.setText(product.getNombre());
 		txtTipo.setText(product.getTipo());
@@ -77,7 +77,12 @@ public class DialogDetails extends DialogFragment {
 		txtPrecio.setText(product.getPrecio());
 		txtCantidad.setText(""+product.getCantidad());
 		txtArtista.setText(product.getArtista());
-		txtCortesias.setText(""+product.getCortesias());
+		
+		if(product.getCortesias().size()>0){
+			for(Cortesias cortesia:product.getCortesias()){
+				addView(cortesia.getTipo(), ""+cortesia.getAmount(), listCortesias);
+			}
+		}
 		
 		if(product.getId_imagen()==0){
 			setPic(product.getPath_imagen());

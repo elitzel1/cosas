@@ -8,6 +8,7 @@ import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.adapters.AdapterCloseStand;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
 
@@ -36,6 +37,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	List<Product> products;
 	AdapterCloseStand adapter;
 	int id;
+	int[] comisiones;
 	TextView txtTotal,txtComision;
 	EditText editEfectivo,editTarjeta,editVoucher;
 
@@ -60,10 +62,6 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		txtTotal.setText("$"+String.format("%.2f",0.0));
 		txtComision.setText("$"+String.format("%.2f",0.0));
 		
-		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products);
-		list.setAdapter(adapter);
-		list.setOnItemClickListener(this);
-
 		dbHelper = new DBAdapter(this);
 		dbHelper.open();
 		
@@ -82,6 +80,8 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		
 		Cursor c  = dbHelper.fetchStandProduct(id);
 		if(c.moveToFirst()){
+			comisiones = new int[c.getCount()];
+			int numCom = 0;
 			do{
 				Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
 				int cantidad = c.getInt(1);
@@ -91,6 +91,23 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				p.setId(c.getInt(0));
 				List<Comisiones> listCom = new ArrayList<Comisiones>();
 				List<Taxes> listTax = new ArrayList<Taxes>();
+				List<Cortesias> listCor = new ArrayList<Cortesias>();
+				Cursor cursorCr = dbHelper.fetchCortesias(c.getInt(0), id);
+				if(cursorCr.moveToFirst()){
+					int cantCor = 0;
+					do{
+						Cortesias cort = new Cortesias();
+						cort.setTipo(cursorCr.getString(1));
+						cort.setAmount(cursorCr.getInt(2));
+						cantCor += cursorCr.getInt(2);
+						listCor.add(cort);
+					}while(cursorCr.moveToNext());
+					comisiones[numCom] = cantCor;
+					numCom++;
+				}else{
+					comisiones[numCom] = 0;
+					numCom++;
+				}
 				Cursor cursorCom = dbHelper.fetchImpuestos(idComision);
 				if(cursorCom.moveToFirst()){
 					Comisiones com = new Comisiones();
@@ -121,36 +138,40 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 						}
 					}while(cursorCom.moveToNext());
 				}
-				p.setTaxes(listTax);
-				p.setComisiones(listCom);
+				
 				Cursor cursor = dbHelper.fetchProducto(idProd);
 				if(cursor.moveToFirst()){
 					String nombre = cursor.getString(1);
 					String artista = artistas.get(cursor.getInt(9));
 					String tipo = cursor.getString(2);
 					String talla = cursor.getString(6);
-					int cortesias = cursor.getInt(7);
 					String precio = cursor.getString(7);
 					int cantidadTotal = cursor.getInt(5);
+					
 					p.setNombre(nombre);
 					p.setArtista(artista);
-					p.setCortesias(cortesias);
 					p.setTipo(tipo);
 					p.setTalla(talla);
 					p.setPrecio(precio);
 					p.setCantidad(cantidadTotal);
+					p.setTaxes(listTax);
 					p.setComisiones(listCom);
+					p.setCortesias(listCor);
 				}
 				products.add(p);
 				
 				Log.i("STAND_PROD", p.getNombre()+" "+p.getTipo()+" "+p.getTalla()+" "+cantidad);
 			}while(c.moveToNext());
-			adapter.notifyDataSetChanged();
+			//adapter.notifyDataSetChanged();
 		}else{
 			products.clear();
-			adapter.notifyDataSetChanged();
+			//adapter.notifyDataSetChanged();
 		}
 		dbHelper.close();
+		
+		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products,comisiones);
+		list.setAdapter(adapter);
+		list.setOnItemClickListener(this);
 		
 		list.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
@@ -222,12 +243,23 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	}
 
 	@Override
-	public void setCortesia(String cortesia, int position) {
+	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
 		Product p = products.get(position);
-		p.setCortesias(Integer.parseInt(cortesia));
+		p.addCortesia(cortesia);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		dbHelper.open();
+		int total=p.getCantidad()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
+		if((total)>0){
+
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),id)>=0){
+				int cantidad = total;
+				p.setCantidad(cantidad);
+				dbHelper.updateProducto(p.getId(), cantidad);
+			}
+		}else{
+
+		}
 		dbHelper.close();
 	}
 
@@ -266,7 +298,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		dbHelper.open();
 		for(int i = 0; i < products.size(); i++){
 			Product prod = products.get(i);
-			long venta = dbHelper.createVentaProducto(id,prod.getId() , (prod.getCantidadStand() - prod.getProdNo()), prod.getCortesias());
+			long venta = dbHelper.createVentaProducto(id,prod.getId() , (prod.getCantidadStand() - prod.getProdNo()));
 			if(venta == -1){
 				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 			}

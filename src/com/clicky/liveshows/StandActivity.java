@@ -75,8 +75,17 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		case R.id.action_new:
 			newProduct();
 			return true;
+		case R.id.action_settings:
+			openSettings();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void openSettings(){
+		Intent i = new Intent(this,Settings.class);
+		startActivity(i);
+		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
 	
 	private void newProduct(){
@@ -173,8 +182,6 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		params.putInt("position", position);
 		dialogA.setArguments(params);
 		dialogA.show(getFragmentManager(), "diagAd");
-		
-		
 	}
 	
 	@Override
@@ -189,40 +196,30 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		dialogA.show(getFragmentManager(), "diagCor");
 	}
 	
-	
 	//CORREGIR CANTIDAD
 	@Override
 	public void setAdicional(String adicional, int position) {
 		// TODO Auto-generated method stub
-
 		Log.i("ERROR","En set adicional "+adicional+" "+position+" "+product.getCantidad());
 		
 		Product p = product;
-			dbHelper.open();
-			if((p.getCantidad()-Integer.parseInt(adicional))>0){
-				if(dbHelper.updateProducto(p.getId(), p.getCantidad()-Integer.parseInt(adicional))){
-					if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
-							((FragmentStandProd)getFragmentManager().
-								findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
-							Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());	
-					}else{
-						Log.i("ERROR","StandProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
-					}
+		dbHelper.open();
+		if((p.getCantidad()-Integer.parseInt(adicional))>0){
+			if(dbHelper.updateProducto(p.getId(), p.getCantidad()-Integer.parseInt(adicional))){
+				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
+					((FragmentStandProd)getFragmentManager().
+							findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
+					Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());	
 				}else{
-					Log.i("ERROR","UpdateProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
+					Log.i("ERROR","StandProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 				}
 			}else{
-				Log.i("ERROR","operacion"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
+				Log.i("ERROR","UpdateProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 			}
-			dbHelper.close();
-
-
-	}
-	
-
-
-	private void makeToast(int resource){
-		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
+		}else{
+			Log.i("ERROR","operacion"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
+		}
+		dbHelper.close();
 	}
 
 	@Override
@@ -235,7 +232,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		int total=p.getCantidadStand()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
 		if((total)>0){
 
-			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId())>=0){
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),(int)stand.getId())>=0){
 				int cantidad = total;
 				p.setCantidadStand(cantidad);
 				dbHelper.updateProducto(p.getId(), cantidad);
@@ -246,7 +243,5 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		}
 		dbHelper.close();
 	}
-
-
 
 }
