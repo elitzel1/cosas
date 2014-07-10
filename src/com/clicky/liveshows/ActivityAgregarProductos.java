@@ -21,7 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class ActivityAgregarProductos extends Activity {
-	int id;
+	int id,idFecha;
 	Comisiones comision;
 	private DBAdapter dbHelper;
 	List<Product> products;
@@ -38,6 +38,7 @@ public class ActivityAgregarProductos extends Activity {
 		TextView txt=(TextView)findViewById(R.id.txtStandD);
 		txt.setText(b.getString("nombre"));
 		id=b.getInt("id");
+		idFecha = b.getInt("fecha");
 		products = new ArrayList<Product>();
 		ListView list = (ListView)findViewById(R.id.listAgregaP);
 		adapter = new AdapterListaAgregaProductos(this, R.layout.item_agrega_prod_stand, products);
@@ -128,7 +129,7 @@ public class ActivityAgregarProductos extends Activity {
 					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
 							long comId = dbHelper.createImpuesto(comision.getName(), "comision_stand", comision.getCantidad(), comision.getIva(), comision.getTipo());
 							if(comId != -1)
-								dbHelper.createStandProducto(id, adapter.getItem(i).getId(), 0, adapter.getItem(i).getCantidadStand(),(int)comId);	
+								dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);	
 						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
 					}else{
 					}

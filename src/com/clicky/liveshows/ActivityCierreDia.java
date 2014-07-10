@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,13 +20,17 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import com.clicky.liveshows.DatePickerFragment.DatePickerFragmentListener;
 import com.clicky.liveshows.adapters.AdapterSpinnerAgencias;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Adicionales;
 import com.clicky.liveshows.utils.Agencia;
+import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Excel;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Gastos;
+import com.clicky.liveshows.utils.Taxes;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,6 +42,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +60,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityCierreDia extends Activity{
+public class ActivityCierreDia extends Activity implements DatePickerFragmentListener{
 	
 	private DBAdapter dbHelper;
 	private Excel excel;
@@ -61,14 +68,17 @@ public class ActivityCierreDia extends Activity{
 	private ArrayList<Agencia> agencias;
 	private ArrayList<Gastos> gastos;
 	private ArrayList<Gastos> sueldos;
+	private ArrayList<Double> totales;
 	private HashMap<Integer, String> artistas;
 	private HashMap<Integer, Product> mapProd;
 	List<Product> products;
 	private int[]art;
 	
-	int idEvento;
+	int idEvento,idfecha,capacidad;
 	int posVenue=0;
 	String evento,fecha,local;
+	double efectivo = 0,banamex =0,banorte=0,santander=0,amex=0,otros=0;
+	boolean more = false;
 	
 	private LinearLayout layoutViaticos,layoutSueldos,layoutReportes;
 	private EditText editCantidad,editCantSueldos;
@@ -92,6 +102,7 @@ public class ActivityCierreDia extends Activity{
 		mapProd  = new HashMap<Integer, Product>();
 		gastos = new ArrayList<Gastos>();
 		sueldos = new ArrayList<Gastos>();
+		totales = new ArrayList<Double>();
 		
 		layoutViaticos = (LinearLayout)findViewById(R.id.listGastos);
 		layoutSueldos = (LinearLayout)findViewById(R.id.listSueldos);
@@ -125,89 +136,45 @@ public class ActivityCierreDia extends Activity{
 		cArtistas.close();
 		
 		Cursor cEvento = dbHelper.fetchAllEvento();
-		
 		if(cEvento.moveToFirst()){
 			do{
 				idEvento = cEvento.getInt(0);
 				evento = cEvento.getString(1);
 				local = cEvento.getString(2);
+				capacidad = cEvento.getInt(3);
 			}while(cEvento.moveToNext());
 		}else{
 		}
 		cEvento.close();
 		
+		List<Date> dates = new ArrayList<Date>();
+		HashMap<Date, Integer> hashDate = new HashMap<Date, Integer>();
 		Cursor cFecha = dbHelper.fetchAllFechas();
+		if(cFecha.getCount() > 1){
+			more = true;
+		}
 		if(cFecha.moveToFirst()){
-			DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
-			fecha = df.format(toDateDate(cFecha.getString(1)));
+			do{
+				hashDate.put(toDateDate(cFecha.getString(1)), cFecha.getInt(0));
+				dates.add(toDateDate(cFecha.getString(1)));
+			}while(cFecha.moveToNext());
 		}
 		cFecha.close();
-
-		Cursor cursorProd = dbHelper.fetchAllProductos();
-		if(cursorProd.moveToFirst()){
-			do{
-				int id = cursorProd.getInt(0);
-				String nombre = cursorProd.getString(1);
-				String tipo = cursorProd.getString(2);
-				String foto = cursorProd.getString(3);
-				int cantidad = cursorProd.getInt(4);
-				int cantidadTotal=cursorProd.getInt(5);
-				String talla = cursorProd.getString(6);
-				String precio = cursorProd.getString(7);
-				int idEvento = cursorProd.getInt(8);
-				int idArtista = cursorProd.getInt(9);
-
-				List<Adicionales> a = null;
-				Cursor cursorA = dbHelper.fetchAdicional(id);
-				if(cursorA.moveToFirst()){
-					a = new ArrayList<Adicionales>();
-					do{
-						int cantidadA = cursorA.getInt(1);
-						String nomA = cursorA.getString(2);
-						a.add(new Adicionales(nomA, cantidadA, id));
-						Log.i("PAdicionales",nomA+" "+cantidadA);
-					}while(cursorA.moveToNext());
-				}
-				cursorA.close();
-				Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
-				p.setTotalCantidad(cantidadTotal);
-				//p.setCortesias(cortesias);
-				p.setId(id);
-				p.setProdNo(0);
-				addProduct(p, a);
-				Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
-			}while(cursorProd.moveToNext());
-			cursorProd.close();
-			
-		}
+		dbHelper.close();
 		
+		Collections.sort(dates, new Comparator<Date>() {
+
+			@Override
+			public int compare(Date lhs, Date rhs) {
+				return lhs.compareTo(rhs);
+			}
+		});
+		
+		idfecha = hashDate.get(dates.get(0));
+		DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
+		fecha = df.format(dates.get(0));
+
 		setArtistas();
-		
-		Cursor stands = dbHelper.fetchAllStand();
-		if(stands.moveToFirst()){
-			do{
-				Cursor ventas = dbHelper.fetchVentas(stands.getLong(0));
-				if(ventas.moveToFirst()){
-					do{
-						int vendidos = ventas.getInt(3);
-						Cursor ventaProd = dbHelper.fetchStandProductAll(ventas.getLong(0));
-						if(ventaProd.moveToFirst()){
-							Product prodAux;
-							int proId = ventaProd.getInt(3);
-							if(mapProd.get(proId) != null){
-								prodAux = mapProd.get(proId);
-								int suma = mapProd.get(proId).getProdNo() + vendidos;
-								prodAux.setProdNo(suma);
-							}else{
-								prodAux = new Product();
-								prodAux.setProdNo(vendidos);
-								mapProd.put(proId, prodAux);
-							}
-						}
-					}while(ventas.moveToNext());
-				}
-			}while(stands.moveToNext());
-		}
 		
 		spinVenue.setAdapter(new AdapterSpinnerAgencias(this,R.layout.item_spinner_drop, agencias));
 		spinVenue.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -246,6 +213,16 @@ public class ActivityCierreDia extends Activity{
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onFinishDatePickerDialog(int year, int month, int day) {
+		dbHelper.open();
+		dbHelper.createFecha(""+day+"/"+month+"/"+year);
+		dbHelper.deleteFecha(idfecha);
+		dbHelper.close();
+		setResult(RESULT_OK);
+		finish();
 	}
 	
 	private void setupActionBar() {
@@ -327,14 +304,14 @@ public class ActivityCierreDia extends Activity{
 		if(v == (Button)findViewById(R.id.enviarInterno)){
 			mail = ((EditText)findViewById(R.id.mailInterno)).getText().toString();
 			acepta = validaCorreo(mail);
-			getReport(0, "","");
+			getReport(0, "","","");
 			if(acepta){
 					
 			}
 		}else if(v == (Button)findViewById(R.id.enviarVenue)){
 			mail = ((EditText)findViewById(R.id.mailVenue)).getText().toString();
 			acepta = validaCorreo(mail);
-			getReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto());
+			getReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
 			if(acepta){
 					
 			}	
@@ -384,7 +361,7 @@ public class ActivityCierreDia extends Activity{
 		}
 	}
 	
-	private void addReporte(String artista){
+	private void addReporte(final String artista){
 		LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		TextView txt = new TextView(this);
 		txt.setText(artista);
@@ -396,7 +373,7 @@ public class ActivityCierreDia extends Activity{
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.5f);
 		linear.setOrientation(LinearLayout.HORIZONTAL);
 		
-		Spinner spin = new Spinner(this);
+		final Spinner spin = new Spinner(this);
 		spin.setAdapter(new AdapterSpinnerAgencias(this,R.layout.item_spinner_drop, agencias));
 		spin.setLayoutParams(params2);
 		linear.addView(spin);
@@ -436,6 +413,7 @@ public class ActivityCierreDia extends Activity{
 			
 			@Override
 			public void onClick(View v) {
+				getReport(2, agencias.get(spin.getSelectedItemPosition()).getNombre(), agencias.get(spin.getSelectedItemPosition()).getContacto(),artista);
 				if(validaCorreo(mail.getText().toString())){
 					Intent email = new Intent(Intent.ACTION_SEND);
 					email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail.getText().toString()});		  
@@ -457,31 +435,88 @@ public class ActivityCierreDia extends Activity{
 	}
 	
 	private void showAlert(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.alert_cierre);
-		builder.setPositiveButton("Acept", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface arg0, int arg1) {
-				borraTodo();
+		if(more){
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.alert_next_date);
+			builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
 				
-			}
-		});
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int arg1) {
-				dialog.cancel();
-			}
-		});
-		builder.create().show();
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					borraDia();
+				}
+			});
+			builder.setNegativeButton(R.string.close_event, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int arg1) {
+					borraTodo();
+				}
+			});
+			builder.create().show();
+		}else{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.alert_no_dates);
+			builder.setPositiveButton(R.string.close_event, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					borraTodo();
+				}
+			});
+			builder.setNegativeButton(R.string.add_date, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int arg1) {
+					dialog.cancel();
+					DatePickerFragment fragment  = new DatePickerFragment();
+					fragment.show(getFragmentManager(), "datePicker");
+				}
+			});
+			builder.create().show();
+		}
 		
 	}
+	
+	private void borraDia(){
+		//TODO Teminar cierre mil 
+		dbHelper.open();
+		dbHelper.deleteFecha(idfecha);
+		Cursor cursorProd = dbHelper.fetchAllProductos();
+		if(cursorProd.moveToFirst()){
+			do{
+				Product prod = new Product();
+				prod.setId(cursorProd.getInt(0));
+				
+				int cant = cursorProd.getInt(5);
+				Cursor cursorStandProd = dbHelper.fetchStandProductDetail(prod.getId());
+				if(cursorStandProd.moveToFirst()){
+					do{
+						int standId = cursorStandProd.getInt(5);
+						int cantStand = cursorStandProd.getInt(1);
+						Cursor ventas = dbHelper.fetchVentasProd(cursorStandProd.getInt(0));
+						if(ventas.moveToFirst()){
+							do{
+								cant -= ventas.getInt(3);
+								cantStand -= ventas.getInt(3);
+							}while(ventas.moveToNext());
+						}
+						dbHelper.updateStandProducto(prod.getId(), standId, cantStand);
+					}while(cursorStandProd.moveToNext());
+				}
+				dbHelper.updateProducto(prod.getId(), cant, cant);
+			}while(cursorProd.moveToNext());
+		}
+		dbHelper.deleteDia();
+		dbHelper.close();
+		setResult(RESULT_OK);
+		finish();
+	}
+	
 	private void borraTodo(){
 		dbHelper.open();
 		dbHelper.deleteTodo();
 		dbHelper.close();
-		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor edit = prefs.edit();
 		edit.putInt("evento", 0);
 		edit.commit();
@@ -591,6 +626,261 @@ public class ActivityCierreDia extends Activity{
 		//mapProd.put(item.getId(), item);
 	}
 	
+	public Integer getKeyFromValue(HashMap<Integer, String> hm, Object value) {
+	    for (Object o : hm.keySet()) {
+	      if (hm.get(o).equals(value)) {
+	    	  return (Integer)o;
+	      }
+	    }
+	    return -1;
+	  }
+	
+	private void getProducts(String artista){
+		products.clear();
+		mapProd.clear();
+		totales.clear();
+		dbHelper.open();
+		if(artista.equals("")){
+			Cursor cursorProd = dbHelper.fetchAllProductos();
+			if(cursorProd.moveToFirst()){
+				do{
+					int id = cursorProd.getInt(0);
+					String nombre = cursorProd.getString(1);
+					String tipo = cursorProd.getString(2);
+					String foto = cursorProd.getString(3);
+					int cantidad = cursorProd.getInt(4);
+					int cantidadTotal=cursorProd.getInt(5);
+					String talla = cursorProd.getString(6);
+					String precio = cursorProd.getString(7);
+					int idEvento = cursorProd.getInt(8);
+					int idArtista = cursorProd.getInt(9);
+
+
+					List<Adicionales> a = null;
+					Cursor cursorA = dbHelper.fetchAdicional(id);
+					if(cursorA.moveToFirst()){
+						a = new ArrayList<Adicionales>();
+						do{
+							int cantidadA = cursorA.getInt(1);
+							String nomA = cursorA.getString(2);
+							a.add(new Adicionales(nomA, cantidadA, id));
+							Log.i("PAdicionales",nomA+" "+cantidadA);
+						}while(cursorA.moveToNext());
+					}
+					cursorA.close();
+
+					List<Comisiones> list_com=new ArrayList<Comisiones>();
+					List<Taxes> list_tax=new ArrayList<Taxes>();
+					List<Cortesias> cortesias = new ArrayList<Cortesias>();;
+
+					Cursor cursorCortesias = dbHelper.fetchCortesias(id);
+					if(cursorCortesias.moveToFirst()){
+						cortesias= new ArrayList<Cortesias>();
+						do{
+							String tipoC = cursorCortesias.getString(1);
+							int cantidadC =cursorCortesias.getInt(2);
+							cortesias.add(new Cortesias(tipoC, cantidadC));
+						}while(cursorCortesias.moveToNext());
+					}
+
+
+					List<Integer> id_impuestos = new ArrayList<Integer>();
+					Cursor cursorI=dbHelper.fetchProductImpuestoProd(id);
+					if(cursorI.moveToNext()){
+						do{
+							id_impuestos.add(cursorI.getInt(1));
+						}while(cursorI.moveToNext());
+					}
+					cursorI.close();
+
+					for(int j=0;j<id_impuestos.size();j++){
+						Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
+
+						if(cursorPI.moveToNext()){
+							do{
+								//taxes
+								//comision
+								//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+								String nombreI = cursorPI.getString(1);
+								String porcentaje = cursorPI.getString(2);
+								String tipoImpuesto = cursorPI.getString(3);
+								if(tipoImpuesto.contentEquals("comision")){
+									String iva = cursorPI.getString(4);
+									String tipoPeso = cursorPI.getString(5);
+									list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+								}else{
+
+									list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+								}
+							}while(cursorPI.moveToNext());	
+						}
+					}
+					Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
+					p.setTotalCantidad(cantidadTotal);
+					if(cortesias!=null){
+						p.setCortesias(cortesias);
+					}
+					p.setId(id);
+					p.setComisiones(list_com);
+					p.setTaxes(list_tax);
+					addProduct(p, a);
+					
+					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
+				}while(cursorProd.moveToNext());
+				cursorProd.close();
+				Cursor stands = dbHelper.fetchStandCierre();
+				if(stands.moveToFirst()){
+					do{
+						efectivo += stands.getDouble(1);
+						banamex += stands.getDouble(2);
+						banorte += stands.getDouble(3);
+						santander += stands.getDouble(4);
+						amex += stands.getDouble(5);
+						otros += stands.getDouble(6);
+						
+						Cursor ventas = dbHelper.fetchVentas(stands.getLong(0));
+						if(ventas.moveToFirst()){
+							do{
+								int vendidos = ventas.getInt(3);
+								Cursor ventaProd = dbHelper.fetchStandProductAll(ventas.getLong(0));
+								if(ventaProd.moveToFirst()){
+									Product prodAux;
+									int proId = ventaProd.getInt(3);
+									if(mapProd.get(proId) != null){
+										prodAux = mapProd.get(proId);
+										int suma = mapProd.get(proId).getProdNo() + vendidos;
+										prodAux.setProdNo(suma);
+									}else{
+										prodAux = new Product();
+										prodAux.setProdNo(vendidos);
+										mapProd.put(proId, prodAux);
+									}
+								}
+							}while(ventas.moveToNext());
+						}
+					}while(stands.moveToNext());
+				}
+			}
+		}else{
+			Cursor cursorProd = dbHelper.fetchProductosArtista(getKeyFromValue(artistas,artista));
+			if(cursorProd.moveToFirst()){
+				do{
+					int id = cursorProd.getInt(0);
+					String nombre = cursorProd.getString(1);
+					String tipo = cursorProd.getString(2);
+					String foto = cursorProd.getString(3);
+					int cantidad = cursorProd.getInt(4);
+					int cantidadTotal=cursorProd.getInt(5);
+					String talla = cursorProd.getString(6);
+					String precio = cursorProd.getString(7);
+					int idEvento = cursorProd.getInt(8);
+					int idArtista = cursorProd.getInt(9);
+
+
+					List<Adicionales> a = null;
+					Cursor cursorA = dbHelper.fetchAdicional(id);
+					if(cursorA.moveToFirst()){
+						a = new ArrayList<Adicionales>();
+						do{
+							int cantidadA = cursorA.getInt(1);
+							String nomA = cursorA.getString(2);
+							a.add(new Adicionales(nomA, cantidadA, id));
+							Log.i("PAdicionales",nomA+" "+cantidadA);
+						}while(cursorA.moveToNext());
+					}
+					cursorA.close();
+
+					List<Comisiones> list_com=null;
+					List<Taxes> list_tax=null;
+					list_com = new ArrayList<Comisiones>();
+					list_tax = new ArrayList<Taxes>();
+
+					List<Cortesias> cortesias = null;
+					Cursor cursorCortesias = dbHelper.fetchCortesias(id);
+					if(cursorCortesias.moveToFirst()){
+						cortesias= new ArrayList<Cortesias>();
+						do{
+							String tipoC = cursorCortesias.getString(1);
+							int cantidadC =cursorCortesias.getInt(2);
+							cortesias.add(new Cortesias(tipoC, cantidadC));
+						}while(cursorCortesias.moveToNext());
+					}
+
+
+					List<Integer> id_impuestos = new ArrayList<Integer>();
+					Cursor cursorI=dbHelper.fetchProductImpuestoProd(id);
+					if(cursorI.moveToNext()){
+						do{
+							id_impuestos.add(cursorI.getInt(1));
+						}while(cursorI.moveToNext());
+					}
+					cursorI.close();
+
+					for(int j=0;j<id_impuestos.size();j++){
+						Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
+
+						if(cursorPI.moveToNext()){
+							do{
+								//taxes
+								//comision
+								//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+								String nombreI = cursorPI.getString(1);
+								String porcentaje = cursorPI.getString(2);
+								String tipoImpuesto = cursorPI.getString(3);
+								if(tipoImpuesto.contentEquals("comision")){
+									String iva = cursorPI.getString(4);
+									String tipoPeso = cursorPI.getString(5);
+									list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+								}else{
+
+									list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+								}
+							}while(cursorPI.moveToNext());	
+						}
+					}
+					Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
+					p.setTotalCantidad(cantidadTotal);
+					if(cortesias!=null){
+						p.setCortesias(cortesias);
+					}
+					p.setId(id);
+					p.setComisiones(list_com);
+					p.setTaxes(list_tax);
+					addProduct(p, a);
+					
+					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
+				}while(cursorProd.moveToNext());
+				cursorProd.close();
+				Cursor stands = dbHelper.fetchAllStand();
+				if(stands.moveToFirst()){
+					do{
+						Cursor ventas = dbHelper.fetchVentas(stands.getLong(0));
+						if(ventas.moveToFirst()){
+							do{
+								int vendidos = ventas.getInt(3);
+								Cursor ventaProd = dbHelper.fetchStandProductAll(ventas.getLong(0));
+								if(ventaProd.moveToFirst()){
+									Product prodAux;
+									int proId = ventaProd.getInt(3);
+									if(mapProd.get(proId) != null){
+										prodAux = mapProd.get(proId);
+										int suma = mapProd.get(proId).getProdNo() + vendidos;
+										prodAux.setProdNo(suma);
+									}else{
+										prodAux = new Product();
+										prodAux.setProdNo(vendidos);
+										mapProd.put(proId, prodAux);
+									}
+								}
+							}while(ventas.moveToNext());
+						}
+					}while(stands.moveToNext());
+				}
+			}
+		}
+		dbHelper.close();
+	}
+	
 	/**
 	 * 
 	 * @param tipo 0 - LSG
@@ -599,13 +889,18 @@ public class ActivityCierreDia extends Activity{
 	 * @param agency
 	 * @param contact
 	 */
-	private void getReport(int tipo,String agency, String contact){
+	private void getReport(int tipo,String agency, String contact,String artista){
+		getProducts(artista);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
 		WritableWorkbook wb = excel.createWorkbook("venue.xls");
 		WritableSheet hoja1 = excel.createSheet(wb, "Venue", 0);
 		try {
 			
+			hoja1.mergeCells(3, 1, 3, 22);
 			//Formato del Reporte
 			//excel.addImage(hoja1, R.drawable.ic_launcher);
+			excel.writeCell(3, 1, "SALES REPORT(IN "+prefs.getString("moneda", "")+")", 10, hoja1);
 			excel.writeCell(1, 5, "DATE", 1, hoja1);
 			excel.writeCell(2, 5, fecha, 0, hoja1);
 			excel.writeCell(1, 7, "EVENT", 1, hoja1);
@@ -634,6 +929,8 @@ public class ActivityCierreDia extends Activity{
 			excel.writeCell(13, 15, "DAMAGE", 2, hoja1);
 			excel.writeCell(14, 15, "COMPS\nVENUE", 2, hoja1);
 			excel.writeCell(15, 15, "COMPS\nOFFICE\nPRODUCTION", 2, hoja1);
+			excel.writeCell(16, 15, prefs.getString("op1", "OTHER"), 2, hoja1);
+			excel.writeCell(17, 15, prefs.getString("op2", "OTHER"), 2, hoja1);
 			
 			excel.writeCell(18, 15, "FINAL INVENTORY", 2, hoja1);
 			excel.writeCell(19, 15, "SALES PIECES", 2, hoja1);
@@ -641,8 +938,12 @@ public class ActivityCierreDia extends Activity{
 			excel.writeCell(21, 15, "% SALES", 2, hoja1);
 			excel.writeCell(22, 15, "GROSS TOTAL\nUS$DLLS", 2, hoja1);
 			
+			Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
+			double tax = 0, gross = 0, venueFee = 0, royaltyFee = 0;
 			for(int i = 0; i < products.size(); i++){
 				Product prod = products.get(i);
+				
+				excel.writeCell(0, (16+i), ""+(Float.parseFloat((prod.getPrecio()))/priceUs), 5, hoja1);
 				excel.writeCell(1, (16+i), ""+(i+1), 4, hoja1);
 				excel.writeCell(2, (16+i), prod.getTipo(), 3, hoja1);
 				excel.writeCell(3, (16+i), prod.getNombre(), 3, hoja1);
@@ -661,82 +962,168 @@ public class ActivityCierreDia extends Activity{
 				excel.writeCell(11, (16+i), ""+prod.getTotalCantidad(), 4, hoja1);
 				excel.writeCell(12, (16+i), prod.getPrecio(), 5, hoja1);
 				
-				if(mapProd.get(prod.getId()) != null){
-					excel.writeCell( 19, (16+i), ""+mapProd.get(prod.getId()).getProdNo(), 4, hoja1);
-					prod.setProdNo(mapProd.get(prod.getId()).getProdNo());
+				int cmv = 0, cmo = 0, cmd = 0, cmo1 = 0, cmo2 = 0;
+				for(Cortesias cort : prod.getCortesias()){
+					if(cort.getTipo().equals("DAMAGE")){
+						cmd += cort.getAmount();
+					}else if(cort.getTipo().equals("COMPS VENUE")){
+						cmv += cort.getAmount();
+					}else if(cort.getTipo().equals("COMPS OFFICE PRODUCTION")){
+						cmo += cort.getAmount();
+					}else if(cort.getTipo().equals(prefs.getString("op1", "OTHER"))){
+						cmo1 += cort.getAmount();
+					}else if(cort.getTipo().equals(prefs.getString("op2", "OTHER"))){
+						cmo2 += cort.getAmount();
+					}
 				}
 				
-				excel.writeCell(20, (16+i), ""+(Double.parseDouble(prod.getPrecio()) * prod.getProdNo()), 5, hoja1);
+				excel.writeCell(13, (16+i), ""+cmd, 4, hoja1);
+				excel.writeCell(14, (16+i), ""+cmv, 4, hoja1);
+				excel.writeCell(15, (16+i), ""+cmo, 4, hoja1);
+				excel.writeCell(16, (16+i), ""+cmo1, 4, hoja1);
+				excel.writeCell(17, (16+i), ""+cmo2, 4, hoja1);
 				
+				if(mapProd.get(prod.getId()) != null){
+					prod.setProdNo(mapProd.get(prod.getId()).getProdNo());
+				}else{
+					prod.setProdNo(0);
+				}
+				
+				int finalInventory = prod.getTotalCantidad()-(prod.getProdNo()+cmd+cmv+cmo+cmo1+cmo2);
+				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
+				double subTotal = total;
+				totales.add(total);
+				gross += total;
+				excel.writeCell(18, (16+i), ""+finalInventory, 4, hoja1);
+				excel.writeCell(19, (16+i), ""+prod.getProdNo(), 4, hoja1);
+				excel.writeCell(20, (16+i), ""+total, 5, hoja1);
+				excel.writeCell(22, (16+i), ""+(total/priceUs), 5, hoja1);
+				
+				for(Taxes tx : prod.getTaxes()){
+					tax += total * (tx.getAmount()* 0.01);
+					subTotal -= total * (tx.getAmount()* 0.01);
+				}
+				for(Comisiones com : prod.getComisiones()){
+					double cant = 0, aux = 0;
+					if(com.getTipo().equals("After taxes")){
+						cant = subTotal;
+					}else if(com.getTipo().equals("Before Taxes")){
+						cant = total;
+					}
+					if(com.getIva().equals("%")){
+						aux = cant * (com.getCantidad() * 0.01);  
+					}else if(com.getIva().equals("$")){
+						aux = com.getCantidad() * prod.getProdNo();
+					}
+					if(com.getName().equals("VENUE")){
+						venueFee += aux;
+					}else if(com.getName().equals("AGENCY")){
+						royaltyFee += aux;
+					}
+				}
+			}
+			for(int i=0;i<totales.size();i++){
+				excel.writeCell(21, (16+i), ""+(totales.get(i)/gross), 9, hoja1);
 			}
 			
 			excel.writeCell(18, 18+products.size(), "GROSS TOTAL", 6, hoja1);
 			excel.writeCell(18, 19+products.size(), "TAX", 6, hoja1);
 			excel.writeCell(18, 20+products.size(), "GROSS NET", 6, hoja1);
 			
+			excel.writeCell(19, 18+products.size(), ""+gross, 5, hoja1);
+			excel.writeCell(19, 19+products.size(), ""+tax, 5, hoja1);
+			excel.writeCell(19, 20+products.size(), ""+(gross-tax), 5, hoja1);
+			
 			if(tipo == 1){
 				excel.writeCell(18, 22+products.size(), "VENUE FEE", 6, hoja1);
+				excel.writeCell(19, 22+products.size(), ""+venueFee, 5, hoja1);
 			}else if(tipo == 2){
 				excel.writeCell(18, 22+products.size(), "ROYALTY FEE", 6, hoja1);
+				excel.writeCell(19, 22+products.size(), ""+royaltyFee, 5, hoja1);
 			}else if(tipo == 0){
 				excel.writeCell(18, 22+products.size(), "ROYALTY FEE", 6, hoja1);
 				excel.writeCell(18, 23+products.size(), "VENUE FEE", 6, hoja1);
 				
-				excel.writeCell(18, 24+products.size(), "GASTOS OPERATIVOS", 7, hoja1);
-				excel.writeCell(20, 24+products.size(), "FACTURA", 7, hoja1);
-				excel.writeCell(21, 24+products.size(), "NOTA", 7, hoja1);
+				excel.writeCell(19, 22+products.size(), ""+royaltyFee, 5, hoja1);
+				excel.writeCell(19, 23+products.size(), ""+venueFee, 5, hoja1);
+				
+				excel.writeCell(18, 25+products.size(), "GASTOS OPERATIVOS", 7, hoja1);
+				excel.writeCell(20, 25+products.size(), "FACTURA", 7, hoja1);
+				excel.writeCell(21, 25+products.size(), "NOTA", 7, hoja1);
 				
 				double totalGastos = 0;
 				for(int i = 0; i< gastos.size(); i++){
 					totalGastos += gastos.get(i).getCantidad();
-					excel.writeCell(18, (25+products.size()+i), gastos.get(i).getConcepto(), 3, hoja1);
-					excel.writeCell(19, (25+products.size()+i), ""+gastos.get(i).getCantidad(), 5, hoja1);
+					excel.writeCell(18, (26+products.size()+i), gastos.get(i).getConcepto(), 3, hoja1);
+					excel.writeCell(19, (26+products.size()+i), ""+gastos.get(i).getCantidad(), 5, hoja1);
 					if(gastos.get(i).getComprobante().equals("Factura"))
-						excel.writeCell(20, (25+products.size()+i), "X", 8, hoja1);
+						excel.writeCell(20, (26+products.size()+i), "X", 8, hoja1);
 					else if(gastos.get(i).getComprobante().equals("Nota"))
-						excel.writeCell(21, (25+products.size()+i), "X", 8, hoja1);
+						excel.writeCell(21, (26+products.size()+i), "X", 8, hoja1);
 				}
-				excel.writeCell(18, 26+products.size()+gastos.size(), "SUBTOTAL", 7, hoja1);
-				excel.writeCell(19, 26+products.size()+gastos.size(), ""+totalGastos, 5, hoja1);
+				excel.writeCell(18, 27+products.size()+gastos.size(), "SUBTOTAL", 7, hoja1);
+				excel.writeCell(19, 27+products.size()+gastos.size(), ""+totalGastos, 5, hoja1);
 				
-				excel.writeCell(18, 28+products.size()+gastos.size(), "SUELDOS/BONOS/COMISIONES", 7, hoja1);
-				excel.writeCell(20, 28+products.size()+gastos.size(), "FACTURA", 7, hoja1);
-				excel.writeCell(21, 28+products.size()+gastos.size(), "NOTA", 7, hoja1);
+				excel.writeCell(18, 29+products.size()+gastos.size(), "SUELDOS/BONOS/COMISIONES", 7, hoja1);
+				excel.writeCell(20, 29+products.size()+gastos.size(), "FACTURA", 7, hoja1);
+				excel.writeCell(21, 29+products.size()+gastos.size(), "NOTA", 7, hoja1);
 				
 				double totalSueldos = 0;
 				for(int i = 0; i < sueldos.size(); i++){
 					totalSueldos += sueldos.get(i).getCantidad();
-					excel.writeCell(18, (29+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 3, hoja1);
-					excel.writeCell(19, (29+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
+					excel.writeCell(18, (30+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 3, hoja1);
+					excel.writeCell(19, (30+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
 					if(sueldos.get(i).getComprobante().equals("Factura"))
-						excel.writeCell(20, (29+products.size()+gastos.size()+i), "X", 8, hoja1);
+						excel.writeCell(20, (30+products.size()+gastos.size()+i), "X", 8, hoja1);
 					else if(sueldos.get(i).getComprobante().equals("Nota"))
-						excel.writeCell(21, (29+products.size()+gastos.size()+i), "X", 8, hoja1);
+						excel.writeCell(21, (30+products.size()+gastos.size()+i), "X", 8, hoja1);
 				}
-				excel.writeCell(18, 30+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 7, hoja1);
-				excel.writeCell(19, 30+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
+				excel.writeCell(18, 31+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 7, hoja1);
+				excel.writeCell(19, 31+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
-				excel.writeCell(18, 32+products.size()+gastos.size()+sueldos.size(), "TOTAL GASTOS OPERATIVOS", 0, hoja1);
-				excel.writeCell(20, 32+products.size()+gastos.size()+sueldos.size(), ""+totalGastos, 5, hoja1);
-				excel.writeCell(18, 33+products.size()+gastos.size()+sueldos.size(), "TOTAL SUELDOS/BONOS/COMISIONES", 0, hoja1);
-				excel.writeCell(20, 33+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
+				excel.writeCell(18, 33+products.size()+gastos.size()+sueldos.size(), "TOTAL GASTOS OPERATIVOS", 0, hoja1);
+				excel.writeCell(20, 33+products.size()+gastos.size()+sueldos.size(), ""+totalGastos, 5, hoja1);
+				excel.writeCell(18, 34+products.size()+gastos.size()+sueldos.size(), "TOTAL SUELDOS/BONOS/COMISIONES", 0, hoja1);
+				excel.writeCell(20, 34+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
-				excel.writeCell(18, 35+products.size()+gastos.size()+sueldos.size(), "TOTAL A DEPOSITAR", 0, hoja1);
-				excel.writeCell(20, 35+products.size()+gastos.size()+sueldos.size(), ""+(totalSueldos+totalGastos), 5, hoja1);
+				double depositar = totalSueldos+totalGastos;
+				excel.writeCell(18, 36+products.size()+gastos.size()+sueldos.size(), "TOTAL A DEPOSITAR", 0, hoja1);
+				excel.writeCell(20, 36+products.size()+gastos.size()+sueldos.size(), ""+depositar, 5, hoja1);
 				
-				excel.writeCell(18, 37+products.size()+gastos.size()+sueldos.size(), "INGRESOS RECIBIDOS", 0, hoja1);
+				excel.writeCell(18, 38+products.size()+gastos.size()+sueldos.size(), "INGRESOS RECIBIDOS", 0, hoja1);
 				
-				excel.writeCell(18, 38+products.size()+gastos.size()+sueldos.size(), "EFECTIVO", 3, hoja1);
-				excel.writeCell(18, 39+products.size()+gastos.size()+sueldos.size(), "TC BANAMEX", 3, hoja1);
-				excel.writeCell(18, 40+products.size()+gastos.size()+sueldos.size(), "TC BANORTE", 3, hoja1);
-				excel.writeCell(18, 41+products.size()+gastos.size()+sueldos.size(), "TC SANTANDER", 3, hoja1);
-				excel.writeCell(18, 42+products.size()+gastos.size()+sueldos.size(), "TC AMEX", 3, hoja1);
-				excel.writeCell(18, 43+products.size()+gastos.size()+sueldos.size(), "OTROS", 3, hoja1);
+				excel.writeCell(18, 39+products.size()+gastos.size()+sueldos.size(), "EFECTIVO", 3, hoja1);
+				excel.writeCell(18, 40+products.size()+gastos.size()+sueldos.size(), "TC BANAMEX", 3, hoja1);
+				excel.writeCell(18, 41+products.size()+gastos.size()+sueldos.size(), "TC BANORTE", 3, hoja1);
+				excel.writeCell(18, 42+products.size()+gastos.size()+sueldos.size(), "TC SANTANDER", 3, hoja1);
+				excel.writeCell(18, 43+products.size()+gastos.size()+sueldos.size(), "TC AMEX", 3, hoja1);
+				excel.writeCell(18, 44+products.size()+gastos.size()+sueldos.size(), "OTROS", 3, hoja1);
 				
-				excel.writeCell(18, 44+products.size()+gastos.size()+sueldos.size(), "TOTAL DEPOSITADO", 0, hoja1);
+				excel.writeCell(20, 39+products.size()+gastos.size()+sueldos.size(), ""+efectivo, 5, hoja1);
+				excel.writeCell(20, 40+products.size()+gastos.size()+sueldos.size(), ""+banamex, 5, hoja1);
+				excel.writeCell(20, 41+products.size()+gastos.size()+sueldos.size(), ""+banorte, 5, hoja1);
+				excel.writeCell(20, 42+products.size()+gastos.size()+sueldos.size(), ""+santander, 5, hoja1);
+				excel.writeCell(20, 43+products.size()+gastos.size()+sueldos.size(), ""+amex, 5, hoja1);
+				excel.writeCell(20, 44+products.size()+gastos.size()+sueldos.size(), ""+otros, 5, hoja1);
 				
-				excel.writeCell(18, 46+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 0, hoja1);
-				excel.writeCell(20, 46+products.size()+gastos.size()+sueldos.size(), ""+(0-(totalSueldos+totalGastos)), 5, hoja1);
+				double depositado = efectivo+banamex+banorte+santander+amex+otros;
+				excel.writeCell(18, 45+products.size()+gastos.size()+sueldos.size(), "TOTAL DEPOSITADO", 0, hoja1);
+				excel.writeCell(20, 45+products.size()+gastos.size()+sueldos.size(), ""+depositado, 5, hoja1);
+				
+				excel.writeCell(18, 47+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 0, hoja1);
+				excel.writeCell(20, 47+products.size()+gastos.size()+sueldos.size(), ""+(depositado-depositar), 5, hoja1);
+				
+				excel.writeCell(5, 15, "ATTENDANCE", 6, hoja1);
+				excel.writeCell(7, 15, "PERCAP", 6, hoja1);
+				excel.writeCell(9, 15, "GROSS TOTAL", 6, hoja1);
+				
+				excel.writeCell(5, 15, "ATTENDANCE", 6, hoja1);
+				excel.writeCell(7, 15, "PERCAP", 6, hoja1);
+				excel.writeCell(9, 15, "GROSS TOTAL", 6, hoja1);
+				
+				excel.writeCell(5, 16, ""+capacidad, 4, hoja1);
+				excel.writeCell(7, 16, ""+(gross/capacidad), 5, hoja1);
+				excel.writeCell(9, 16, ""+gross, 5, hoja1);
 			}
 			
 			excel.sheetAutoFitColumns(hoja1);

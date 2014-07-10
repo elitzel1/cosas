@@ -153,10 +153,12 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		linear.setId(count);
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		linear.setOrientation(LinearLayout.HORIZONTAL);
+		
 		TextView txt = new TextView(this);
 		txt.setText(text);
 		txt.setTextColor(getResources().getColor(R.color.azul));
 		txt.setLayoutParams(params2);
+		
 		linear.addView(txt);
 		layout.addView(linear);
 		layout.invalidate();

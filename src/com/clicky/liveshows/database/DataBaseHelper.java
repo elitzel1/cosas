@@ -64,9 +64,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colComisionStand="comision";
 	static final String colIVAStand="iva";
 	static final String colTipoCStand = "tipo_comision";
+	
 	static final String colCantidadEfectivo = "cantidad_efectivo";
-	static final String colCantidadTarjeta = "cantidad_tarjeta";
-	static final String colCantidadVoucher = "cantidad_voucher";
+	static final String colCantidadBanamex = "cantidad_banamex";
+	static final String colCantidadBanorte = "cantidad_banorte";
+	static final String colCantidadSantander = "cantidad_santander";
+	static final String colCantidadAmex = "cantidad_amex";
+	static final String colCantidadOtro = "cantidad_otro";
 
 	//TABLA STAND PRODUCTO
 	static final String TABLE_STAND_PROD="TStand_Prod";
@@ -156,7 +160,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		String SQL_STAND ="CREATE TABLE "+TABLE_STAND+ " ("+colIdStand+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
 		colNombreStand+" TEXT NOT NULL, "+colNombreEmpleado+" TEXT NOT NULL, "+colComisionStand+" INTEGER NOT NULL, "
 				+colIVAStand+" TEXT NOT NULL, "+colTipoCStand+" TEXT NOT NULL, "+colCantidadEfectivo+" REAL, "
-				+colCantidadTarjeta+" REAL, "+colCantidadVoucher+" REAL)";
+				+colCantidadBanamex+" REAL, "+colCantidadBanorte+" REAL, "+colCantidadSantander+" REAL, "
+				+colCantidadAmex+" REAL, "+colCantidadOtro+" REAL)";
 		database.execSQL(SQL_STAND);
 
 		String SQL_PRODUCTOS_STAND ="CREATE TABLE "+TABLE_STAND_PROD+ " ("+colIdStandProd+" INTEGER PRIMARY KEY AUTOINCREMENT, "+

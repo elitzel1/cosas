@@ -36,10 +36,10 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	private DBAdapter dbHelper;
 	List<Product> products;
 	AdapterCloseStand adapter;
-	int id;
+	int id,idFecha;
 	int[] comisiones;
 	TextView txtTotal,txtComision;
-	EditText editEfectivo,editTarjeta,editVoucher;
+	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro;
 
 	@SuppressLint("UseSparseArrays")
 	@Override
@@ -49,13 +49,18 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		// Show the Up button in the action bar.
 		setupActionBar();
 		Bundle b= getIntent().getBundleExtra("extra");
-		id=b.getInt("id_stand");
-
+		id = b.getInt("id_stand");
+		idFecha = b.getInt("fecha");
+		
 		txtTotal=(TextView)findViewById(R.id.txtTotal);
 		txtComision = (TextView)findViewById(R.id.txtComisiones);
 		editEfectivo = (EditText)findViewById(R.id.editEfec);
-		editTarjeta = (EditText)findViewById(R.id.editCre);
-		editVoucher = (EditText)findViewById(R.id.editVou);
+		editBanamex = (EditText)findViewById(R.id.editBanamex);
+		editBanorte = (EditText)findViewById(R.id.editBanorte);
+		editSantander = (EditText)findViewById(R.id.editSantander);
+		editAmex = (EditText)findViewById(R.id.editAmex);
+		editOtro = (EditText)findViewById(R.id.editOtro);
+		
 		products = new ArrayList<Product>();
 		ListView list=(ListView)findViewById(R.id.listCierre);
 		
@@ -303,6 +308,10 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 			}
 		}
+		dbHelper.updateStandCierre(id, Double.parseDouble(editEfectivo.getText().toString()), 
+				Double.parseDouble(editBanamex.getText().toString()), Double.parseDouble(editBanorte.getText().toString()), 
+				Double.parseDouble(editSantander.getText().toString()), Double.parseDouble(editAmex.getText().toString()), 
+				Double.parseDouble(editOtro.getText().toString()));
 		dbHelper.close();
 	}
 	private void validaCierre(){

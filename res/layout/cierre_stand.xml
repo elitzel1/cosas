@@ -117,7 +117,6 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/efectivo"
@@ -127,10 +126,25 @@
                 android:id="@+id/editEfec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:ems="10"
-                android:inputType="numberDecimal" >
+                android:inputType="numberDecimal" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/banamex"
+                android:textColor="@color/azul_textos" />
 
-            </EditText>
+            <EditText
+                android:id="@+id/editBanamex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+
         </TableRow>
 
         <TableRow
@@ -139,18 +153,34 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tarjeta"
+                android:text="@string/banorte"
                 android:textColor="@color/azul_textos" />
 
             <EditText
-                android:id="@+id/editCre"
+                android:id="@+id/editBanorte"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:ems="10"
                 android:inputType="numberDecimal" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/santander"
+                android:textColor="@color/azul_textos" />
+
+            <EditText
+                android:id="@+id/editSantander"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+            
         </TableRow>
 
         <TableRow
@@ -159,18 +189,34 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/voucher"
+                android:text="@string/amex"
                 android:textColor="@color/azul_textos" />
 
             <EditText
-                android:id="@+id/editVou"
+                android:id="@+id/editAmex"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:ems="10"
                 android:inputType="numberDecimal" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/pago_otro"
+                android:textColor="@color/azul_textos" />
+
+            <EditText
+                android:id="@+id/editOtro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+            
         </TableRow>
     </TableLayout>
 

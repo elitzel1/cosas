@@ -55,9 +55,13 @@ public class DBAdapter {
 	static final String colComisionStand="comision";
 	static final String colIVAStand="iva";
 	static final String colTipoCStand = "tipo_comision";
+	
 	static final String colCantidadEfectivo = "cantidad_efectivo";
-	static final String colCantidadTarjeta = "cantidad_tarjeta";
-	static final String colCantidadVoucher = "cantidad_voucher";
+	static final String colCantidadBanamex = "cantidad_banamex";
+	static final String colCantidadBanorte = "cantidad_banorte";
+	static final String colCantidadSantander = "cantidad_santander";
+	static final String colCantidadAmex = "cantidad_amex";
+	static final String colCantidadOtro = "cantidad_otro";
 
 	//TABLA STAND PRODUCTO
 	static final String TABLE_STAND_PROD="TStand_Prod";
@@ -211,8 +215,8 @@ public class DBAdapter {
 		return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
 	}
 
-	public boolean updateStandCierre(long rowId,double efectivo,double tarjeta,double voucher){
-		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,tarjeta,voucher);
+	public boolean updateStandCierre(long rowId,double efectivo,double banamex,double banorte, double santander, double amex,double otro){
+		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro);
 		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
 	}
 	//Borra la tarea
@@ -273,6 +277,12 @@ public class DBAdapter {
 		database.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + TABLE_CORTESIAS + "'");
 	}
 	
+	public void deleteDia(){
+		database.delete(TABLE_SALES_PRODUCT, null, null);
+		database.delete(TABLE_ADICIONAL, null, null);
+		database.delete(TABLE_CORTESIAS, null, null);
+	}
+	
 	//Returna un Cursor que contiene todos los items
 	public Cursor fetchAllEvento() {
 		return database.query(TABLE_EVENTO, new String[] { colIdEvento,
@@ -295,7 +305,7 @@ public class DBAdapter {
 	public Cursor fetchAllProductos(){
 		return database.query(TABLE_PRODCUT, new String[]{
 				colIdProduct, colNombreP,colTipoP, colFoto, colCantidad, colCantidadTotal, colTalla,colPrecio, colEventoFK, colArtistaFK
-		}, null, null, null, null, null);
+		}, null, null, null, null, colArtistaFK+" DESC");
 	}
 
 	public Cursor fetchAllAdicional(){
@@ -309,6 +319,11 @@ public class DBAdapter {
 		}, null, null, null,
 		null, null);
 	}
+	
+	public Cursor fetchStandCierre(){
+		return database.query(TABLE_STAND, new String[] { colIdStand,colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,
+				colCantidadSantander,colCantidadAmex,colCantidadOtro}, null, null, null,null, null);
+	}
 
 	public Cursor fetchAllCortesias(){
 		return database.query(TABLE_CORTESIAS, new String[] { colIdCortesias,colTipoCortesias,
@@ -316,10 +331,15 @@ public class DBAdapter {
 				null, null, null,null, null);
 	}	
 
+	public Cursor fetchProductosArtista(int idArtista){
+		return database.query(TABLE_PRODCUT, new String[]{
+				colIdProduct, colNombreP,colTipoP, colFoto, colCantidad, colCantidadTotal, colTalla,colPrecio, colEventoFK, colArtistaFK
+		}, colArtistaFK+" = "+idArtista, null, null, null, null);
+	}
+	
 	public Cursor fetchStand(int rowId){
 		return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand
-		}, colIdStand + "=" +rowId, null, null,
-		null, null);
+		}, colIdStand + "=" +rowId, null, null,null, null);
 	}
 
 	public Cursor fetchCortesias(long rowId){
@@ -396,7 +416,14 @@ public class DBAdapter {
 
 	public Cursor fetchStandProduct(long rowId) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId,null, null, null, null, null);
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId,
+				null, null, null, null, null);
+		return mCursor;
+	}
+	
+	public Cursor fetchStandProductDetail(long rowId) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId,colStandIdSP}, colProductoIdSP + "=" + rowId,null, null, null, null, null);
 		return mCursor;
 	}
 
@@ -434,6 +461,12 @@ public class DBAdapter {
 	public Cursor fetchVentas(long rowId) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,
 				colCantidadVP}, colStandFK+" = "+rowId,null, null, null, null, null);
+		return mCursor;
+	}
+	
+	public Cursor fetchVentasProd(long rowId) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,
+				colCantidadVP}, colStandProdFK+" = "+rowId,null, null, null, null, null);
 		return mCursor;
 	}
 
@@ -563,11 +596,15 @@ public class DBAdapter {
 	}
 
 
-	private ContentValues createContentValuesUpdateStandCierre(double efectivo,double tarjeta,double voucher){
+	private ContentValues createContentValuesUpdateStandCierre(double efectivo,double banamex,double banorte,double santander,
+			double amex,double otro){
 		ContentValues values = new ContentValues();
 		values.put(colCantidadEfectivo, efectivo);
-		values.put(colCantidadTarjeta, tarjeta);
-		values.put(colCantidadVoucher, voucher);
+		values.put(colCantidadBanamex, banamex);
+		values.put(colCantidadBanorte, banorte);
+		values.put(colCantidadSantander, santander);
+		values.put(colCantidadAmex, amex);
+		values.put(colCantidadOtro, otro);
 		return values;
 	}
 

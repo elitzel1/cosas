@@ -110,13 +110,15 @@
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
     
     <!-- Cierre Stand -->
-    <string name="efectivo">Efectivo: </string>
-    <string name="tarjeta">Tarjeta: </string>
-    <string name="voucher">Vouchers: </string>
+    <string name="efectivo">Efectivo:</string>
+    <string name="banamex">TC Banamex:</string>
+    <string name="banorte">TC Banorte:</string>
+    <string name="santander">TC Santander:</string>
+    <string name="amex">TC AmEx:</string>
+    <string name="pago_otro">Otros:</string>
     <string name="prod_no">Productos no vendidos</string>
     <string name="cortesias">Cortesias</string>
     <string name="lbl_total">Total</string>
-    <string name="lbl_faltan">Faltan</string>
     <string name="lbl_comision">Comision</string>
     <string name="alert_cierre">Are you sure?</string>
     
@@ -138,6 +140,12 @@
     <string name="interno">Interno</string>
     <string name="venue">Venue</string>
     <string name="enviar_mail">Send Mail</string>
+    
+    <string name="alert_no_dates">There are no more dates for this event.</string>
+    <string name="alert_next_date">Go to next date?</string>
+    <string name="add_date">Add New Date</string>
+    <string name="close_event">Close event</string>
+    
     <string-array name="gastos">
         <item>LONAS	</item>
 		<item>GASOLINA PARA CARRETERA</item>
@@ -161,6 +169,7 @@
 		<item>OTROS</item>
     </string-array>
     <string-array name="sueldos">
+        <item>VENDEDORES</item>
         <item>BONO GERENCIAL</item>
 		<item>SUELDO CHOFER</item>
 		<item>MONTAJE/DESMONTAJE</item>

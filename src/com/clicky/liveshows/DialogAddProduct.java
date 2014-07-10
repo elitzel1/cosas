@@ -41,7 +41,7 @@ public class DialogAddProduct extends DialogFragment {
 	private String[]tallas ={"SIN TALLA","UNITALLA","2-4","6-8","10-12",   
 			"14-16","18-20","XS","S","M","L","XL","XXL",   
 			"XXXL","XS JR","S JR","M JR","L JR","XL JR"};
-	private String[]comison = {"Elija comision","artista","puesto","lugar","otro"};
+	private String[]comison = {"Elija comision","AGENCY","VENUE","OTHER"};
 	private EditText editNombre;
 	private EditText editCantidad;
 	private EditText editPrecio;

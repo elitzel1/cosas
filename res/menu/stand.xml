@@ -16,6 +16,6 @@
         android:id="@+id/action_print"
         android:showAsAction="always"
         android:title="@string/action_print"
-        android:icon="@drawable/icono_impresora"/>
+        android:icon="@drawable/imprimi"/>
 
 </menu>

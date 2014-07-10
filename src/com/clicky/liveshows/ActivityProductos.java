@@ -66,7 +66,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	AdapterProduct adapter;
 	String nameEvento = null;
 	ArrayList<TipoProduct> tipos;
-	int idEvento;
+	int idEvento,idFecha;
 	HashMap<Integer, String> artistas;
 	DialogAddProduct dialog;
 	protected static final int CAMERA_ACTIVITY = 100;
@@ -146,9 +146,10 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		c.close();
 		Cursor cursor1 = dbHelper.fetchAllFechas();
 		List<Date> dates = new ArrayList<Date>();
+		HashMap<Date, Integer> hashDate = new HashMap<Date, Integer>();
 		if(cursor1.moveToFirst()){
-
 			do{
+				hashDate.put(toDateDate(cursor1.getString(1)), cursor1.getInt(0));
 				dates.add(toDateDate(cursor1.getString(1)));
 				Log.i("BD",""+cursor1.getString(1));
 			}while(cursor1.moveToNext());
@@ -260,8 +261,10 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		txtEvento.setText(nameEvento);
 		TextView txtFecha = (TextView)findViewById(R.id.txtFechaP);
 		
+		idFecha = hashDate.get(dates.get(0));
 		DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
 		txtFecha.setText(df.format(dates.get(0)));
+		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String div = prefs.getString("moneda", "");
 		float divisa = Float.parseFloat(prefs.getString("divisa", "0"));
@@ -650,6 +653,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	public void toStand(View v){
 		Intent i = new Intent(this,StandActivity.class);
 		i.putExtra("evento", nameEvento);
+		i.putExtra("fecha", idFecha);
 		startActivity(i);
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}

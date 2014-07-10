@@ -14,6 +14,7 @@ import jxl.format.BorderLineStyle;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
+import jxl.write.NumberFormats;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableImage;
@@ -96,7 +97,7 @@ public class Excel {
 	  	WritableSheet sheet) throws RowsExceededException, WriteException{
 	    //create a new cell with contents at position
 		CellValue newCell;
-		if(headerCell != 5)
+		if(headerCell != 5 && headerCell != 9)
 			newCell = new Label(columnPosition,rowPosition,contents);
 		else
 			newCell = new Number(columnPosition, rowPosition, Double.parseDouble(contents));
@@ -183,7 +184,26 @@ public class Excel {
 		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		    	headerFormat.setAlignment(Alignment.CENTRE);
 		        newCell.setCellFormat(headerFormat);
-		        break;  
+		        break;
+	        case 9:
+		    	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
+		    	headerFormat = new WritableCellFormat(NumberFormats.PERCENT_FLOAT);
+		    	//center align the cells' contents
+		    	headerFormat.setFont(headerFont);
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+		    	headerFormat.setAlignment(Alignment.RIGHT);
+		        newCell.setCellFormat(headerFormat);
+		        break;
+	        case 10:
+		    	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD);
+		    	headerFormat = new WritableCellFormat(headerFont);
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
+		        newCell.setCellFormat(headerFormat);
+		        break;
 		        
 	    }
 	 

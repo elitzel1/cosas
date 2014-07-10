@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class StandActivity extends Activity implements OnStandNuevo,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
@@ -29,6 +28,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	private DBAdapter dbHelper;
 	Product product;
 	Stand stand;
+	int idFecha;
 	protected final int CIERRE = 0;
 	
 	@Override
@@ -38,6 +38,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		// Show the Up button in the action bar.
 		dbHelper = new DBAdapter(this);
 		setupActionBar(getIntent().getStringExtra("evento"));
+		idFecha = getIntent().getIntExtra("fecha",-1);
 		frag= (FragmentStands)getFragmentManager().findFragmentById(R.id.headlines_fragment);
 		
 	}
@@ -121,7 +122,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 
 		if(hayDetalle) {
 			((FragmentStandProd)getFragmentManager().
-				findFragmentById(R.id.article_fragment)).setStand(s);
+				findFragmentById(R.id.article_fragment)).setStand(s,idFecha);
 		}
 		
 	}

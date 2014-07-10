@@ -45,6 +45,7 @@ public class FragmentStandProd extends Fragment {
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
 
+	int idFecha;
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
 	protected static final int CONTEXTMENU_CHANGECOMISION = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
@@ -138,6 +139,7 @@ public class FragmentStandProd extends Fragment {
 				Intent i = new Intent(getActivity(),ActivityCierreStand.class);
 				Bundle b = new Bundle();
 				b.putInt("id_stand",(int)s.getId());
+				b.putInt("fecha", idFecha);
 				i.putExtra("extra", b);
 				startActivity(i);
 				getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
@@ -150,12 +152,13 @@ public class FragmentStandProd extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == PRODUCTOS) {
 	        if (resultCode == Activity.RESULT_OK) {
-	        	setStand(s);
+	        	setStand(s,idFecha);
 	        }
 	    }
 	}
 	
-	public void setStand(Stand s){
+	public void setStand(Stand s,int idFecha){
+		this.idFecha = idFecha;
 		this.s=s;
 		empty.setVisibility(View.GONE);
 		Comisiones com = s.getComision();
@@ -223,6 +226,7 @@ public class FragmentStandProd extends Fragment {
 			Bundle b = new Bundle();
 			b.putString("nombre", s.getName());
 			b.putInt("id",(int)s.getId());
+			b.putInt("fecha", idFecha);
 			i.putExtra("stand",b);
 			startActivityForResult(i, PRODUCTOS);
 			getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
