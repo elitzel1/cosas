@@ -55,7 +55,7 @@
     <string name="total">Total</string>
     <string name="t_adicionales">No se pueden agregar más adicionales</string>
     <string name="error">error</string>
-    <string name="stand">Stand</string>
+    <string name="stand">Stands</string>
     <string name="cantidad_disponible">Amount Available</string>
     <string name="textdivisa">Aún no ingresa tipo de cambio</string>
     <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
@@ -108,6 +108,8 @@
     <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
     <string name="title_activity_activity_cierre_stand">Cierre Stand</string>
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
+    <string name="no_stand">Please select a stand</string>
+    <string name="no_products">This stand has no products</string>
     
     <!-- Cierre Stand -->
     <string name="efectivo">Efectivo:</string>

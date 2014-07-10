@@ -3,6 +3,7 @@ package com.clicky.liveshows.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import jxl.Cell;
 import jxl.CellView;
@@ -233,12 +234,20 @@ public class Excel {
 	    sheet.addCell(newCell);
 	}
 	
-	public void addImage(WritableSheet sheet,int imageResource){
-		Bitmap bmp= BitmapFactory.decodeResource(context.getResources(),imageResource);
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-		byte[] byteArray = stream.toByteArray();
-		sheet.addImage(new WritableImage(0, 0, 280, 116, byteArray));
+	public void addImage(double x, double y,WritableSheet sheet){
+		try {
+            // get input stream
+           InputStream ims = context.getAssets().open("live_shows_logo.png");
+           Bitmap bmp = BitmapFactory.decodeStream(ims);
+           ByteArrayOutputStream stream = new ByteArrayOutputStream();
+           bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+           WritableImage image = new WritableImage(x,y,((bmp.getWidth()/64)/2),((bmp.getHeight()/17)/2),stream.toByteArray());
+           sheet.addImage(image);
+        }
+   catch(IOException ex)
+        {
+            return;
+        }
 	}
 	
 	public void sheetAutoFitColumns(WritableSheet sheet) {

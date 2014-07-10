@@ -369,7 +369,7 @@ public class DBAdapter {
 	public Cursor fetchArtista(long rowId) throws SQLException {
 		Cursor mCursor = database.query(true, TABLE_ARTISTA, new String[] {
 				colId, colNombre, colEvento },
-				colEvento + "=" + rowId, null, null, null, null, null);
+				colId + "=" + rowId, null, null, null, null, null);
 		if (mCursor != null) {
 			mCursor.moveToFirst();
 		}

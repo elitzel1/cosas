@@ -900,7 +900,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			
 			hoja1.mergeCells(1, 3, 22, 3);
 			//Formato del Reporte
-			//excel.addImage(hoja1, R.drawable.ic_launcher);
+			excel.addImage(0.0,0.0,hoja1);
 			excel.writeCell(1, 3, "SALES REPORT(IN "+prefs.getString("moneda", "")+")", 10, hoja1);
 			excel.writeCell(1, 5, "DATE", 1, hoja1);
 			excel.writeCell(2, 5, fecha, 0, hoja1);

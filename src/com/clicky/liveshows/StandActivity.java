@@ -1,5 +1,8 @@
 package com.clicky.liveshows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogStand.OnStandNuevo;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
@@ -9,8 +12,10 @@ import com.clicky.liveshows.FragmentStands.onStandSelected;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Cortesias;
+import com.clicky.liveshows.utils.PDF;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
+import com.itextpdf.text.Document;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -21,6 +26,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class StandActivity extends Activity implements OnStandNuevo,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
@@ -62,23 +68,26 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
-			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
-			return true;
-		case R.id.action_new:
-			newProduct();
-			return true;
-		case R.id.action_settings:
-			openSettings();
-			return true;
+			case android.R.id.home:
+				// This ID represents the Home or Up button. In the case of this
+				// activity, the Up button is shown. Use NavUtils to allow users
+				// to navigate up one level in the application structure. For
+				// more details, see the Navigation pattern on Android Design:
+				//
+				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+				//
+				NavUtils.navigateUpFromSameTask(this);
+				overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+				return true;
+			case R.id.action_new:
+				newProduct();
+				return true;
+			case R.id.action_settings:
+				openSettings();
+				return true;
+			case R.id.action_print:
+				printProducts();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -93,7 +102,60 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		DialogStand dialog = new DialogStand();
 		dialog.show(getFragmentManager(), "stands");
 	}
-
+	private void printProducts(){
+		if(stand != null){
+			dbHelper.open();
+			Cursor c  = dbHelper.fetchStandProduct(stand.getId());
+			if(c.moveToFirst()){
+				PDF pdf = new PDF(this);
+				Document docPdf = pdf.createPDF("stand.pdf");
+				List<Product> prodList = new ArrayList<Product>(); 
+				do{
+					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
+					int cantidad = c.getInt(1);
+					int idProd = c.getInt(3);
+					p.setCantidadStand(cantidad);
+					p.setId(idProd);
+					Cursor cursor = dbHelper.fetchProducto(idProd);
+					if(cursor.moveToFirst()){
+						do{
+							//int id = cursor.getInt(0);
+							String nombre = cursor.getString(1);
+							String tipo = cursor.getString(2);
+							int idArtista = cursor.getInt(9);
+							String talla = cursor.getString(6);
+							String precio = cursor.getString(7);
+							int cantidadTotal = cursor.getInt(4);
+							Cursor cArtista = dbHelper.fetchArtista(idArtista);
+							if(cArtista.moveToFirst()){
+								p.setArtista(cArtista.getString(1));
+							}
+							p.setNombre(nombre);
+							p.setTipo(tipo);
+							p.setTalla(talla);
+							p.setPrecio(precio);
+							p.setCantidad(cantidadTotal);
+						}while(cursor.moveToNext());
+					}
+					prodList.add(p);
+				}while(c.moveToNext());
+				pdf.addImage(25,700,docPdf);
+				pdf.createHeadings(400, 600, 24, "Stand: "+stand.getName());
+				pdf.tableProducts(docPdf, prodList, 550);
+				pdf.addLine(50, 120);
+				pdf.createHeadings(80, 100, 14, "Gerente");
+				pdf.addLine(320, 120);
+				pdf.createHeadings(350, 100, 14, stand.getEncargado());
+				docPdf.close();
+			}else{
+				Toast.makeText(this, R.string.no_products, Toast.LENGTH_SHORT).show();
+			}
+			c.close();
+			dbHelper.close();
+		}else{
+			Toast.makeText(this, R.string.no_stand, Toast.LENGTH_SHORT).show();
+		}
+	}
 	@Override
 	public void setStand(String nombre, String encargado, Comisiones com) {
 		dbHelper.open();
@@ -116,7 +178,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	@Override
 	public void onStandSeleccionado(Stand s) {
 		// TODO Auto-generated method stub
-		
+		this.stand = s;
 		boolean hayDetalle = 
 				(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
 
