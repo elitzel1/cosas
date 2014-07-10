@@ -13,8 +13,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/azul"
+            android:background="@drawable/fondo_botonbar_a"
             android:text="@string/btn_aceptar"
+            style="?android:attr/buttonBarStyle"
             android:textColor="@color/blanco" />
 
         <Button
@@ -22,8 +23,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/azul_textos"
+            android:background="@drawable/fondo_botonbar_b"
             android:text="@string/btn_cancelar"
+            style="?android:attr/buttonBarStyle"
             android:textColor="@color/blanco" />
     </LinearLayout>
     
@@ -52,13 +54,17 @@
                     android:contentDescription="@string/cnt"
                     android:src="@drawable/teeshirt" />
 
-                <Button
+                <ImageView
                     android:id="@+id/btnCamera"
-                    style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/im_por"
+                    android:layout_gravity="bottom|right"
                     android:onClick="takePicture"
+                    android:padding="3dp"
+                    android:src="@drawable/mas"
                     android:text="@string/mas" />
+
             </FrameLayout>
 
             <LinearLayout

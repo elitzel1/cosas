@@ -53,9 +53,9 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 	private LinearLayout mLinear;
 	private LinearLayout mLinearDate;
 
-	private String[] moneda = {"Elija el tipo de moneda","MEXICAN PESO","QUETZAL","DOLLAR","LEMPIRA","CORDOBAS","COLONES",
-			"DOMINICAN PESO", "COLOMBIAN PESO","BOLIVIAN PESO","BOLIVAR","REAL","SOL","CHILEAN PESO","URUGUAYAN PESO",
-			"GUARANI","ARGENTINE PESO"};
+	private String[] moneda = {"Elija el tipo de moneda","MEXICAN PESOS","QUETZALES","DOLLARS","LEMPIRAS","CORDOBAS","COLONES",
+			"DOMINICAN PESOS", "COLOMBIAN PESOS","BOLIVIAN PESOS","BOLIVARS","REALES","SOLES","CHILEAN PESOS","URUGUAYAN PESOS",
+			"GUARANIES","ARGENTINE PESOS"};
 	private String[] divisa = {"","12.96","7.766","1","20.99","26.015","543.8","43.6","1844","6.91","6.91","2.21","2.79",
 			"548.89","22.98","4326.18","8.14"};
 	private DBAdapter dbHelper;

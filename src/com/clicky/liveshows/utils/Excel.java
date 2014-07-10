@@ -11,6 +11,7 @@ import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
+import jxl.format.Colour;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -97,7 +98,7 @@ public class Excel {
 	  	WritableSheet sheet) throws RowsExceededException, WriteException{
 	    //create a new cell with contents at position
 		CellValue newCell;
-		if(headerCell != 5 && headerCell != 9)
+		if(headerCell != 5 && headerCell != 9 && headerCell != 11)
 			newCell = new Label(columnPosition,rowPosition,contents);
 		else
 			newCell = new Number(columnPosition, rowPosition, Double.parseDouble(contents));
@@ -201,6 +202,28 @@ public class Excel {
 		    	headerFont = new WritableFont(WritableFont.ARIAL, 14, WritableFont.BOLD);
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	headerFormat.setWrap(true);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
+		        newCell.setCellFormat(headerFormat);
+		        break;
+	        case 11:
+		    	//give header cells size 10 Arial bolded 	
+	        	NumberFormat currencyFormatYellow = new NumberFormat(NumberFormat.CURRENCY_DOLLAR + " ###,###.00", NumberFormat.COMPLEX_FORMAT);
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
+		    	headerFormat = new WritableCellFormat(currencyFormatYellow);
+		    	//center align the cells' contents
+		    	headerFormat.setFont(headerFont);
+		    	headerFormat.setBackground(Colour.YELLOW);
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+		    	headerFormat.setAlignment(Alignment.RIGHT);
+		        newCell.setCellFormat(headerFormat);
+		        break;
+	        case 12:
+	        	//give header cells size 10 Arial bolded 	
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
+		    	headerFormat = new WritableCellFormat(headerFont);
+		    	headerFormat.setWrap(true);
+		    	headerFormat.setBackground(Colour.YELLOW);
 		    	headerFormat.setAlignment(Alignment.CENTRE);
 		        newCell.setCellFormat(headerFormat);
 		        break;

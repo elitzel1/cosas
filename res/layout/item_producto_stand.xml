@@ -4,56 +4,55 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" >
     
-        <ImageView
-        android:id="@+id/imgFoto"
-        android:layout_width="0dp"
-        android:layout_height="75dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:contentDescription="@string/cnt" />
+   <ImageView
+	    android:id="@+id/imgFoto"
+	    android:layout_width="0dp"
+	    android:layout_height="75dp"
+	    android:layout_gravity="center"
+	    android:layout_weight="1"
+	    android:contentDescription="@string/cnt" />
 
         <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/txtTallaS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/azul"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/txtNombreS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/azul"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout_weight="1"
+	        android:orientation="vertical" >
+	
+	        <TextView
+	            android:id="@+id/txtTallaS"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textColor="@color/azul"
+	            android:visibility="gone" />
+	
+	        <TextView
+	            android:id="@+id/txtNombreS"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textColor="@color/azul"
+	            android:textStyle="bold"
+	            android:textAppearance="?android:attr/textAppearanceMedium" />
+	    </LinearLayout>
         
          <TextView
-        android:id="@+id/txtPrecioS"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
+	        android:id="@+id/txtPrecioS"
+	        android:layout_width="0dp"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:layout_weight="1"
             android:textColor="@color/azul_fuerte"
             android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+      		android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/txtCantidadS"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
+    	<TextView
+        	android:id="@+id/txtCantidadS"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+        	android:layout_gravity="center"
+        	android:layout_weight="1"
             android:textColor="@color/azul_fuerte"
             android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-        
+        	android:textAppearance="?android:attr/textAppearanceMedium" />
         
 </LinearLayout>

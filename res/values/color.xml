@@ -8,4 +8,6 @@
     <color name="azul_live">#216bd6</color>
     <color name="transparent">#00000000</color>
     <color name="azul_textos">#0a3866</color>
+    <color name="azul_selected">#4e91eb</color>
+    <color name="azul_textos_selected">#2b587b</color>
 </resources>

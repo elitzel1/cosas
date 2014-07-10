@@ -245,9 +245,9 @@ public class DBAdapter {
 
 	public boolean deleteProductStand(long rowId,long rowIdP, int cantidad){
 		updateProducto(rowIdP, cantidad);
-		String []args = {colStandIdSP + "= "+rowId,
-				colProductoIdSP+" = "+rowIdP};
-		int band = database.delete(TABLE_STAND_PROD, null, args);
+		String args = colStandIdSP + "= "+rowId+" AND "+
+				colProductoIdSP+" = "+rowIdP;
+		int band = database.delete(TABLE_STAND_PROD, args, null);
 		return band>0;
 
 	}

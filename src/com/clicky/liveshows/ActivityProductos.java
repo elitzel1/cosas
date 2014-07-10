@@ -576,6 +576,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				Log.i("ADICIONALES", nombre+" "+adicional+" "+p.getId()+" "+p.getArtista()+" "+p.getNombre());
 			}
 			dbHelper.close();
+			adapter.notifyDataSetChanged();
 
 		}else
 		{

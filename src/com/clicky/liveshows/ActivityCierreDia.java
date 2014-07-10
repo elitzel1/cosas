@@ -35,7 +35,6 @@ import com.clicky.liveshows.utils.Taxes;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -382,12 +381,14 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		contacto.setTextColor(getResources().getColor(R.color.azul));
 		contacto.setLayoutParams(params2);
 		contacto.setHint(R.string.hint_contacto);
+		contacto.setSingleLine();
 		linear.addView(contacto);
 		
 		final EditText mail = new EditText(this);
 		mail.setTextColor(getResources().getColor(R.color.azul));
 		mail.setLayoutParams(params2);
 		mail.setHint(R.string.hint_mail);
+		mail.setSingleLine();
 		linear.addView(mail);
 		
 		Button btnMail = new Button(this);
@@ -897,10 +898,10 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		WritableSheet hoja1 = excel.createSheet(wb, "Venue", 0);
 		try {
 			
-			hoja1.mergeCells(3, 1, 3, 22);
+			hoja1.mergeCells(1, 3, 22, 3);
 			//Formato del Reporte
 			//excel.addImage(hoja1, R.drawable.ic_launcher);
-			excel.writeCell(3, 1, "SALES REPORT(IN "+prefs.getString("moneda", "")+")", 10, hoja1);
+			excel.writeCell(1, 3, "SALES REPORT(IN "+prefs.getString("moneda", "")+")", 10, hoja1);
 			excel.writeCell(1, 5, "DATE", 1, hoja1);
 			excel.writeCell(2, 5, fecha, 0, hoja1);
 			excel.writeCell(1, 7, "EVENT", 1, hoja1);
@@ -913,7 +914,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(1, 13, "CONTACT", 1, hoja1);
 				excel.writeCell(2, 13, contact, 1, hoja1);
 			}
-			excel.writeCell(0, 15, "PRICE SALES IN US", 2, hoja1);
+			excel.writeCell(0, 15, "PRICE SALES IN US", 12, hoja1);
 			excel.writeCell(1, 15, "#", 2, hoja1);
 			excel.writeCell(2, 15, "ITEM", 2, hoja1);
 			excel.writeCell(3, 15, "STYLE", 2, hoja1);
@@ -936,14 +937,19 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(19, 15, "SALES PIECES", 2, hoja1);
 			excel.writeCell(20, 15, "GROSS TOTAL", 2, hoja1);
 			excel.writeCell(21, 15, "% SALES", 2, hoja1);
-			excel.writeCell(22, 15, "GROSS TOTAL\nUS$DLLS", 2, hoja1);
+			excel.writeCell(22, 15, "GROSS TOTAL\nUS$DLLS", 12, hoja1);
 			
 			Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
 			double tax = 0, gross = 0, venueFee = 0, royaltyFee = 0;
+			
+			excel.writeCell(18, 13, "RATE EXCHANGE US$1 =", 12, hoja1);
+			excel.writeCell(19, 13, ""+priceUs, 11, hoja1);
+			excel.writeCell(20, 13, prefs.getString("moneda", ""), 12, hoja1);
+			
 			for(int i = 0; i < products.size(); i++){
 				Product prod = products.get(i);
 				
-				excel.writeCell(0, (16+i), ""+(Float.parseFloat((prod.getPrecio()))/priceUs), 5, hoja1);
+				excel.writeCell(0, (16+i), ""+(Float.parseFloat((prod.getPrecio()))/priceUs), 11, hoja1);
 				excel.writeCell(1, (16+i), ""+(i+1), 4, hoja1);
 				excel.writeCell(2, (16+i), prod.getTipo(), 3, hoja1);
 				excel.writeCell(3, (16+i), prod.getNombre(), 3, hoja1);
@@ -997,7 +1003,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(18, (16+i), ""+finalInventory, 4, hoja1);
 				excel.writeCell(19, (16+i), ""+prod.getProdNo(), 4, hoja1);
 				excel.writeCell(20, (16+i), ""+total, 5, hoja1);
-				excel.writeCell(22, (16+i), ""+(total/priceUs), 5, hoja1);
+				excel.writeCell(22, (16+i), ""+(total/priceUs), 11, hoja1);
 				
 				for(Taxes tx : prod.getTaxes()){
 					tax += total * (tx.getAmount()* 0.01);
@@ -1034,18 +1040,27 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(19, 19+products.size(), ""+tax, 5, hoja1);
 			excel.writeCell(19, 20+products.size(), ""+(gross-tax), 5, hoja1);
 			
+			excel.writeCell(22, 18+products.size(), ""+(gross/priceUs), 11, hoja1);
+			excel.writeCell(22, 19+products.size(), ""+(tax/priceUs), 11, hoja1);
+			excel.writeCell(22, 20+products.size(), ""+((gross-tax)/priceUs), 11, hoja1);
+			
 			if(tipo == 1){
 				excel.writeCell(18, 22+products.size(), "VENUE FEE", 6, hoja1);
 				excel.writeCell(19, 22+products.size(), ""+venueFee, 5, hoja1);
+				excel.writeCell(22, 22+products.size(), ""+(venueFee/priceUs), 11, hoja1);
 			}else if(tipo == 2){
 				excel.writeCell(18, 22+products.size(), "ROYALTY FEE", 6, hoja1);
 				excel.writeCell(19, 22+products.size(), ""+royaltyFee, 5, hoja1);
+				excel.writeCell(22, 22+products.size(), ""+(royaltyFee/priceUs), 11, hoja1);
 			}else if(tipo == 0){
 				excel.writeCell(18, 22+products.size(), "ROYALTY FEE", 6, hoja1);
 				excel.writeCell(18, 23+products.size(), "VENUE FEE", 6, hoja1);
 				
 				excel.writeCell(19, 22+products.size(), ""+royaltyFee, 5, hoja1);
 				excel.writeCell(19, 23+products.size(), ""+venueFee, 5, hoja1);
+				
+				excel.writeCell(22, 22+products.size(), ""+(royaltyFee/priceUs), 11, hoja1);
+				excel.writeCell(22, 23+products.size(), ""+(venueFee/priceUs), 11, hoja1);
 				
 				excel.writeCell(18, 25+products.size(), "GASTOS OPERATIVOS", 7, hoja1);
 				excel.writeCell(20, 25+products.size(), "FACTURA", 7, hoja1);
@@ -1113,17 +1128,13 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(18, 47+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 0, hoja1);
 				excel.writeCell(20, 47+products.size()+gastos.size()+sueldos.size(), ""+(depositado-depositar), 5, hoja1);
 				
-				excel.writeCell(5, 15, "ATTENDANCE", 6, hoja1);
-				excel.writeCell(7, 15, "PERCAP", 6, hoja1);
-				excel.writeCell(9, 15, "GROSS TOTAL", 6, hoja1);
+				excel.writeCell(15, 5, "ATTENDANCE", 6, hoja1);
+				excel.writeCell(15, 7, "PERCAP", 6, hoja1);
+				excel.writeCell(15, 9, "GROSS TOTAL", 6, hoja1);
 				
-				excel.writeCell(5, 15, "ATTENDANCE", 6, hoja1);
-				excel.writeCell(7, 15, "PERCAP", 6, hoja1);
-				excel.writeCell(9, 15, "GROSS TOTAL", 6, hoja1);
-				
-				excel.writeCell(5, 16, ""+capacidad, 4, hoja1);
-				excel.writeCell(7, 16, ""+(gross/capacidad), 5, hoja1);
-				excel.writeCell(9, 16, ""+gross, 5, hoja1);
+				excel.writeCell(16, 5, ""+capacidad, 4, hoja1);
+				excel.writeCell(16, 7, ""+(gross/capacidad), 5, hoja1);
+				excel.writeCell(16, 9, ""+gross, 5, hoja1);
 			}
 			
 			excel.sheetAutoFitColumns(hoja1);

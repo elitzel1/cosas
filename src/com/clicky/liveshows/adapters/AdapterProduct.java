@@ -21,13 +21,14 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 	int resource;
 	List<Product> items;
 	SDImageLoader sdim;
+	
 	public AdapterProduct(Context context, int resource, List<Product> items) {
 		super(context, resource, items);
 
 		this.context=context;
 		this.resource=resource;
 		this.items = items;
-		 sdim =new SDImageLoader();
+		sdim =new SDImageLoader();
 	}
 	
 	public View getView(int position,View convertView,ViewGroup parent ){
@@ -94,9 +95,5 @@ public class AdapterProduct extends ArrayAdapter<Product> {
 		ImageView imgTipo;
 		TextView txtTotal;
 	}
-	
-	
-	
-	 
 
 }

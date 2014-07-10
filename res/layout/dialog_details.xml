@@ -8,7 +8,7 @@
         android:id="@+id/btnAceptar"
        	android:layout_width="match_parent"
        	android:layout_height="wrap_content"
-       	android:background="@color/azul"
+       	android:background="@drawable/fondo_botonbar_a"
        	android:text="@string/btn_aceptar"
        	android:textColor="@color/blanco" />
         

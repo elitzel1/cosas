@@ -1,8 +1,15 @@
 package com.clicky.liveshows;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import com.clicky.liveshows.ActivityProductos.TipoProduct;
 import com.clicky.liveshows.adapters.AdapterStandProduct;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
@@ -41,6 +48,7 @@ public class FragmentStandProd extends Fragment {
 	DBAdapter db;
 	Stand s;
 	List<Product> items;
+	ArrayList<TipoProduct> tipos;
 	AdapterStandProduct adapter;
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
@@ -74,6 +82,8 @@ public class FragmentStandProd extends Fragment {
 		super.onCreate(savedInstanceState);
 		db = new DBAdapter(getActivity());
 		items = new ArrayList<Product>(); 
+		tipos = new ArrayList<TipoProduct>();
+		setXML();
 		adapter = new AdapterStandProduct(getActivity(), R.layout.item_producto_stand, items);
 	}
 	@Override
@@ -189,16 +199,19 @@ public class FragmentStandProd extends Fragment {
 							//int id = cursor.getInt(0);
 							String nombre = cursor.getString(1);
 							String tipo = cursor.getString(2);
+							String foto = cursor.getString(3);
 							String talla = cursor.getString(6);
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
 							//db.createImpuestoProducto(id, idCom);
 							p.setNombre(nombre);
+							p.setPath_imagen(foto);
 							p.setTipo(tipo);
 							p.setTalla(talla);
 							p.setPrecio(precio);
 							p.setCantidad(cantidadTotal);
 							p.setComisiones(comisiones);
+							p = verifyImage(p);
 						}while(cursor.moveToNext());
 					}
 					items.add(p);
@@ -215,6 +228,18 @@ public class FragmentStandProd extends Fragment {
 		db.close();
 	}
 
+	private Product verifyImage(Product item){
+		if(item.getPath_imagen().contentEquals("")){
+			for(TipoProduct prod:tipos){
+				if(prod.getNombre().contentEquals(item.getTipo())){
+					item.setId_imagen(prod.getImage());
+				}
+			}
+		}else{
+			item.setId_imagen(0);
+		}
+		return item;
+	}
 	public void setNewCantidad(int cantidad, int position){
 		items.get(position).setCantidad(cantidad);
 	}
@@ -271,6 +296,87 @@ public class FragmentStandProd extends Fragment {
 		}
 
 		return false;
+	}
+	
+	private void setXML(){
+		XmlPullParserFactory pullParserFactory;
+		try {
+			pullParserFactory = XmlPullParserFactory.newInstance();
+			XmlPullParser parser = pullParserFactory.newPullParser();
+
+			InputStream in_s = getActivity().getApplicationContext().getAssets().open("productos.xml");
+			parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+			parser.setInput(in_s, null);
+
+			parseXML(parser);
+
+		} catch (XmlPullParserException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException
+	{
+		int eventType = parser.getEventType();
+		TipoProduct currentLocal = null;
+
+
+		while (eventType != XmlPullParser.END_DOCUMENT){
+			String name = null;
+			switch (eventType){
+			case XmlPullParser.START_DOCUMENT:
+				break;
+			case XmlPullParser.START_TAG:
+				name = parser.getName();
+				if (name.contentEquals("item")){
+					currentLocal = new TipoProduct();
+				} else if (currentLocal != null){
+					if (name.contentEquals("title")){
+						currentLocal.setNombre(parser.nextText());
+					} else if (name.contentEquals("image")){
+						int idr =getResources().getIdentifier(parser.nextText(), "drawable", getActivity().getPackageName());
+						if(idr==0){
+							currentLocal.setImage(R.drawable.werelupe);
+						}
+						else{
+							currentLocal.setImage(idr);
+						}
+					}  
+				}
+				break;
+			case XmlPullParser.END_TAG:
+				name = parser.getName();
+				if (name.equalsIgnoreCase("item") && currentLocal != null){
+					tipos.add(currentLocal);
+				} 
+			}
+			eventType = parser.next();
+		}
+	}
+
+
+	public class TipoProduct{
+		String name;
+		int image;
+		
+		public TipoProduct(){}
+		public TipoProduct(String name, int image){
+			this.name=name;
+			this.image=image;
+		}
+		public TipoProduct(String name){
+			this.name=name;
+		}
+		public void setNombre(String nombre){
+			this.name=nombre;
+		}
+		public void setImage(int imag){this.image=imag;}
+		public String getNombre(){ return name;}
+		public int getImage(){return image;}
 	}
 
 }

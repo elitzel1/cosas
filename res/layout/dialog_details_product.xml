@@ -17,7 +17,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/azul"
+                android:background="@drawable/fondo_botonbar_a"
                 android:text="@string/btn_aceptar"
                 android:textColor="@color/blanco" />
         </LinearLayout>

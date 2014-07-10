@@ -45,8 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_weight="1"
-            android:ems="10"
+            android:layout_weight="2"
+            android:ems="8"
             android:hint="@string/cantidad"
             android:inputType="number" />
 
@@ -62,9 +62,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/azul"
+            android:background="@drawable/fondo_botonbar_a"
             android:text="@string/btn_aceptar"
             android:textColor="@color/blanco"
+            style="?android:attr/buttonBarButtonStyle"
             android:textStyle="bold" />
 
         <Button
@@ -72,9 +73,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/azul_fuerte"
+            android:background="@drawable/fondo_botonbar_b"
             android:text="@string/btn_cancelar"
             android:textColor="@color/blanco"
+            style="?android:attr/buttonBarButtonStyle"
             android:textStyle="bold" />
     </LinearLayout>
 
