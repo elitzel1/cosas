@@ -107,7 +107,7 @@ public class DialogDetails extends DialogFragment {
 
 		if(product.getComisiones().size()>0){
 			for(Comisiones com:product.getComisiones()){
-				addView(com.getName(), ""+com.getCantidad(), listComisiones);
+				addView(com.getName(), ""+com.getCantidad(), com.getTipo(), com.getIva(), listComisiones);
 			}
 		}
 
@@ -147,6 +147,37 @@ public class DialogDetails extends DialogFragment {
 		txtA.setLayoutParams(params2);
 		linear.addView(txtA);
 
+		layout.addView(linear);
+		layout.invalidate();
+	}
+	
+
+	private void addView(String text, String amount, String tipo,String taxes, LinearLayout layout){
+		LinearLayout linear = new LinearLayout(getActivity());
+		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.25f);
+		linear.setOrientation(LinearLayout.HORIZONTAL);
+		TextView txt = new TextView(getActivity());
+		txt.setText(text);
+		txt.setTextColor(getResources().getColor(R.color.azul));
+		txt.setLayoutParams(params2);
+		linear.addView(txt);
+		TextView txtAmout = new TextView(getActivity());
+		txtAmout.setText(amount);
+		txtAmout.setTextColor(getResources().getColor(R.color.azul));
+		txtAmout.setLayoutParams(params2);
+		linear.addView(txtAmout);
+
+		TextView txtTaxes = new TextView(getActivity());
+		txtTaxes.setText(taxes);
+		txtTaxes.setTextColor(getResources().getColor(R.color.azul));
+		txtTaxes.setLayoutParams(params2);
+		linear.addView(txtTaxes);
+
+		TextView txtTipo = new TextView(getActivity());
+		txtTipo.setText(tipo);
+		txtTipo.setTextColor(getResources().getColor(R.color.azul));
+		txtTipo.setLayoutParams(params2);
+		linear.addView(txtTipo);
 		layout.addView(linear);
 		layout.invalidate();
 	}
