@@ -193,7 +193,21 @@ public class DBAdapter {
 			return database.update(DATABASE_TABLE, updateValues, KEY_ROWID + "="
 					+ rowId, null) > 0;
 		}*/
+	
+	public boolean updateProducto(long rowId,String nombre, String tipo, String foto, int cantidad,int cantidadTotal,String precio, int artista){
+		ContentValues updateValues = createContentValuesProducto(nombre, tipo, foto, cantidad, cantidadTotal, precio, artista);
+		return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
+	}
+	
+	public boolean updateComisiones(long rowId, String nombre, int porcentaje, String tipo){
+		ContentValues updateValues = createContentValuesImpuesto(nombre,porcentaje,tipo);
+		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;
+	}
 
+	public boolean updateComisiones(long rowId,String nombre, String tipo, int porcentaje,String iva, String tipoPeso){
+		ContentValues updateValues = createContentValuesImpuesto(nombre,porcentaje,tipo,iva, tipoPeso);
+		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;	
+	}
 
 	//Actualiza productos
 	public boolean updateProducto(long rowId, int cantidadTotal, int cantidad){
@@ -614,6 +628,18 @@ public class DBAdapter {
 		values.put(colCantidadCortesias, cantidad);
 		values.put(colProductoCortesia, id);
 		values.put(colStandCortesias, stand);
+		return values;
+	}
+	
+	private ContentValues createContentValuesProducto(String nombre, String tipo, String foto, int cantidad,int cantidadTotal, String precio, int artista){
+		ContentValues values = new ContentValues();
+		values.put(colNombreP, nombre);
+		values.put(colTipoP, tipo);
+		values.put(colFoto,foto);
+		values.put(colCantidad,cantidad);
+		values.put(colCantidadTotal, cantidadTotal);
+		values.put(colPrecio, precio);
+		values.put(colArtistaFK, artista);
 		return values;
 	}
 }

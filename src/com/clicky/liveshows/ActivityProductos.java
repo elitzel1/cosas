@@ -20,6 +20,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener;
 import com.clicky.liveshows.DialogAddProduct.OnDialogListener;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
+import com.clicky.liveshows.DialogUpdate.OnDialogUpdateListener;
 import com.clicky.liveshows.adapters.AdapterProduct;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Adicionales;
@@ -36,6 +37,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -56,7 +58,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener {
+public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener,OnDialogUpdateListener {
 
 	private DBAdapter dbHelper;
 	private Cursor cursor;
@@ -69,6 +71,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	int idEvento,idFecha;
 	HashMap<Integer, String> artistas;
 	DialogAddProduct dialog;
+	DialogUpdate dialog_update;
 	protected static final int CAMERA_ACTIVITY = 100;
 	ListView list;
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
@@ -218,6 +221,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 							//taxes
 							//comision
 							//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+							int idTaxes = cursorPI.getInt(0);
 							String nombreI = cursorPI.getString(1);
 							String porcentaje = cursorPI.getString(2);
 							String tipoImpuesto = cursorPI.getString(3);
@@ -225,9 +229,14 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 								String iva = cursorPI.getString(4);
 								String tipoPeso = cursorPI.getString(5);
 								list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+								Comisiones com = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+								com.setId(idTaxes);
+ 								list_com.add(com);
 							}else{
-
 								list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+								Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+								tax.setId(idTaxes);
+ 								list_tax.add(tax);
 							}
 						}while(cursorPI.moveToNext());	
 					}
@@ -351,24 +360,24 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	private String[] toArray(ArrayList<TipoProduct> aTipos){
 		String[] array = new String[aTipos.size()];
-		
+
 		for(int i = 0 ;i<aTipos.size();i++){
 			array[i] = aTipos.get(i).getNombre();
 		}
-		
+
 		return array;
 	}
-	
+
 	private int[] toArrayI(ArrayList<TipoProduct> aTipos){
 		int[] array = new int[aTipos.size()];
-		
+
 		for(int i = 0 ;i<aTipos.size();i++){
 			array[i] = aTipos.get(i).getImage();
 		}
-		
+
 		return array;
 	}
-	
+
 	@Override
 	public void articuloNuevo(Product p, int idImag){
 		int band = 0;
@@ -386,25 +395,25 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				long idRowT = dbHelper.createImpuesto(tax.getName(),"taxes",tax.getAmount());
 				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
-						
+
 					}else{
-						
+
 					}
 				}else{
-					
+
 				}
 			}
-			
+
 			for(Comisiones com : p.getComisiones()){
 				long idRowT = dbHelper.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
 				if(idRowT!=-1){
 					if(dbHelper.createImpuestoProducto((int)idRow, (int)idRowT)==-1){
-						
+
 					}else{
-						
+
 					}
 				}else{
-					
+
 				}
 			}
 			p.setId((int)idRow);
@@ -518,7 +527,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		}else{
 			item.setId_imagen(0);
 		}
-		
+
 		if(adicionales!=null){
 			item.setAdicional(adicionales);
 			Log.i("ADICIONALEs", ""+adicionales.size());
@@ -536,14 +545,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		if (resultCode == -1) {
 			switch (requestCode) {
 			case CAMERA_ACTIVITY:
-				//do your stuff here, i am just calling the path of stored image
-				//				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-				//				String imageFileName = JPEG_FILE_PREFIX + timeStamp +JPEG_FILE_SUFFIX; //Nombre de la imagen
-				//				//		Log.i("ALBUM", ""+getAlbumDir().getAbsolutePath());
-				//				Log.i("ALBUM", ""+imageFileName);
-				//				String filePath = Environment.getExternalStorageDirectory()+imageFileName;
-				//				Log.i("ALBUM", ""+filePath);
+				try{
 				dialog.setImage(mCurrentPhotoPath);
+				}catch (RuntimeException e) {
+					// TODO: handle exception
+					dialog_update.setImage(mCurrentPhotoPath);
+				}
 			}
 		}
 	}
@@ -573,6 +580,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			}else{
 				dbHelper.updateProducto(p.getId(), p.getTotalCantidad()+Integer.parseInt(adicional),  p.getCantidad()+Integer.parseInt(adicional));
 				p.setTotalCantidad(p.getTotalCantidad()+Integer.parseInt(adicional));
+				p.setCantidad(p.getCantidad()+Integer.parseInt(adicional));
 				Log.i("ADICIONALES", nombre+" "+adicional+" "+p.getId()+" "+p.getArtista()+" "+p.getNombre());
 			}
 			dbHelper.close();
@@ -614,7 +622,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_UPDATEITEM:
-			//	showDetails(menuInfo.position);
+			updateItem(menuInfo.position);
 			return true;
 
 		case CONTEXTMENU_DETALLEITEM:
@@ -635,9 +643,21 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		return false;
 	}
 
+	private void updateItem(int position){
+		Product p = products.get(position);
+		dialog_update = new DialogUpdate();
+		dialog_update.setProduct(p);
+		Bundle params = new Bundle();
+		params.putStringArray("artistas", artists);
+		params.putStringArray("tipos", toArray(tipos));
+		params.putIntArray("imagenes", toArrayI(tipos));
+		params.putInt("position", position);
+		dialog_update.setArguments(params);
+		dialog_update.show(getFragmentManager(), "Actualizar");
+	}
+	
 	private void showDetails(int position){
 		Product p = products.get(position);
-
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct(p);
 		dialog.show(getFragmentManager(), "Detalles");
@@ -650,7 +670,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	private void makeToast(int resource){
 		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	public void toStand(View v){
 		Intent i = new Intent(this,StandActivity.class);
 		i.putExtra("evento", nameEvento);
@@ -658,11 +678,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		startActivity(i);
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
-	
+
 	public void makeToastDialog(int msg){
 		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 	}
-	
+
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
@@ -749,7 +769,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	public class TipoProduct{
 		String name;
 		int image;
-		
+
 		public TipoProduct(){}
 		public TipoProduct(String name, int image){
 			this.name=name;
@@ -764,6 +784,49 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		public void setImage(int imag){this.image=imag;}
 		public String getNombre(){ return name;}
 		public int getImage(){return image;}
+	}
+
+
+	@Override
+	public void articuloActualizado(Product p, int position) {
+		// TODO Auto-generated method stub
+		dbHelper.open();
+		int band = 0;
+		for(int i = 0;i<artistas.size();i++){
+			if(p.getArtista().contentEquals(artists[i]))
+				band=i;
+		}
+		products.get(position).setArtista(p.getArtista());
+		products.get(position).setNombre(p.getNombre());
+		products.get(position).setPrecio(p.getPrecio());
+		products.get(position).setCantidad(p.getCantidad());
+		products.get(position).setTipo(p.getTipo());
+		if(!p.getPath_imagen().contentEquals(""))
+			products.get(position).setPath_imagen(p.getPath_imagen());
+		else
+			products.get(position).setId_imagen(p.getId_imagen());
+		
+		Log.i("UPDATE",""+p.getId()+" "+p.getTipo()+" "+p.getNombre()+" "+id_artists[band]);
+		
+		if(dbHelper.updateProducto((long)p.getId(), p.getNombre(), p.getTipo(), p.getPath_imagen(), p.getCantidad(),  p.getTotalCantidad(), p.getPrecio(), id_artists[band])){
+			for(Taxes t: p.getTaxes()){
+				if(dbHelper.updateComisiones((long)t.getId(), t.getName(), t.getAmount(), "taxes")){
+					Log.i("UPDATE", "Exitoso taxes");
+				}
+			}
+			for(Comisiones c:p.getComisiones()){
+				if(dbHelper.updateComisiones((long)c.getId(), c.getName(), "comision", c.getCantidad(), c.getIva(), c.getTipo())){
+					Log.i("UPDATE", "Exitoso comision");
+				}
+			}
+			makeToast(R.string.update_exitoso);
+		}else{
+			makeToast(R.string.update_noexitoso);
+		}
+
+		dbHelper.close();
+
+
 	}
 
 }

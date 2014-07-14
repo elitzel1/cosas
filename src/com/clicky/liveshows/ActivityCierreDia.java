@@ -40,7 +40,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -303,22 +305,22 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		if(v == (Button)findViewById(R.id.enviarInterno)){
 			mail = ((EditText)findViewById(R.id.mailInterno)).getText().toString();
 			acepta = validaCorreo(mail);
-			getReport(0, "","","");
 			if(acepta){
-					
+				getReport(0, "","","");
 			}
 		}else if(v == (Button)findViewById(R.id.enviarVenue)){
 			mail = ((EditText)findViewById(R.id.mailVenue)).getText().toString();
 			acepta = validaCorreo(mail);
-			getReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
 			if(acepta){
-					
+				getReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
 			}	
 		}
 		if(acepta){
+			String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
 			Intent email = new Intent(Intent.ACTION_SEND);
 			email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail});		  
 			email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
+			email.putExtra(Intent.EXTRA_STREAM, Uri.parse(reporte));
 			email.setType("message/rfc822");
 			startActivity(Intent.createChooser(email, "Choose an Email client :"));
 		}
@@ -416,9 +418,11 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			public void onClick(View v) {
 				getReport(2, agencias.get(spin.getSelectedItemPosition()).getNombre(), agencias.get(spin.getSelectedItemPosition()).getContacto(),artista);
 				if(validaCorreo(mail.getText().toString())){
+					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
 					Intent email = new Intent(Intent.ACTION_SEND);
 					email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail.getText().toString()});		  
 					email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
+					email.putExtra(Intent.EXTRA_STREAM, Uri.parse(reporte));
 					email.setType("message/rfc822");
 					startActivity(Intent.createChooser(email, "Choose an Email client :"));
 				}
@@ -894,7 +898,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		getProducts(artista);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		WritableWorkbook wb = excel.createWorkbook("venue.xls");
+		WritableWorkbook wb = excel.createWorkbook("sales_report.xls");
 		WritableSheet hoja1 = excel.createSheet(wb, "Venue", 0);
 		try {
 			

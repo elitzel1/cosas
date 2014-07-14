@@ -53,8 +53,13 @@ public class Excel {
 	    File sdCard = Environment.getExternalStorageDirectory();
 	    //add on the your app's path
 	    File dir = new File(sdCard.getAbsolutePath() + "/MerchSys");
+	    /*
+	    if(dir.exists()){
+	    	dir.delete();
+	    }
+	    */
 	    //make them in case they're not there
-	    dir.mkdirs();
+	    dir.mkdir();
 	    //create a standard java.io.File object for the Workbook to use
 	    File wbfile = new File(dir,fileName);
 	 
@@ -79,8 +84,7 @@ public class Excel {
 	 * @param sheetIndex - position in sheet tabs at bottom of workbook
 	 * @return - a new WritableSheet in given WritableWorkbook
 	 */
-	public WritableSheet createSheet(WritableWorkbook wb, 
-	    String sheetName, int sheetIndex){
+	public WritableSheet createSheet(WritableWorkbook wb, String sheetName, int sheetIndex){
 	    //create a new WritableSheet and return it
 	    return wb.createSheet(sheetName, sheetIndex);
 	}

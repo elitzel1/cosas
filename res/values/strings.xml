@@ -24,7 +24,7 @@
     <string name="hint_evento">Nombre del evento</string>
     <string name="evento_tipo_moneda">Tipo de moneda</string>
     <string name="hint_artista">Nombre del artista</string>
-    
+
     <!-- Imagenes -->
     <string name="cnt">Content</string>
 
@@ -110,7 +110,7 @@
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
     <string name="no_stand">Please select a stand</string>
     <string name="no_products">This stand has no products</string>
-    
+
     <!-- Cierre Stand -->
     <string name="efectivo">Efectivo:</string>
     <string name="banamex">TC Banamex:</string>
@@ -123,7 +123,7 @@
     <string name="lbl_total">Total</string>
     <string name="lbl_comision">Comision</string>
     <string name="alert_cierre">Are you sure?</string>
-    
+
     <!-- Cierre dia -->
     <string name="viaticos">Gastos Operativos</string>
     <string name="lbl_sueldos">Sueldos/Bonos/Comisiones</string>
@@ -184,10 +184,12 @@
     <string name="d_tipo">TIPO: </string>
     <string name="d_talla">TALLA: </string>
     <string name="d_precio">PRECIO: </string>
-    <string name="d_cantidad">CANTIDAD: </string>
+    <string name="d_cantidad">CANIDAD: </string>
     <string name="d_artista">ARTISTA: </string>
-    <string name="d_cortesias">CORTESIAS: </string>
+    <string name="d_cortesias">CORTESIAS </string>
+    <string name="d_no_cor">No hay cortesias</string>
     <string name="d_adicionales">ADICIONALES </string>
+    <string name="d_no_adi">No hay adicionales</string>
     <string name="title_activity_preferencias">Preferencias</string>
     
     <!-- Preferencias -->
@@ -202,5 +204,6 @@
 	<string name="p_opc_dos">Opción dos</string>
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
-	
+	<string name="update_exitoso">Actualización Exitosa</string>
+	<string name="update_noexitoso">Actualización No Exitosa</string>
 </resources>
