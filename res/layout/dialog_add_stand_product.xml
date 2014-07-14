@@ -13,7 +13,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/azul"
+            android:background="@drawable/fondo_botonbar_a"
             android:textColor="@color/blanco"
             android:text="@string/btn_aceptar" />
 
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/blanco"
-            android:background="@color/azul_fuerte"
+            android:background="@drawable/fondo_botonbar_b"
             android:text="@string/btn_cancelar" />
     </LinearLayout>
 

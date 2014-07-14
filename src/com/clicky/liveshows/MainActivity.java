@@ -17,8 +17,8 @@ import com.clicky.liveshows.utils.Evento;
 import com.clicky.liveshows.utils.Local;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -53,7 +53,11 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 	private LinearLayout mLinear;
 	private LinearLayout mLinearDate;
 
-	private String[] moneda = {"Peso","Dolar","Euro"};
+	private String[] moneda = {"Elija el tipo de moneda","MEXICAN PESOS","QUETZALES","DOLLARS","LEMPIRAS","CORDOBAS","COLONES",
+			"DOMINICAN PESOS", "COLOMBIAN PESOS","BOLIVIAN PESOS","BOLIVARS","REALES","SOLES","CHILEAN PESOS","URUGUAYAN PESOS",
+			"GUARANIES","ARGENTINE PESOS"};
+	private String[] divisa = {"","12.96","7.766","1","20.99","26.015","543.8","43.6","1844","6.91","6.91","2.21","2.79",
+			"548.89","22.98","4326.18","8.14"};
 	private DBAdapter dbHelper;
 	private Spinner spinnerTipoMoneda;
 	@Override
@@ -61,7 +65,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		int bandEvento = prefs.getInt("evento", 0);
 		if(bandEvento==1){
 			toActivityProducto();
@@ -149,10 +153,12 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		linear.setId(count);
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		linear.setOrientation(LinearLayout.HORIZONTAL);
+		
 		TextView txt = new TextView(this);
 		txt.setText(text);
 		txt.setTextColor(getResources().getColor(R.color.azul));
 		txt.setLayoutParams(params2);
+		
 		linear.addView(txt);
 		layout.addView(linear);
 		layout.invalidate();
@@ -369,9 +375,10 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		
 		String moneda = (String)spinnerTipoMoneda.getSelectedItem();
 		if(!moneda.contentEquals("Elija el tipo de moneda")){
-			SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putString("moneda", moneda);
+			editor.putString("divisa", divisa[spinnerTipoMoneda.getSelectedItemPosition()]);
 			editor.commit();
 		}
 
@@ -390,7 +397,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		}
 		dbHelper.close();
 		
-		SharedPreferences prefs = getSharedPreferences("Preferencias",Context.MODE_PRIVATE);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt("evento", 1);
 		editor.commit();

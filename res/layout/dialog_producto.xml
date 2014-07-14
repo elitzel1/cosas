@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnAceptar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/fondo_botonbar_a"
+            android:text="@string/btn_aceptar"
+            style="?android:attr/buttonBarStyle"
+            android:textColor="@color/blanco" />
+
+        <Button
+            android:id="@+id/btnCancelar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/fondo_botonbar_b"
+            android:text="@string/btn_cancelar"
+            style="?android:attr/buttonBarStyle"
+            android:textColor="@color/blanco" />
+    </LinearLayout>
+    
+    <ScrollView 
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content" >
+        
+        <LinearLayout 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/btnAceptar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/azul"
-                android:text="@string/btn_aceptar"
-                android:textColor="@color/blanco" />
-
-            <Button
-                android:id="@+id/btnCancelar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/azul_textos"
-                android:text="@string/btn_cancelar"
-                android:textColor="@color/blanco" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,13 +54,17 @@
                     android:contentDescription="@string/cnt"
                     android:src="@drawable/teeshirt" />
 
-                <Button
+                <ImageView
                     android:id="@+id/btnCamera"
-                    style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/im_por"
+                    android:layout_gravity="bottom|right"
                     android:onClick="takePicture"
+                    android:padding="3dp"
+                    android:src="@drawable/mas"
                     android:text="@string/mas" />
+
             </FrameLayout>
 
             <LinearLayout
@@ -307,18 +318,18 @@
                 android:orientation="horizontal" >
 
                 <RadioButton
-                    android:id="@+id/radioBT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/r_bruto"
-                    android:textColor="@color/azul_textos" />
-
-                <RadioButton
                     android:id="@+id/radioAT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="@string/r_neto"
+                    android:textColor="@color/azul_textos" />
+                
+                <RadioButton
+                    android:id="@+id/radioBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/r_bruto"
                     android:textColor="@color/azul_textos" />
             </RadioGroup>
         </LinearLayout>
@@ -393,3 +404,4 @@
     </LinearLayout>
 
 </ScrollView>
+</LinearLayout>

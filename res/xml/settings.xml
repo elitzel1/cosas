@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory
+        android:title="@string/p_divisas">
+        
+        <EditTextPreference
+            
+            android:key="divisa"
+            android:title="Valor Dólar"
+            android:summary="Valor del dólar para la moneda seleccionada"
+            android:defaultValue="0"
+            android:numeric="decimal"
+            android:inputType="numberDecimal" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/p_comisiones">
+        
+        <EditTextPreference
+            android:key="comision_tarjeta"
+            android:title="@string/p_tarjeta"
+            android:summary="Comisión para las tarjetas de crédito"
+            android:defaultValue="0"
+            android:numeric="integer"
+            android:inputType="number" />
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/d_cortesias">
+        
+        <EditTextPreference
+            android:key="op1"
+            android:title="@string/p_opc_uno"
+            android:summary="Nombre para tipo de cortesia extra"
+            android:defaultValue="OTHER"/>
+        
+        <EditTextPreference
+            android:key="op2"
+            android:title="@string/p_opc_dos"
+            android:summary="Nombre para tipo de cortesia extra"
+            android:defaultValue="OTHER"/>
+        
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>

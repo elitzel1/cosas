@@ -21,7 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class ActivityAgregarProductos extends Activity {
-	int id;
+	int id,idFecha;
 	Comisiones comision;
 	private DBAdapter dbHelper;
 	List<Product> products;
@@ -38,11 +38,13 @@ public class ActivityAgregarProductos extends Activity {
 		TextView txt=(TextView)findViewById(R.id.txtStandD);
 		txt.setText(b.getString("nombre"));
 		id=b.getInt("id");
+		idFecha = b.getInt("fecha");
 		products = new ArrayList<Product>();
 		ListView list = (ListView)findViewById(R.id.listAgregaP);
 		adapter = new AdapterListaAgregaProductos(this, R.layout.item_agrega_prod_stand, products);
 		list.setAdapter(adapter);
 
+		ArrayList<Integer> idProductos = b.getIntegerArrayList("idsProductos");
 		dbHelper = new DBAdapter(this);
 		dbHelper.open();
 
@@ -79,8 +81,14 @@ public class ActivityAgregarProductos extends Activity {
 				String talla = cursorProd.getString(6);
 				int idArtista = cursorProd.getInt(9);
 
-
-				addProduct(nombre, tipo, foto, cantidad, cantidadTotal, talla, artistas.get(idArtista),id);
+				boolean band = false;
+				for(int i = 0; i<idProductos.size();i++){
+					if(id==idProductos.get(i)){
+						band=true;
+					}
+				}
+				if(band==false)
+					addProduct(nombre, tipo, foto, cantidad, cantidadTotal, talla, artistas.get(idArtista),id);
 				Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+idArtista);
 			}while(cursorProd.moveToNext());
 			cursorProd.close();
@@ -120,15 +128,15 @@ public class ActivityAgregarProductos extends Activity {
 			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		case R.id.action_accept:
-		
+
 			dbHelper.open();
 			for(int i = 0;i<adapter.getCount();i++){
 				int c = adapter.getItem(i).getCantidad()-adapter.getItem(i).getCantidadStand();
 				if(0<=c && adapter.getItem(i).getCantidadStand() > 0){
 					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
-							long comId = dbHelper.createImpuesto(comision.getName(), "comision_stand", comision.getCantidad(), comision.getIva(), comision.getTipo());
-							if(comId != -1)
-								dbHelper.createStandProducto(id, adapter.getItem(i).getId(), 0, adapter.getItem(i).getCantidadStand(),(int)comId);	
+						long comId = dbHelper.createImpuesto(comision.getName(), "comision_stand", comision.getCantidad(), comision.getIva(), comision.getTipo());
+						if(comId != -1)
+							dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);	
 						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
 					}else{
 					}
@@ -181,30 +189,5 @@ public class ActivityAgregarProductos extends Activity {
 		adapter.notifyDataSetChanged();
 	}
 
-//	public void onAceptar(View v){
-//		switch(v.getId()){
-//		case R.id.btnCancelarDA:
-//			finish();
-//			break;
-//		case R.id.btnAceptarDA:
-//			dbHelper.open();
-//			for(int i = 0;i<adapter.getCount();i++){
-//				int c = adapter.getItem(i).getCantidad()-adapter.getItem(i).getCantidadStand();
-//				if(0<=c){
-//					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
-//						dbHelper.createStandProducto(id, adapter.getItem(i).getId(), 0, adapter.getItem(i).getCantidadStand());	
-//						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
-//					}else{
-//					}
-//				}
-//			}
-//			dbHelper.close();
-//			finish();
-//			break;
-//		default:
-//			break;
-//
-//		}
-//	}
 
 }

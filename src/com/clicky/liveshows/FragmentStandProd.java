@@ -42,6 +42,7 @@ public class FragmentStandProd extends Fragment {
 	DBAdapter db;
 	Stand s;
 	List<Product> items;
+	ArrayList<Integer> idProducts;
 	AdapterStandProduct adapter;
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
@@ -73,6 +74,7 @@ public class FragmentStandProd extends Fragment {
 		super.onCreate(savedInstanceState);
 		db = new DBAdapter(getActivity());
 		items = new ArrayList<Product>(); 
+		idProducts = new ArrayList<Integer>();
 		adapter = new AdapterStandProduct(getActivity(), R.layout.item_producto_stand, items);
 	}
 	@Override
@@ -190,9 +192,8 @@ public class FragmentStandProd extends Fragment {
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
 							//db.createImpuestoProducto(id, idCom);
-							List<Comisiones> list_com=null;
+							
 							List<Taxes> list_tax=null;
-							list_com = new ArrayList<Comisiones>();
 							list_tax = new ArrayList<Taxes>();
 							List<Integer> id_impuestos = new ArrayList<Integer>();
 							Cursor cursorI=db.fetchProductImpuestoProd(idProd);
@@ -220,7 +221,7 @@ public class FragmentStandProd extends Fragment {
 											String tipoPeso = cursorPI.getString(5);
 											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
 											comi.setId(idTaxes);
-											list_com.add(comi);
+											comisiones.add(comi);
 										}else{
 											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
 											tax.setId(idTaxes);
@@ -235,6 +236,7 @@ public class FragmentStandProd extends Fragment {
 							p.setPrecio(precio);
 							p.setCantidad(cantidadTotal);
 							p.setComisiones(comisiones);
+							idProducts.add(idProd);
 						}while(cursor.moveToNext());
 					}
 					items.add(p);
@@ -262,6 +264,7 @@ public class FragmentStandProd extends Fragment {
 			Bundle b = new Bundle();
 			b.putString("nombre", s.getName());
 			b.putInt("id",(int)s.getId());
+			b.putIntegerArrayList("idsProductos", idProducts);
 			i.putExtra("stand",b);
 			startActivityForResult(i, PRODUCTOS);
 			getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);

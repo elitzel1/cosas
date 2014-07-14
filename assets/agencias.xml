@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<agencias>
+	<item>
+		<agency>ADVENTURES IN WONDERLAND</agency>
+		<contact>EMILY NEWMAN</contact>
+		<mail>emily@adventuresinwonderland.com</mail>
+	</item>
+	<item>
+		<agency>ADVENTURES IN WONDERLAND</agency>
+		<contact>MOLLY TORRES</contact>
+		<mail>molly@adventuresinwonderland.com</mail>
+	</item>
+	<item>
+		<agency>ADVENTURES IN WONDERLAND</agency>
+		<contact>KARIN CAMPBELL</contact>
+		<mail>karin@adventuresinwonderland.com</mail>
+	</item>
+	<item>
+		<agency>ARACA</agency>
+		<contact>ELIN EGGERTSDOTTIR</contact>
+		<mail>eeggertsdottir@araca.com</mail>
+	</item>
+	<item>
+		<agency>BAND MERCH</agency>
+		<contact>CHRIS HALL</contact>
+		<mail>chall@bandmerch.com</mail>
+	</item>
+	<item>
+		<agency>BAND MERCH</agency>
+		<contact>SARA SHERMAN</contact>
+		<mail>ssherman@bandmerch.com</mail>
+	</item>
+	<item>
+		<agency>BAND MERCH</agency>
+		<contact>DOUG CAUGHEY</contact>
+		<mail>dcaughey@bandmerch.com</mail>
+	</item>
+	<item>
+		<agency>CINDERBLOCK</agency>
+		<contact>ALAN SITCHON</contact>
+		<mail>asitchon@cinderblock.com</mail>
+	</item>
+	<item>
+		<agency>DISNEY</agency>
+		<contact>STEVEN DOWNING</contact>
+		<mail>steven.downing@disney.com</mail>
+	</item>
+	<item>
+		<agency>DISNEY</agency>
+		<contact>MICHAEL DEICAS</contact>
+		<mail>michael.J.Dei.Cas@disney.com</mail>
+	</item>
+	<item>
+		<agency>FEA MERCHANDISE</agency>
+		<contact>KELLY MCDONALD</contact>
+		<mail>feakelly@gmail.com</mail>
+	</item>
+	<item>
+		<agency>FIREBRAND LIVE</agency>
+		<contact>PAUL VARELLA</contact>
+		<mail>paulv@firebrandlive.com</mail>
+	</item>
+	<item>
+		<agency>FIREBRAND LIVE</agency>
+		<contact>LAUREN WHITE</contact>
+		<mail>lauren@firebrandlive.com</mail>
+	</item>
+	<item>
+		<agency>GLOBAL MERCHANDISE UK</agency>
+		<contact>BARRY DRINKWATER</contact>
+		<mail>barry@globalmerchservices.com</mail>
+	</item>
+	<item>
+		<agency>GLOBAL MERCHANDISE UK</agency>
+		<contact>JEREMY HEWITT</contact>
+		<mail>jeremy@globalmerchservices.com</mail>
+	</item>
+	<item>
+		<agency>GLOBAL MERCHANDISE UK</agency>
+		<contact>TEDD MATTES</contact>
+		<mail>ted@globalmerchservices.com</mail>
+	</item>
+	<item>
+		<agency>GLOBAL MERCHANDISE USA</agency>
+		<contact>Brad Andersen </contact>
+		<mail>Brad@globalmerchservices.com</mail>
+	</item>
+	<item>
+		<agency>HIFIDELITY MERCH</agency>
+		<contact>DAWN DEBISSCHOP</contact>
+		<mail>dawn@hifientertainment.com</mail>
+	</item>
+	<item>
+		<agency>INSOMNIAC</agency>
+		<contact>CHADD FERRIS</contact>
+		<mail>chad@insomniac.com</mail>
+	</item>
+	<item>
+		<agency>JMP PRESENTS</agency>
+		<contact>JACOB BATTERSBY</contact>
+		<mail>jacob@jmppresents.com</mail>
+	</item>
+	<item>
+		<agency>KONTRABAND MERCH</agency>
+		<contact>JUSTIN SMITH</contact>
+		<mail>justin@kontrabandmerch.com</mail>
+	</item>
+	<item>
+		<agency>LIVE NATION MERCHANDISE</agency>
+		<contact>PETE WEBER</contact>
+		<mail>PeteWeber@LiveNation.com</mail>
+	</item>
+	<item>
+		<agency>LIVE NATION MERCHANDISE</agency>
+		<contact>RYAN SMULL</contact>
+		<mail>RyanSmull@LiveNation.com</mail>
+	</item>
+	<item>
+		<agency>MANHEAD</agency>
+		<contact>ANDREW POLNER</contact>
+		<mail>andrew@manheadmerch.com</mail>
+	</item>
+	<item>
+		<agency>MANHEAD</agency>
+		<contact>ANDY STENSRUD</contact>
+		<mail>apstensrud@gmail.com</mail>
+	</item>
+	<item>
+		<agency>MERCH BROS</agency>
+		<contact>TIM SAVOLAINENE</contact>
+		<mail>tim@merchbros.com</mail>
+	</item>
+	<item>
+		<agency>REDSTAR MERCH</agency>
+		<contact>MATHEW BOWER</contact>
+		<mail>mathew@resdstarmerch.com</mail>
+	</item>
+	<item>
+		<agency>REVOLVER MERCHANDISE</agency>
+		<contact>JAMIE BETWEE</contact>
+		<mail>jamie@revolvermerchandise.com</mail>
+	</item>
+	<item>
+		<agency>SANDBAG</agency>
+		<contact>TIFFANY CUMMINS</contact>
+		<mail>tiffany.cummins@sandbagusa.com</mail>
+	</item>
+	<item>
+		<agency>SANDBAG</agency>
+		<contact>ERIC DOYLE</contact>
+		<mail>eric.doyle@sandbagusa.com</mail>
+	</item>
+	<item>
+		<agency>WMG MERCH USA</agency>
+		<contact>ANDREW PETERSON</contact>
+		<mail>Andrew.Peterson@wmg.com</mail>
+	</item>
+	<item>
+		<agency>WMG MERCH USA</agency>
+		<contact>AMY ZAGLAUER</contact>
+		<mail>Amy.Zaglauer@wmg.com</mail>
+	</item>
+	<item>
+		<agency>WMG MERCH USA</agency>
+		<contact>MATHEW PILEGGI</contact>
+		<mail>Mat.Pileggi@wmg.com</mail>
+	</item>
+	<item>
+		<agency>WMG MERCH USA</agency>
+		<contact>ROBERT SUCHAN</contact>
+		<mail>robert.suchan@wmg.com</mail>
+	</item>
+	<item>
+		<agency>WWE</agency>
+		<contact>JIM HARRISON</contact>
+		<mail>jimwharrison@charter.net</mail>
+	</item>
+</agencias>

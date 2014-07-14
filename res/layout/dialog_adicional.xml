@@ -54,7 +54,7 @@
             android:text="@string/btn_aceptar"
             android:textColor="@color/blanco"
             android:textStyle="bold"
-            android:background="@color/azul" />
+            android:background="@drawable/fondo_botonbar_a" />
 
         <Button
             android:id="@+id/btnCancelarA"
@@ -64,7 +64,7 @@
             android:textStyle="bold"
             android:text="@string/btn_cancelar"
             android:textColor="@color/blanco"
-            android:background="@color/azul_fuerte" />
+            android:background="@drawable/fondo_botonbar_b" />
     </LinearLayout>
 
 </LinearLayout>
