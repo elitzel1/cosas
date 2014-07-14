@@ -3,6 +3,7 @@ package com.clicky.liveshows;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -14,7 +15,9 @@ import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
+import com.clicky.liveshows.utils.Taxes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -37,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+@SuppressLint("UseSparseArrays")
 public class FragmentStandProd extends Fragment {
 
 	LinearLayout empty;
@@ -44,10 +48,12 @@ public class FragmentStandProd extends Fragment {
 	TextView txtEncargado;
 	TextView txtComision;
 	ListView list;
+	Button btnCierre;
 	DBAdapter db;
 	Stand s;
 	List<Product> items;
 	ArrayList<TipoProduct> tipos;
+	ArrayList<Integer> idProducts;
 	AdapterStandProduct adapter;
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
@@ -57,7 +63,6 @@ public class FragmentStandProd extends Fragment {
 	protected static final int CONTEXTMENU_CHANGECOMISION = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
-	
 	protected static final int PRODUCTOS = 0;
 
 	public interface OnNewAdicional{
@@ -81,6 +86,7 @@ public class FragmentStandProd extends Fragment {
 		super.onCreate(savedInstanceState);
 		db = new DBAdapter(getActivity());
 		items = new ArrayList<Product>(); 
+		idProducts = new ArrayList<Integer>();
 		tipos = new ArrayList<TipoProduct>();
 		setXML();
 		adapter = new AdapterStandProduct(getActivity(), R.layout.item_producto_stand, items);
@@ -93,6 +99,7 @@ public class FragmentStandProd extends Fragment {
 		txtEncargado = (TextView)v.findViewById(R.id.txtEncargado);
 		txtComision = (TextView)v.findViewById(R.id.txtComision);
 		list=(ListView)v.findViewById(R.id.listStandProd);
+		btnCierre = (Button)v.findViewById(R.id.btnCierreStand);
 		
 		return v;
 	}
@@ -121,7 +128,7 @@ public class FragmentStandProd extends Fragment {
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
-				menu.add(0, CONTEXTMENU_CHANGECOMISION,1,R.string.m_actualizar);
+				menu.add(0, CONTEXTMENU_CHANGECOMISION,1,R.string.long_change);
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
 				menu.add(0, CONTEXTMENU_ADDCORTESIA, 3, R.string.m_cortesia);
@@ -139,7 +146,7 @@ public class FragmentStandProd extends Fragment {
 			}
 		});
 
-		Button btnCierre = (Button)getView().findViewById(R.id.btnCierreStand);
+		btnCierre = (Button)getView().findViewById(R.id.btnCierreStand);
 		btnCierre.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -174,6 +181,7 @@ public class FragmentStandProd extends Fragment {
 		txtEncargado.setText(s.getEncargado());
 		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getIva());//CORREGIR AQUI
 		items.clear();
+		idProducts.clear();
 		adapter.notifyDataSetChanged();
 		db.open();
 		//int idCom = (int)db.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
@@ -183,8 +191,17 @@ public class FragmentStandProd extends Fragment {
 		//	com.setId(idCom);
 			List<Comisiones> comisiones = new ArrayList<Comisiones>();
 			comisiones.add(com);
-
-			Cursor c  = db.fetchStandProduct(s.getId());
+			HashMap<Integer, String> artistas  = new HashMap<Integer, String>();
+			Cursor cArtistas = db.fetchAllArtistas();
+			if(cArtistas.moveToFirst()){
+				do{
+					int id = cArtistas.getInt(0);
+					String name = cArtistas.getString(1);
+					artistas.put(id, name);
+				}while(cArtistas.moveToNext());
+			}
+			cArtistas.close();
+			Cursor c  = db.fetchStandProduct(s.getId(),idFecha);
 			if(c.moveToFirst()){
 				do{
 					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
@@ -197,20 +214,62 @@ public class FragmentStandProd extends Fragment {
 						do{
 							//int id = cursor.getInt(0);
 							String nombre = cursor.getString(1);
+							int idArtista = cursor.getInt(9);
+							String artista = artistas.get(idArtista);
 							String tipo = cursor.getString(2);
 							String foto = cursor.getString(3);
 							String talla = cursor.getString(6);
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
 							//db.createImpuestoProducto(id, idCom);
+							
+							List<Taxes> list_tax = new ArrayList<Taxes>();
+							List<Integer> id_impuestos = new ArrayList<Integer>();
+							Cursor cursorI=db.fetchProductImpuestoProd(idProd);
+							if(cursorI.moveToNext()){
+								do{
+									id_impuestos.add(cursorI.getInt(1));
+								}while(cursorI.moveToNext());
+							}
+							cursorI.close();
+
+							for(int j=0;j<id_impuestos.size();j++){
+								Cursor cursorPI = db.fetchImpuestos(id_impuestos.get(j));
+
+								if(cursorPI.moveToNext()){
+									do{
+										//taxes
+										//comision
+										//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+										int idTaxes = cursorPI.getInt(0);
+										String nombreI = cursorPI.getString(1);
+										String porcentaje = cursorPI.getString(2);
+										String tipoImpuesto = cursorPI.getString(3);
+										if(tipoImpuesto.contentEquals("comision")){
+											String iva = cursorPI.getString(4);
+											String tipoPeso = cursorPI.getString(5);
+											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+											comi.setId(idTaxes);
+											comisiones.add(comi);
+										}else{
+											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+											tax.setId(idTaxes);
+											list_tax.add(tax);
+										}
+									}while(cursorPI.moveToNext());	
+								}
+							}
 							p.setNombre(nombre);
+							p.setArtista(artista);
 							p.setPath_imagen(foto);
 							p.setTipo(tipo);
 							p.setTalla(talla);
 							p.setPrecio(precio);
 							p.setCantidad(cantidadTotal);
 							p.setComisiones(comisiones);
+							p.setTaxes(list_tax);
 							p = verifyImage(p);
+							idProducts.add(idProd);
 						}while(cursor.moveToNext());
 					}
 					items.add(p);
@@ -221,7 +280,11 @@ public class FragmentStandProd extends Fragment {
 				items.clear();
 				adapter.notifyDataSetChanged();
 			}
-
+			if(items.isEmpty()){
+				btnCierre.setVisibility(View.INVISIBLE);
+			}else{
+				btnCierre.setVisibility(View.VISIBLE);
+			}
 			c.close();
 		//}
 		db.close();
@@ -251,6 +314,7 @@ public class FragmentStandProd extends Fragment {
 			b.putString("nombre", s.getName());
 			b.putInt("id",(int)s.getId());
 			b.putInt("fecha", idFecha);
+			b.putIntegerArrayList("idsProductos", idProducts);
 			i.putExtra("stand",b);
 			startActivityForResult(i, PRODUCTOS);
 			getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
@@ -285,8 +349,8 @@ public class FragmentStandProd extends Fragment {
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_DETALLEITEM:
-
-			
+			showDetails(menuInfo.position);
+			return true;
 		case CONTEXTMENU_CHANGECOMISION:
 			return true;
 		case CONTEXTMENU_ADDCORTESIA:
@@ -378,4 +442,9 @@ public class FragmentStandProd extends Fragment {
 		public int getImage(){return image;}
 	}
 
+	private void showDetails(int position){
+		DialogDetails dialog = new DialogDetails();
+		dialog.setProduct((Product)list.getAdapter().getItem(position));
+		dialog.show(getFragmentManager(), "Detalles");
+	}
 }

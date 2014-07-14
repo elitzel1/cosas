@@ -105,7 +105,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	private void printProducts(){
 		if(stand != null){
 			dbHelper.open();
-			Cursor c  = dbHelper.fetchStandProduct(stand.getId());
+			Cursor c  = dbHelper.fetchStandProduct(stand.getId(),idFecha);
 			if(c.moveToFirst()){
 				PDF pdf = new PDF(this);
 				Document docPdf = pdf.createPDF("stand.pdf");
@@ -159,7 +159,7 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 	@Override
 	public void setStand(String nombre, String encargado, Comisiones com) {
 		dbHelper.open();
-		long id= dbHelper.createStand(nombre, com.getCantidad(), com.getIva(), com.getTipo(), encargado);
+		long id= dbHelper.createStand(nombre, com.getCantidad(), com.getTipo(), com.getIva(), encargado);
 		if(id==-1){
 			
 		}else{

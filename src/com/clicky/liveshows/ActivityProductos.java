@@ -98,7 +98,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		products = new ArrayList<Product>();
 		tipos = new ArrayList<TipoProduct>();
 		setXML();
-		
+
 		list = (ListView)findViewById(R.id.listArticulos);
 		adapter = new AdapterProduct(this, R.layout.item_lista_producto, products);
 		list.setAdapter(adapter);
@@ -120,7 +120,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		dbHelper = new DBAdapter(this);
 		dbHelper.open();
 		cursor = dbHelper.fetchAllEvento();
-		
+
 		if(cursor.moveToFirst()){
 			do{
 				idEvento = cursor.getInt(0);
@@ -228,12 +228,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 							if(tipoImpuesto.contentEquals("comision")){
 								String iva = cursorPI.getString(4);
 								String tipoPeso = cursorPI.getString(5);
-								list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
+								//list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
 								Comisiones com = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
 								com.setId(idTaxes);
  								list_com.add(com);
 							}else{
-								list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
+								//list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
 								Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
 								tax.setId(idTaxes);
  								list_tax.add(tax);
@@ -253,7 +253,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
 			}while(cursorProd.moveToNext());
 			cursorProd.close();
-			
+
 		}
 
 		dbHelper.close();
@@ -700,11 +700,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				adapter.notifyDataSetChanged();
 			}
 		}else{
-			
+
 		}
 		dbHelper.close();
 	}
-	
+
 	private void setXML(){
 		XmlPullParserFactory pullParserFactory;
 		try {
@@ -725,7 +725,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException
 	{
 		int eventType = parser.getEventType();

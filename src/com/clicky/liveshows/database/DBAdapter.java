@@ -292,7 +292,6 @@ public class DBAdapter {
 	}
 	
 	public void deleteDia(){
-		database.delete(TABLE_SALES_PRODUCT, null, null);
 		database.delete(TABLE_ADICIONAL, null, null);
 		database.delete(TABLE_CORTESIAS, null, null);
 	}
@@ -428,16 +427,18 @@ public class DBAdapter {
 		return mCursor;
 	}
 
-	public Cursor fetchStandProduct(long rowId) throws SQLException{
+	public Cursor fetchStandProduct(long rowId,long idFecha) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId+" AND "+colFechaIdSP+" = "+idFecha,
 				null, null, null, null, null);
 		return mCursor;
 	}
 	
-	public Cursor fetchStandProductDetail(long rowId) throws SQLException{
+	public Cursor fetchStandProductDetail(long rowId,long idFecha) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
-				colFechaIdSP, colProductoIdSP, colImpuestoProdId,colStandIdSP}, colProductoIdSP + "=" + rowId,null, null, null, null, null);
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId,colStandIdSP}, 
+				colProductoIdSP + "=" + rowId+" AND "+colFechaIdSP+" = "+idFecha
+				,null, null, null, null, null);
 		return mCursor;
 	}
 

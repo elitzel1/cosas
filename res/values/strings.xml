@@ -101,7 +101,7 @@
     <string name="s_cantidad">Cantidad</string>
     <string name="s_cantidad_stand">Cantidad Stand</string>
     <string name="s_comision">Comision</string>
-    <string name="nombre_emp">Nombre empleado</string>
+    <string name="nombre_emp">Encargado</string>
     <string name="r_neto">After taxes</string>
     <string name="r_bruto">Before taxes</string>
     <string name="a_prod">Agregar Producto</string>
@@ -184,7 +184,7 @@
     <string name="d_tipo">TIPO: </string>
     <string name="d_talla">TALLA: </string>
     <string name="d_precio">PRECIO: </string>
-    <string name="d_cantidad">CANIDAD: </string>
+    <string name="d_cantidad">CANTIDAD: </string>
     <string name="d_artista">ARTISTA: </string>
     <string name="d_cortesias">CORTESIAS </string>
     <string name="d_no_cor">No hay cortesias</string>
@@ -204,6 +204,8 @@
 	<string name="p_opc_dos">Opción dos</string>
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
+	
+	<string name="long_change">Cambiar comisión</string>
 	<string name="update_exitoso">Actualización Exitosa</string>
 	<string name="update_noexitoso">Actualización No Exitosa</string>
 </resources>

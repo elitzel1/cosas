@@ -24,11 +24,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.8" >
+        android:layout_weight="0.6" >
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:background="@color/azul_claro" />
 
         <ImageView

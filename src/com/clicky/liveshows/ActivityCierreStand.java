@@ -83,7 +83,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		}
 		cur.close();
 		
-		Cursor c  = dbHelper.fetchStandProduct(id);
+		Cursor c  = dbHelper.fetchStandProduct(id,idFecha);
 		if(c.moveToFirst()){
 			comisiones = new int[c.getCount()];
 			int numCom = 0;
@@ -308,10 +308,26 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 			}
 		}
-		dbHelper.updateStandCierre(id, Double.parseDouble(editEfectivo.getText().toString()), 
-				Double.parseDouble(editBanamex.getText().toString()), Double.parseDouble(editBanorte.getText().toString()), 
-				Double.parseDouble(editSantander.getText().toString()), Double.parseDouble(editAmex.getText().toString()), 
-				Double.parseDouble(editOtro.getText().toString()));
+		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other = 0.0;
+		if(!editEfectivo.getText().toString().equals("")){
+			efectivo = Double.parseDouble(editEfectivo.getText().toString());
+		}
+		if(!editBanamex.getText().toString().equals("")){
+			banamex = Double.parseDouble(editBanamex.getText().toString());
+		}
+		if(!editBanorte.getText().toString().equals("")){
+			banorte = Double.parseDouble(editBanorte.getText().toString());
+		}
+		if(!editSantander.getText().toString().equals("")){
+			santander = Double.parseDouble(editSantander.getText().toString());
+		}
+		if(!editAmex.getText().toString().equals("")){
+			amex = Double.parseDouble(editAmex.getText().toString());
+		}
+		if(!editOtro.getText().toString().equals("")){
+			other = Double.parseDouble(editOtro.getText().toString());
+		}
+		dbHelper.updateStandCierre(id, efectivo, banamex, banorte, santander, amex , other);
 		dbHelper.close();
 	}
 	private void validaCierre(){

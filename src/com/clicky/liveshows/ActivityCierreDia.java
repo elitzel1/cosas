@@ -71,7 +71,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	private ArrayList<Gastos> sueldos;
 	private ArrayList<Double> totales;
 	private HashMap<Integer, String> artistas;
-	private HashMap<Integer, Product> mapProd;
 	List<Product> products;
 	private int[]art;
 	
@@ -100,7 +99,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		
 		products = new ArrayList<Product>();
 		artistas  = new HashMap<Integer, String>();
-		mapProd  = new HashMap<Integer, Product>();
 		gastos = new ArrayList<Gastos>();
 		sueldos = new ArrayList<Gastos>();
 		totales = new ArrayList<Double>();
@@ -220,8 +218,8 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	public void onFinishDatePickerDialog(int year, int month, int day) {
 		dbHelper.open();
 		dbHelper.createFecha(""+day+"/"+month+"/"+year);
-		dbHelper.deleteFecha(idfecha);
 		dbHelper.close();
+		borraDia();
 		setResult(RESULT_OK);
 		finish();
 	}
@@ -486,6 +484,28 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		//TODO Teminar cierre mil 
 		dbHelper.open();
 		dbHelper.deleteFecha(idfecha);
+		
+		Cursor cursor1 = dbHelper.fetchAllFechas();
+		List<Date> dates = new ArrayList<Date>();
+		HashMap<Date, Integer> hashDate = new HashMap<Date, Integer>();
+		if(cursor1.moveToFirst()){
+			do{
+				hashDate.put(toDateDate(cursor1.getString(1)), cursor1.getInt(0));
+				dates.add(toDateDate(cursor1.getString(1)));
+				Log.i("BD",""+cursor1.getString(1));
+			}while(cursor1.moveToNext());
+		}
+		cursor1.close();
+		Collections.sort(dates, new Comparator<Date>() {
+
+			@Override
+			public int compare(Date lhs, Date rhs) {
+				return lhs.compareTo(rhs);
+			}
+		});
+		
+		int idNewFecha = hashDate.get(dates.get(0));
+		
 		Cursor cursorProd = dbHelper.fetchAllProductos();
 		if(cursorProd.moveToFirst()){
 			do{
@@ -493,22 +513,31 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				prod.setId(cursorProd.getInt(0));
 				
 				int cant = cursorProd.getInt(5);
-				Cursor cursorStandProd = dbHelper.fetchStandProductDetail(prod.getId());
+				int asignados = 0;
+				Cursor cursorStandProd = dbHelper.fetchStandProductDetail(prod.getId(),idfecha);
 				if(cursorStandProd.moveToFirst()){
 					do{
 						int standId = cursorStandProd.getInt(5);
 						int cantStand = cursorStandProd.getInt(1);
+						int idComision = cursorStandProd.getInt(4);
 						Cursor ventas = dbHelper.fetchVentasProd(cursorStandProd.getInt(0));
 						if(ventas.moveToFirst()){
 							do{
-								cant -= ventas.getInt(3);
+								cant -= cantStand;
 								cantStand -= ventas.getInt(3);
+								asignados += cantStand;
 							}while(ventas.moveToNext());
 						}
-						dbHelper.updateStandProducto(prod.getId(), standId, cantStand);
+						dbHelper.createStandProducto(standId, prod.getId(), idNewFecha, cantStand, idComision);
 					}while(cursorStandProd.moveToNext());
 				}
-				dbHelper.updateProducto(prod.getId(), cant, cant);
+				Cursor cursorAdicionales = dbHelper.fetchAdicional(prod.getId());
+				if(cursorAdicionales.moveToFirst()){
+					do{
+						cant += cursorAdicionales.getInt(1);
+					}while(cursorAdicionales.moveToNext());
+				}
+				dbHelper.updateProducto(prod.getId(), cant, (cant-asignados));
 			}while(cursorProd.moveToNext());
 		}
 		dbHelper.deleteDia();
@@ -642,7 +671,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	
 	private void getProducts(String artista){
 		products.clear();
-		mapProd.clear();
 		totales.clear();
 		dbHelper.open();
 		if(artista.equals("")){
@@ -728,11 +756,28 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					p.setId(id);
 					p.setComisiones(list_com);
 					p.setTaxes(list_tax);
+					int ventas = 0;
+					
+					Cursor cursorStand = dbHelper.fetchStandProductDetail(id, idfecha);
+					if(cursorStand.moveToFirst()){
+						do{
+							int standProdId = cursorStand.getInt(0);
+							Cursor cursorVentas = dbHelper.fetchVentasProd(standProdId);
+							if(cursorVentas.moveToFirst()){
+								do{
+									ventas += cursorVentas.getInt(3);
+								}while(cursorVentas.moveToNext());
+							}
+						}while(cursorStand.moveToNext());
+					}
+					
+					p.setProdNo(ventas);
 					addProduct(p, a);
 					
 					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
 				}while(cursorProd.moveToNext());
 				cursorProd.close();
+				
 				Cursor stands = dbHelper.fetchStandCierre();
 				if(stands.moveToFirst()){
 					do{
@@ -742,27 +787,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 						santander += stands.getDouble(4);
 						amex += stands.getDouble(5);
 						otros += stands.getDouble(6);
-						
-						Cursor ventas = dbHelper.fetchVentas(stands.getLong(0));
-						if(ventas.moveToFirst()){
-							do{
-								int vendidos = ventas.getInt(3);
-								Cursor ventaProd = dbHelper.fetchStandProductAll(ventas.getLong(0));
-								if(ventaProd.moveToFirst()){
-									Product prodAux;
-									int proId = ventaProd.getInt(3);
-									if(mapProd.get(proId) != null){
-										prodAux = mapProd.get(proId);
-										int suma = mapProd.get(proId).getProdNo() + vendidos;
-										prodAux.setProdNo(suma);
-									}else{
-										prodAux = new Product();
-										prodAux.setProdNo(vendidos);
-										mapProd.put(proId, prodAux);
-									}
-								}
-							}while(ventas.moveToNext());
-						}
+
 					}while(stands.moveToNext());
 				}
 			}
@@ -851,36 +876,26 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					p.setId(id);
 					p.setComisiones(list_com);
 					p.setTaxes(list_tax);
+					int ventas = 0;
+					
+					Cursor cursorStand = dbHelper.fetchStandProductDetail(id, idfecha);
+					if(cursorStand.moveToFirst()){
+						do{
+							int standProdId = cursorStand.getInt(0);
+							Cursor cursorVentas = dbHelper.fetchVentasProd(standProdId);
+							if(cursorVentas.moveToFirst()){
+								do{
+									ventas += cursorVentas.getInt(3);
+								}while(cursorVentas.moveToNext());
+							}
+						}while(cursorStand.moveToNext());
+					}
+					
+					p.setProdNo(ventas);
 					addProduct(p, a);
 					
 					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
 				}while(cursorProd.moveToNext());
-				cursorProd.close();
-				Cursor stands = dbHelper.fetchAllStand();
-				if(stands.moveToFirst()){
-					do{
-						Cursor ventas = dbHelper.fetchVentas(stands.getLong(0));
-						if(ventas.moveToFirst()){
-							do{
-								int vendidos = ventas.getInt(3);
-								Cursor ventaProd = dbHelper.fetchStandProductAll(ventas.getLong(0));
-								if(ventaProd.moveToFirst()){
-									Product prodAux;
-									int proId = ventaProd.getInt(3);
-									if(mapProd.get(proId) != null){
-										prodAux = mapProd.get(proId);
-										int suma = mapProd.get(proId).getProdNo() + vendidos;
-										prodAux.setProdNo(suma);
-									}else{
-										prodAux = new Product();
-										prodAux.setProdNo(vendidos);
-										mapProd.put(proId, prodAux);
-									}
-								}
-							}while(ventas.moveToNext());
-						}
-					}while(stands.moveToNext());
-				}
 			}
 		}
 		dbHelper.close();
@@ -992,12 +1007,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(15, (16+i), ""+cmo, 4, hoja1);
 				excel.writeCell(16, (16+i), ""+cmo1, 4, hoja1);
 				excel.writeCell(17, (16+i), ""+cmo2, 4, hoja1);
-				
-				if(mapProd.get(prod.getId()) != null){
-					prod.setProdNo(mapProd.get(prod.getId()).getProdNo());
-				}else{
-					prod.setProdNo(0);
-				}
 				
 				int finalInventory = prod.getTotalCantidad()-(prod.getProdNo()+cmd+cmv+cmo+cmo1+cmo2);
 				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();

@@ -85,7 +85,7 @@ public class DialogStand extends DialogFragment {
 				
 				int selectedP=radioPorcentaje.getCheckedRadioButtonId();
 				radioP=(RadioButton)view.findViewById(selectedP);
-				Comisiones com = new Comisiones("vendedor", Integer.parseInt(comision), radioTipo.getText().toString().toLowerCase(), radioP.getText().toString());
+				Comisiones com = new Comisiones("Vendedor", Integer.parseInt(comision), radioP.getText().toString(), radioTipo.getText().toString());
 			listener.setStand(nombre, encargado, com);
 			dismiss();	
 			}
