@@ -390,6 +390,7 @@ public final class R {
         public static final int lbl_comision=0x7f070061;
         public static final int lbl_faltan=0x7f070060;
         public static final int lbl_total=0x7f07005f;
+        public static final int long_change=0x7f07007c;
         public static final int m_actualizar=0x7f070045;
         public static final int m_comision=0x7f070049;
         public static final int m_cortesia=0x7f07004a;
@@ -456,8 +457,8 @@ public final class R {
         public static final int title_activity_stand=0x7f070047;
         public static final int title_menu=0x7f070048;
         public static final int total=0x7f070028;
-        public static final int update_exitoso=0x7f07007c;
-        public static final int update_noexitoso=0x7f07007d;
+        public static final int update_exitoso=0x7f07007d;
+        public static final int update_noexitoso=0x7f07007e;
         /**  Stands 
          */
         public static final int vacio=0x7f07004b;

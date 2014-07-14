@@ -8,6 +8,7 @@ import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
+import com.clicky.liveshows.utils.Taxes;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -49,7 +50,6 @@ public class FragmentStandProd extends Fragment {
 	protected static final int CONTEXTMENU_CHANGECOMISION = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
-	
 	protected static final int PRODUCTOS = 0;
 
 	public interface OnNewAdicional{
@@ -111,7 +111,7 @@ public class FragmentStandProd extends Fragment {
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
-				menu.add(0, CONTEXTMENU_CHANGECOMISION,1,R.string.m_actualizar);
+				menu.add(0, CONTEXTMENU_CHANGECOMISION,1,R.string.long_change);
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
 				menu.add(0, CONTEXTMENU_ADDCORTESIA, 3, R.string.m_cortesia);
@@ -190,6 +190,45 @@ public class FragmentStandProd extends Fragment {
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
 							//db.createImpuestoProducto(id, idCom);
+							List<Comisiones> list_com=null;
+							List<Taxes> list_tax=null;
+							list_com = new ArrayList<Comisiones>();
+							list_tax = new ArrayList<Taxes>();
+							List<Integer> id_impuestos = new ArrayList<Integer>();
+							Cursor cursorI=db.fetchProductImpuestoProd(idProd);
+							if(cursorI.moveToNext()){
+								do{
+									id_impuestos.add(cursorI.getInt(1));
+								}while(cursorI.moveToNext());
+							}
+							cursorI.close();
+
+							for(int j=0;j<id_impuestos.size();j++){
+								Cursor cursorPI = db.fetchImpuestos(id_impuestos.get(j));
+
+								if(cursorPI.moveToNext()){
+									do{
+										//taxes
+										//comision
+										//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+										int idTaxes = cursorPI.getInt(0);
+										String nombreI = cursorPI.getString(1);
+										String porcentaje = cursorPI.getString(2);
+										String tipoImpuesto = cursorPI.getString(3);
+										if(tipoImpuesto.contentEquals("comision")){
+											String iva = cursorPI.getString(4);
+											String tipoPeso = cursorPI.getString(5);
+											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+											comi.setId(idTaxes);
+											list_com.add(comi);
+										}else{
+											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+											tax.setId(idTaxes);
+											list_tax.add(tax);
+										}
+									}while(cursorPI.moveToNext());	
+								}
+							}
 							p.setNombre(nombre);
 							p.setTipo(tipo);
 							p.setTalla(talla);
@@ -257,8 +296,8 @@ public class FragmentStandProd extends Fragment {
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_DETALLEITEM:
-
-			
+					showDetails();
+			return true;
 		case CONTEXTMENU_CHANGECOMISION:
 			return true;
 		case CONTEXTMENU_ADDCORTESIA:
@@ -269,4 +308,7 @@ public class FragmentStandProd extends Fragment {
 		return false;
 	}
 
+	private void showDetails(){
+		
+	}
 }

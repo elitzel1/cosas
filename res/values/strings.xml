@@ -148,6 +148,8 @@
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	
+	<string name="long_change">Cambiar comisión</string>
+	
 	<string name="update_exitoso">Actualización Exitosa</string>
 	<string name="update_noexitoso">Actualización No Exitosa</string>
 </resources>
