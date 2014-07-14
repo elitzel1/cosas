@@ -299,7 +299,7 @@ public class FragmentStandProd extends Fragment {
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_DETALLEITEM:
-					showDetails();
+					showDetails(menuInfo.position);
 			return true;
 		case CONTEXTMENU_CHANGECOMISION:
 			return true;
@@ -311,7 +311,9 @@ public class FragmentStandProd extends Fragment {
 		return false;
 	}
 
-	private void showDetails(){
-		
+	private void showDetails(int position){
+		DialogDetails dialog = new DialogDetails();
+		dialog.setProduct((Product)list.getAdapter().getItem(position));
+		dialog.show(getFragmentManager(), "Detalles");
 	}
 }
