@@ -104,7 +104,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		totales = new ArrayList<Double>();
 		
 		layoutViaticos = (LinearLayout)findViewById(R.id.listGastos);
-		layoutSueldos = (LinearLayout)findViewById(R.id.listSueldos);
 		layoutReportes = (LinearLayout)findViewById(R.id.layoutReportes);
 		spinnerGasto = (Spinner)findViewById(R.id.spinnerGasto);
 		spinnerSueldos = (Spinner)findViewById(R.id.spinnerSueldo);
@@ -318,7 +317,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			Intent email = new Intent(Intent.ACTION_SEND);
 			email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail});		  
 			email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
-			email.putExtra(Intent.EXTRA_STREAM, Uri.parse(reporte));
+			email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+reporte));
 			email.setType("message/rfc822");
 			startActivity(Intent.createChooser(email, "Choose an Email client :"));
 		}
@@ -352,10 +351,10 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		linear.addView(txtB);
 
 		if(tipo == 0){
-			layoutViaticos.addView(linear);
+			layoutViaticos.addView(linear,0);
 			layoutViaticos.invalidate();
 		}else if(tipo == 1){
-			layoutSueldos.addView(linear);
+			layoutSueldos.addView(linear,0);
 			layoutSueldos.invalidate();
 		}
 	}
@@ -420,7 +419,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					Intent email = new Intent(Intent.ACTION_SEND);
 					email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail.getText().toString()});		  
 					email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
-					email.putExtra(Intent.EXTRA_STREAM, Uri.parse(reporte));
+					email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+reporte));
 					email.setType("message/rfc822");
 					startActivity(Intent.createChooser(email, "Choose an Email client :"));
 				}
@@ -914,7 +913,9 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		WritableWorkbook wb = excel.createWorkbook("sales_report.xls");
-		WritableSheet hoja1 = excel.createSheet(wb, "Venue", 0);
+		
+		WritableSheet hoja1 = excel.createSheet(wb, "Sales", 0);
+		
 		try {
 			
 			hoja1.mergeCells(1, 3, 22, 3);

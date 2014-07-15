@@ -37,8 +37,9 @@
     <string name="impuestos">TAXES</string>
     <string name="im_nombre">Name:</string>
     <string name="im_por">%</string>
+    <string name="artista_dialogo_prod">ARTIST</string>
     <string name="ck_talla">Por talla</string>
-    <string name="comision">COMISIONES</string>
+    <string name="comision">COMMISSIONS</string>
     <string name="mas">+</string>
     <string name="menos">-</string>
     <string name="preciod">Price</string>

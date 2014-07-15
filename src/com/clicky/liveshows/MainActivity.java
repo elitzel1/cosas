@@ -160,7 +160,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		txt.setLayoutParams(params2);
 		
 		linear.addView(txt);
-		layout.addView(linear);
+		layout.addView(linear,0);
 		layout.invalidate();
 	}
 
@@ -171,7 +171,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 				final LinearLayout temp = (LinearLayout) mLinear.findViewById(countA);
 				temp.removeAllViews();
 				mLinear.removeView(temp);
-				artistas.remove(artistas.size()-1);
+				artistas.remove(0);
 				countA--;
 			}else{
 				findViewById(R.id.btnEliminarArtista).setVisibility(View.INVISIBLE);
@@ -179,11 +179,11 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 			}
 			break;
 		case R.id.btnEliminarFecha:
-			if(countA>0){
+			if(countD>0){
 				final LinearLayout temp = (LinearLayout) mLinearDate.findViewById(countD);
 				temp.removeAllViews();
 				mLinearDate.removeView(temp);
-				fechas.remove(fechas.size()-1);
+				fechas.remove(0);
 				countD--;}
 			else{
 				findViewById(R.id.btnEliminarFecha).setVisibility(View.INVISIBLE);

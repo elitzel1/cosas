@@ -41,7 +41,7 @@ public class DialogAddProduct extends DialogFragment {
 	private String[]tallas ={"SIN TALLA","UNITALLA","2-4","6-8","10-12",   
 			"14-16","18-20","XS","S","M","L","XL","XXL",   
 			"XXXL","XS JR","S JR","M JR","L JR","XL JR"};
-	private String[]comison = {"Elija comision","AGENCY","VENUE","OTHER"};
+	private String[]comison = {"Elija comision","AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
 	private EditText editCantidad;
 	private EditText editPrecio;
@@ -54,7 +54,6 @@ public class DialogAddProduct extends DialogFragment {
 	private boolean visibleComision = false;
 	private boolean visibleTaxes=false;
 	private EditText editComisiones;
-	private EditText editTaxes;
 	private LinearLayout mLinearC;
 	private int countC;
 	private int countT;
@@ -235,6 +234,8 @@ public class DialogAddProduct extends DialogFragment {
 								list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
 								countC++;
 								addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
+								editComisiones.setText("");
+								spinnerComisiones.setSelection(0);
 							}
 						}
 					if(visibleComision==false){
@@ -249,7 +250,6 @@ public class DialogAddProduct extends DialogFragment {
 		mLinearT =(LinearLayout)view.findViewById(R.id.listImpuestos);
 		mLinearT.setOrientation(LinearLayout.VERTICAL);
 		ImageView btnImpuesto = (ImageView)view.findViewById(R.id.btnTaxes);
-		editTaxes = (EditText)view.findViewById(R.id.editImpuestosNombre);
 		
 		/*Agregar impuesto**/
 		btnImpuesto.setOnClickListener(new OnClickListener() {
@@ -257,20 +257,18 @@ public class DialogAddProduct extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(editTaxes.getEditableText()!=null)
-					if(!editTaxes.getEditableText().toString().contentEquals("")){
-						String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
-						if(!amount.contentEquals(""))
-						if(Integer.parseInt(amount)>0){
-							list_taxes.add(new Taxes(editTaxes.getEditableText().toString(),Integer.parseInt(amount)));
-							countT++;
-							addView(editTaxes.getEditableText().toString(), amount , countT, mLinearT);
-							if(visibleTaxes==false){
-								view.findViewById(R.id.btnTaxesLess).setVisibility(View.VISIBLE);
-								visibleTaxes=true;
-							}
-						}
+				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
+				if(!amount.contentEquals(""))
+				if(Integer.parseInt(amount)>0){
+					list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
+					countT++;
+					addView("Tax", amount , countT, mLinearT);
+					((EditText)view.findViewById(R.id.editImpuestoCantidad)).setText("");
+					if(visibleTaxes==false){
+						view.findViewById(R.id.btnTaxesLess).setVisibility(View.VISIBLE);
+						visibleTaxes=true;
 					}
+				}
 			}
 		});
 
@@ -327,6 +325,7 @@ public class DialogAddProduct extends DialogFragment {
 								countTallas++;
 								
 								addView(com,editCantidadTallas.getEditableText().toString(), countTallas, mLinearTallas);
+								editCantidadTallas.setText("");
 							}
 			//			}
 					if(visibleTallaMenos==false){
@@ -405,8 +404,10 @@ public class DialogAddProduct extends DialogFragment {
 						}else {
 							listener.makeToastDialog(R.string.sin_tipo);
 							return;}
-					}else {listener.makeToastDialog(R.string.sin_tipo);
-					return;}
+					}else {
+						listener.makeToastDialog(R.string.sin_tipo);
+						return;
+					}
 				}
 				// TODO Auto-generated method stub
 				if(editNombre.getEditableText()!=null){
@@ -571,7 +572,7 @@ public class DialogAddProduct extends DialogFragment {
 		txtA.setLayoutParams(params2);
 		linear.addView(txtA);
 
-		layout.addView(linear);
+		layout.addView(linear,0);
 		layout.invalidate();
 	}
 
@@ -602,7 +603,7 @@ public class DialogAddProduct extends DialogFragment {
 		txtTipo.setTextColor(getResources().getColor(R.color.azul));
 		txtTipo.setLayoutParams(params2);
 		linear.addView(txtTipo);
-		layout.addView(linear);
+		layout.addView(linear,0);
 		layout.invalidate();
 	}
 
