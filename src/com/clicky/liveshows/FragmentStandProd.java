@@ -302,6 +302,7 @@ public class FragmentStandProd extends Fragment {
 					showDetails(menuInfo.position);
 			return true;
 		case CONTEXTMENU_CHANGECOMISION:
+				changeComision(menuInfo.position);
 			return true;
 		case CONTEXTMENU_ADDCORTESIA:
 			listenerCortesia.onSetCortesia((Product)list.getAdapter().getItem(menuInfo.position), menuInfo.position, s);
@@ -311,6 +312,24 @@ public class FragmentStandProd extends Fragment {
 		return false;
 	}
 
+	private void changeComision(int position){
+		DialogUpdateComision dialog = new DialogUpdateComision();
+		Product p = (Product)list.getAdapter().getItem(position);
+		Bundle b = new Bundle();
+		b.putString("nombre", p.getNombre());
+		b.putString("stand", s.getName());
+		List<Comisiones> comisiones = p.getComisiones();
+		Comisiones comision = null;
+		for(Comisiones com:comisiones){
+			if(com.getName().contentEquals("vendedor")){
+				comision = com;
+			}
+		}
+		dialog.setComision(comision);
+		dialog.setArguments(b);
+		dialog.show(getFragmentManager(), "Comisiones");
+	}
+	
 	private void showDetails(int position){
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct((Product)list.getAdapter().getItem(position));

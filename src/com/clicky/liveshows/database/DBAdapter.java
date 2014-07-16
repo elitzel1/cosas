@@ -59,6 +59,12 @@ public class DBAdapter {
 	static final String colCantidadTarjeta = "cantidad_tarjeta";
 	static final String colCantidadVoucher = "cantidad_voucher";
 
+	static final String colCantidadBanamex = "cantidad_banamex";
+	static final String colCantidadBanorte = "cantidad_banorte";
+	static final String colCantidadSantander = "cantidad_santander";
+	static final String colCantidadAmex = "cantidad_amex";
+	static final String colCantidadOtro = "cantidad_otro";
+	
 	//TABLA STAND PRODUCTO
 	static final String TABLE_STAND_PROD="TStand_Prod";
 	static final String colIdStandProd="stand_prod_id";
@@ -205,6 +211,11 @@ public class DBAdapter {
 		ContentValues updateValues = createContentValuesImpuesto(nombre,porcentaje,tipo,iva, tipoPeso);
 		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;	
 	}
+	
+	public boolean updateComision(long rowId,int porcentaje, String iva, String tipoPeso){
+		ContentValues updateValues = createContentValuesImpuesto(porcentaje,iva,tipoPeso);
+		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;	
+	}
 	//Actualiza productos
 	public boolean updateProducto(long rowId, int cantidadTotal, int cantidad){
 		ContentValues updateValues = createContentValuesUpdate(cantidadTotal, cantidad);
@@ -275,6 +286,11 @@ public class DBAdapter {
 		database.delete(TABLE_CORTESIAS, null, null);
 	}
 	//Returna un Cursor que contiene todos los items
+	
+
+	
+
+		
 	public Cursor fetchAllEvento() {
 		return database.query(TABLE_EVENTO, new String[] { colIdEvento,
 				colNombreEvento, colLugar, colCapacidad }, null, null, null,
@@ -402,6 +418,22 @@ public class DBAdapter {
 				colFechaIdSP, colProductoIdSP, colImpuestoProdId},null,args, null, null, null, null);
 		return mCursor;
 	}
+	
+	public Cursor fetchStandProductAll(long rowId) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId},colIdStandProd+" = "+rowId,null, null, null, null, null);
+		return mCursor;
+	}
+	
+	public Cursor fetchStandCierre(){
+		return database.query(TABLE_STAND, new String[] { colIdStand,colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,
+				colCantidadSantander,colCantidadAmex,colCantidadOtro}, null, null, null,null, null);
+	}
+	public Cursor fetchProductosArtista(int idArtista){
+		return database.query(TABLE_PRODCUT, new String[]{
+				colIdProduct, colNombreP,colTipoP, colFoto, colCantidad, colCantidadTotal, colTalla,colPrecio, colEventoFK, colArtistaFK
+		}, colArtistaFK+" = "+idArtista, null, null, null, null);
+	}
 
 	public Cursor fetchProductImpuestoProd(long rowId) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_TAXES_PRODUCT, new String[] { colIdTaxesProductId,colIdTaxesCK,
@@ -414,7 +446,24 @@ public class DBAdapter {
 				colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso}, colIdTaxes + "=" + rowId,null, null, null, null, null);
 		return mCursor;
 	}
+	
 
+	public Cursor fetchStandProductDetail(long rowId,long idFecha) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId,colStandIdSP}, 
+				colProductoIdSP + "=" + rowId+" AND "+colFechaIdSP+" = "+idFecha
+				,null, null, null, null, null);
+		return mCursor;
+	}
+	public Cursor fetchVentasProd(long rowId) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,
+				colCantidadVP}, colStandProdFK+" = "+rowId,null, null, null, null, null);
+		return mCursor;
+	}
+	public void deleteDia(){
+		database.delete(TABLE_ADICIONAL, null, null);
+		database.delete(TABLE_CORTESIAS, null, null);
+	}
 
 	//	public Cursor fetchCortesias(long rowId) throws SQLException{
 	//		Cursor mCursor = database.query(true, TABLE_PRODCUT, new String[] {colCortesia}, colIdProduct + "=" + rowId,null, null, null, null, null);
@@ -519,6 +568,14 @@ public class DBAdapter {
 		values.put(colTipoImpuesto, tipo);
 		return values;
 	}
+	
+	private ContentValues createContentValuesImpuesto(int porcentaje,String IVA, String pesoPor){
+		ContentValues values = new ContentValues();
+		values.put(colPorcentajeT, porcentaje);
+		values.put(colIVA, IVA);
+		values.put(colTipoPorPeso, pesoPor);
+		return values;
+	}
 
 	private ContentValues createContentValuesImpuesto(String nombre, int porcentaje, String tipo,String IVA, String pesoPor){
 		ContentValues values = new ContentValues();
@@ -581,5 +638,19 @@ public class DBAdapter {
 		values.put(colArtistaFK, artista);
 		return values;
 	}
+	
+
+	private ContentValues createContentValuesUpdateStandCierre(double efectivo,double banamex,double banorte,double santander,
+			double amex,double otro){
+		ContentValues values = new ContentValues();
+		values.put(colCantidadEfectivo, efectivo);
+		values.put(colCantidadBanamex, banamex);
+		values.put(colCantidadBanorte, banorte);
+		values.put(colCantidadSantander, santander);
+		values.put(colCantidadAmex, amex);
+		values.put(colCantidadOtro, otro);
+		return values;
+	}
+
 
 }

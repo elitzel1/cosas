@@ -8,6 +8,9 @@
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
 
+    <string name="accept">Yes</string>
+    <string name="cancel">No</string>
+    <string name="action_print">Print</string>
     <!-- Evento -->
     <string name="evento_nombre">Name: </string>
     <string name="evento_artista">Artist: </string>
@@ -116,11 +119,59 @@
     <string name="lbl_faltan">Faltan</string>
     <string name="lbl_comision">Comision</string>
 
-    <!-- Cierre dia -->
-    <string name="viaticos">Viáticos</string>
+<!-- Cierre dia -->
+    <string name="viaticos">Gastos Operativos</string>
+    <string name="lbl_sueldos">Sueldos/Bonos/Comisiones</string>
+    <string name="nota">Nota</string>
+    <string name="factura">Factura</string>
     <string name="reportes">Reportes</string>
     <string name="hint_concepto">Concept</string>
     <string name="hint_cantidad">Amount</string>
+    <string name="hint_agencia">Selecciona una agencia</string>
+    <string name="hint_contacto">Contacto</string>
+    <string name="hint_mail">Mail</string>
+    <string name="sin_concepto">No hay concepto</string>
+    <string name="sin_viatico">No hay cantidad</string>
+    <string name="sin_correo">No hay Correo</string>
+    <string name="no_correo">Invalid mail</string>
+    <string name="interno">Interno</string>
+    <string name="venue">Venue</string>
+    <string name="enviar_mail">Send Mail</string>
+    
+    <string name="alert_no_dates">There are no more dates for this event.</string>
+    <string name="alert_next_date">Go to next date?</string>
+    <string name="add_date">Add New Date</string>
+    <string name="close_event">Close event</string>
+    
+    <string-array name="gastos">
+        <item>LONAS	</item>
+		<item>GASOLINA PARA CARRETERA</item>
+		<item>ESTACIONAMIENTO</item>
+		<item>HOTELES</item>
+		<item>VUELOS</item>
+		<item>CAMIONES</item>
+		<item>PROPINAS</item>
+		<item>BAÑOS PUBLICOS</item>
+		<item>TELEFONIA</item>
+		<item>COMIDAS</item>
+		<item>REPARACIONES</item>
+		<item>MUDANZAS</item>
+		<item>TRANSPORTACION</item>
+		<item>CASETAS</item>
+		<item>RENTA DE CARPAS</item>
+		<item>RENTA DE TABLONES Y MANTELERIA</item>
+		<item>RENTA DE VALLAS</item>
+		<item>MULTAS</item>
+		<item>PERMISOS Y TRAMITES</item>
+		<item>OTROS</item>
+    </string-array>
+    <string-array name="sueldos">
+        <item>VENDEDORES</item>
+        <item>BONO GERENCIAL</item>
+		<item>SUELDO CHOFER</item>
+		<item>MONTAJE/DESMONTAJE</item>
+		<item>OTRO</item>
+    </string-array>
 
     <!-- Detalles PRod -->
     <string name="d_nombre">NOMBRE: </string>
@@ -149,6 +200,7 @@
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	
 	<string name="long_change">Cambiar comisión</string>
+	<string name="producto">Producto</string>
 	
 	<string name="update_exitoso">Actualización Exitosa</string>
 	<string name="update_noexitoso">Actualización No Exitosa</string>

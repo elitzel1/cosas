@@ -2,6 +2,7 @@ package com.clicky.liveshows;
 
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogStand.OnStandNuevo;
+import com.clicky.liveshows.DialogUpdateComision.OnChangeComision;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
 import com.clicky.liveshows.FragmentStandProd.OnNewCortesia;
 import com.clicky.liveshows.FragmentStands.onFragmentCreate;
@@ -24,7 +25,7 @@ import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
-public class StandActivity extends Activity implements OnStandNuevo,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
+public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
 	Product product;
@@ -245,6 +246,21 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 
 		}
 		dbHelper.close();
+	}
+
+	@Override
+	public void setNewComision(Comisiones com) {
+		// TODO Auto-generated method stub
+		dbHelper.open();
+		
+		if(dbHelper.updateComision(com.getId(), com.getCantidad(), com.getIva(), com.getTipo())){
+			makeToast(R.string.update_exitoso);
+		}else{
+			makeToast(R.string.update_noexitoso);
+		}
+		
+		dbHelper.close();
+		
 	}
 
 
