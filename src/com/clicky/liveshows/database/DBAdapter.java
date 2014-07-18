@@ -208,6 +208,11 @@ public class DBAdapter {
 		ContentValues updateValues = createContentValuesImpuesto(nombre,porcentaje,tipo,iva, tipoPeso);
 		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;	
 	}
+	
+	public boolean updateComision(long rowId,int porcentaje, String iva, String tipoPeso){
+		ContentValues updateValues = createContentValuesImpuesto(porcentaje,iva,tipoPeso);
+		return database.update(TABLE_TAXES, updateValues, colIdTaxes+" = "+rowId, null)>0;	
+	}
 
 	//Actualiza productos
 	public boolean updateProducto(long rowId, int cantidadTotal, int cantidad){
@@ -588,6 +593,14 @@ public class DBAdapter {
 		return values;
 	}
 
+	private ContentValues createContentValuesImpuesto(int porcentaje,String IVA, String pesoPor){
+		ContentValues values = new ContentValues();
+		values.put(colPorcentajeT, porcentaje);
+		values.put(colIVA, IVA);
+		values.put(colTipoPorPeso, pesoPor);
+		return values;
+	}
+	
 	private ContentValues createContentValuesImpuestoProducto(int idProd,int idTaxes){
 		ContentValues values = new ContentValues();
 		values.put(colIdProductCK, idProd);

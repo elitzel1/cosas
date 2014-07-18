@@ -9,12 +9,16 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import com.itextpdf.text.BadElementException;
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -48,16 +52,13 @@ public class PDF{
 			bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
 			Image companyLogo = Image.getInstance(stream.toByteArray());
 			companyLogo.setAbsolutePosition(x,y);
-			//companyLogo.scalePercent(25);
+			companyLogo.scalePercent(50);
 			document.add(companyLogo); 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (BadElementException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -76,6 +77,139 @@ public class PDF{
 		cb.stroke();
 	}
 	
+	public void tableVentas(Document document, List<Product> listProd, float y){
+		//list all the products sold to the customer
+		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f};
+		//create PDF table with the given widths
+		PdfPTable table = new PdfPTable(columnWidths);
+		// set table width a percentage of the page width
+		table.setTotalWidth(980f);
+		
+		Font font = FontFactory.getFont(FontFactory.HELVETICA,8);
+		font.setColor(BaseColor.WHITE);
+		
+		BaseColor azul = WebColors.getRGBColor("#347af0");
+		
+		PdfPCell cell = new PdfPCell(new Phrase("PRICE SALES IN US",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("#",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ITEM",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("STYLE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("SIZE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("INITIAL\nINVENTORY",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ADDING 1",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ADDING 2",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ADDING 3",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ADDING 4",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("ADDING 5",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("TOTAL\nINVENTORY",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		cell = new PdfPCell(new Phrase("PRICE SALE",font));
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+		cell.setBackgroundColor(azul);
+		table.addCell(cell);
+		table.setHeaderRows(1);
+		
+		table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+	}
+	
 	public void tableProducts(Document document, List<Product> listProd, float y){
 		//list all the products sold to the customer
 		float[] columnWidths = {1f, 1f, 1f, 1f, 1f};
@@ -83,7 +217,7 @@ public class PDF{
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
 		table.setTotalWidth(500f);
-		 
+		
 		PdfPCell cell = new PdfPCell(new Phrase("Cantidad"));
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		table.addCell(cell);
@@ -119,6 +253,31 @@ public class PDF{
 	public Document createPDF(String fileName){
 		
 		Document document = new Document(PageSize.A4);
+		//get the sdcard's directory
+	    File sdCard = Environment.getExternalStorageDirectory();
+	    //add on the your app's path
+	    File dir = new File(sdCard.getAbsolutePath() + "/MerchSys");
+	    //make them in case they're not there
+	    dir.mkdirs();
+	    //create a standard java.io.File object for the Workbook to use
+	    File pdffile = new File(dir,fileName);
+		  try {
+		    
+		   docWriter = PdfWriter.getInstance(document, new FileOutputStream(pdffile));
+		   document.open();
+		   
+		   cb = docWriter.getDirectContent();
+		 
+		  } 
+		  catch(Exception e){
+			  e.printStackTrace();
+		  }
+		  return document;
+	}
+	
+	public Document createPDFHorizontal(String fileName){
+		
+		Document document = new Document(PageSize.LEGAL.rotate());
 		//get the sdcard's directory
 	    File sdCard = Environment.getExternalStorageDirectory();
 	    //add on the your app's path

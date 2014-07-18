@@ -1,19 +1,16 @@
 package com.clicky.liveshows;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Product;
-import com.clicky.liveshows.utils.Talla;
 import com.clicky.liveshows.utils.Taxes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.ClipData.Item;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,8 +22,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,13 +29,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class DialogUpdate extends DialogFragment {
 
 	private String []tipos;
 	private int idImages[]; 
-	private String[]comison = {"Elija comision","artista","puesto","lugar","otro"};
+	private String[]comison = {"Elija comision","AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
 	private EditText editCantidad;
 	private EditText editPrecio;
@@ -50,7 +44,6 @@ public class DialogUpdate extends DialogFragment {
 	private ImageView img;
 	private String path;
 	private EditText editComisiones;
-	private EditText editTaxes;
 	private LinearLayout mLinearC;
 	private int countC;
 	private int countT;
@@ -241,7 +234,6 @@ public class DialogUpdate extends DialogFragment {
 		mLinearT =(LinearLayout)view.findViewById(R.id.listImpuestos);
 		mLinearT.setOrientation(LinearLayout.VERTICAL);
 		ImageView btnImpuesto = (ImageView)view.findViewById(R.id.btnTaxes);
-		editTaxes = (EditText)view.findViewById(R.id.editImpuestosNombre);
 
 		/*Agregar impuesto**/
 		btnImpuesto.setOnClickListener(new OnClickListener() {
@@ -249,16 +241,13 @@ public class DialogUpdate extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if(editTaxes.getEditableText()!=null)
-					if(!editTaxes.getEditableText().toString().contentEquals("")){
-						String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
-						if(!amount.contentEquals(""))
-							if(Integer.parseInt(amount)>0){
-								list_taxes.add(new Taxes(editTaxes.getEditableText().toString(),Integer.parseInt(amount)));
-								countT++;
-								addView(editTaxes.getEditableText().toString(), amount , countT, mLinearT);
+				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
+				if(!amount.contentEquals(""))
+					if(Integer.parseInt(amount)>0){
+						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
+						countT++;
+						addView("Tax", amount , countT, mLinearT);
 
-							}
 					}
 			}
 		});
@@ -496,7 +485,7 @@ public class DialogUpdate extends DialogFragment {
 		txtA.setLayoutParams(params2);
 		linear.addView(txtA);
 
-		layout.addView(linear);
+		layout.addView(linear,0);
 		layout.invalidate();
 	}
 
@@ -527,7 +516,7 @@ public class DialogUpdate extends DialogFragment {
 		txtTipo.setTextColor(getResources().getColor(R.color.azul));
 		txtTipo.setLayoutParams(params2);
 		linear.addView(txtTipo);
-		layout.addView(linear);
+		layout.addView(linear,0);
 		layout.invalidate();
 	}
 }

@@ -179,113 +179,123 @@ public class FragmentStandProd extends Fragment {
 		empty.setVisibility(View.GONE);
 		Comisiones com = s.getComision();
 		txtEncargado.setText(s.getEncargado());
-		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getIva());//CORREGIR AQUI
+		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getTipo());//CORREGIR AQUI
 		items.clear();
 		idProducts.clear();
 		adapter.notifyDataSetChanged();
 		db.open();
-		//int idCom = (int)db.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
-		//if(idCom == -1){
-
-		//}else{
-		//	com.setId(idCom);
-			List<Comisiones> comisiones = new ArrayList<Comisiones>();
-			comisiones.add(com);
-			HashMap<Integer, String> artistas  = new HashMap<Integer, String>();
-			Cursor cArtistas = db.fetchAllArtistas();
-			if(cArtistas.moveToFirst()){
-				do{
-					int id = cArtistas.getInt(0);
-					String name = cArtistas.getString(1);
-					artistas.put(id, name);
-				}while(cArtistas.moveToNext());
-			}
-			cArtistas.close();
-			Cursor c  = db.fetchStandProduct(s.getId(),idFecha);
-			if(c.moveToFirst()){
-				do{
-					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
-					int cantidad = c.getInt(1);
-					int idProd = c.getInt(3);
-					p.setCantidadStand(cantidad);
-					p.setId(idProd);
-					Cursor cursor = db.fetchProducto(idProd);
-					if(cursor.moveToFirst()){
+		HashMap<Integer, String> artistas  = new HashMap<Integer, String>();
+		Cursor cArtistas = db.fetchAllArtistas();
+		if(cArtistas.moveToFirst()){
+			do{
+				int id = cArtistas.getInt(0);
+				String name = cArtistas.getString(1);
+				artistas.put(id, name);
+			}while(cArtistas.moveToNext());
+		}
+		cArtistas.close();
+		Cursor c  = db.fetchStandProduct(s.getId(),idFecha);
+		if(c.moveToFirst()){
+			do{
+				List<Comisiones> comisiones = new ArrayList<Comisiones>();
+				Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
+				int prodStandId = c.getInt(0);
+				int cantidad = c.getInt(1);
+				int idProd = c.getInt(3);
+				p.setCantidadStand(cantidad);
+				p.setId(idProd);
+				Cursor cursorStandImp = db.fetchProductImpuestoProd(prodStandId);
+				if(cursorStandImp.moveToFirst()){
+					do{
+						Cursor cursorSI = db.fetchImpuestos(cursorStandImp.getLong(1));
+						if(cursorSI.moveToFirst()){
+							int idTaxes = cursorSI.getInt(0);
+							String nombreI = cursorSI.getString(1);
+							String porcentaje = cursorSI.getString(2);
+							String tipoImpuesto = cursorSI.getString(3);
+							String iva = cursorSI.getString(4);
+							String tipoPeso = cursorSI.getString(5);
+							if(tipoImpuesto.contentEquals("comision_stand")){
+								Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+								comi.setId(idTaxes);
+								comisiones.add(comi);
+							}
+						}
+					}while(cursorStandImp.moveToNext());
+				}
+				Cursor cursor = db.fetchProducto(idProd);
+				if(cursor.moveToFirst()){
+					String nombre = cursor.getString(1);
+					int idArtista = cursor.getInt(9);
+					String artista = artistas.get(idArtista);
+					String tipo = cursor.getString(2);
+					String foto = cursor.getString(3);
+					String talla = cursor.getString(6);
+					String precio = cursor.getString(7);
+					int cantidadTotal = cursor.getInt(4);
+						
+					List<Taxes> list_tax = new ArrayList<Taxes>();
+					List<Integer> id_impuestos = new ArrayList<Integer>();
+					Cursor cursorI=db.fetchProductImpuestoProd(idProd);
+					if(cursorI.moveToFirst()){
 						do{
-							//int id = cursor.getInt(0);
-							String nombre = cursor.getString(1);
-							int idArtista = cursor.getInt(9);
-							String artista = artistas.get(idArtista);
-							String tipo = cursor.getString(2);
-							String foto = cursor.getString(3);
-							String talla = cursor.getString(6);
-							String precio = cursor.getString(7);
-							int cantidadTotal = cursor.getInt(4);
-							//db.createImpuestoProducto(id, idCom);
-							
-							List<Taxes> list_tax = new ArrayList<Taxes>();
-							List<Integer> id_impuestos = new ArrayList<Integer>();
-							Cursor cursorI=db.fetchProductImpuestoProd(idProd);
-							if(cursorI.moveToNext()){
-								do{
-									id_impuestos.add(cursorI.getInt(1));
-								}while(cursorI.moveToNext());
-							}
-							cursorI.close();
-
-							for(int j=0;j<id_impuestos.size();j++){
-								Cursor cursorPI = db.fetchImpuestos(id_impuestos.get(j));
-
-								if(cursorPI.moveToNext()){
-									do{
-										//taxes
-										//comision
-										//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
-										int idTaxes = cursorPI.getInt(0);
-										String nombreI = cursorPI.getString(1);
-										String porcentaje = cursorPI.getString(2);
-										String tipoImpuesto = cursorPI.getString(3);
-										if(tipoImpuesto.contentEquals("comision")){
-											String iva = cursorPI.getString(4);
-											String tipoPeso = cursorPI.getString(5);
-											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
-											comi.setId(idTaxes);
-											comisiones.add(comi);
-										}else{
-											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
-											tax.setId(idTaxes);
-											list_tax.add(tax);
-										}
-									}while(cursorPI.moveToNext());	
-								}
-							}
-							p.setNombre(nombre);
-							p.setArtista(artista);
-							p.setPath_imagen(foto);
-							p.setTipo(tipo);
-							p.setTalla(talla);
-							p.setPrecio(precio);
-							p.setCantidad(cantidadTotal);
-							p.setComisiones(comisiones);
-							p.setTaxes(list_tax);
-							p = verifyImage(p);
-							idProducts.add(idProd);
-						}while(cursor.moveToNext());
+							id_impuestos.add(cursorI.getInt(1));
+						}while(cursorI.moveToNext());
 					}
-					items.add(p);
-					Log.i("STAND_PROD", p.getNombre()+" "+p.getTipo()+" "+p.getTalla()+" "+cantidad);
-				}while(c.moveToNext());
-				adapter.notifyDataSetChanged();
-			}else{
-				items.clear();
-				adapter.notifyDataSetChanged();
-			}
-			if(items.isEmpty()){
-				btnCierre.setVisibility(View.INVISIBLE);
-			}else{
-				btnCierre.setVisibility(View.VISIBLE);
-			}
-			c.close();
+					cursorI.close();
+
+					for(int j = 0;j < id_impuestos.size();j++){
+						Cursor cursorPI = db.fetchImpuestos(id_impuestos.get(j));
+	
+						if(cursorPI.moveToFirst()){
+							do{
+								//taxes
+								//comision
+								//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+								int idTaxes = cursorPI.getInt(0);
+								String nombreI = cursorPI.getString(1);
+								String porcentaje = cursorPI.getString(2);
+								String tipoImpuesto = cursorPI.getString(3);
+								if(tipoImpuesto.contentEquals("comision")){
+									String iva = cursorPI.getString(4);
+									String tipoPeso = cursorPI.getString(5);
+									Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+									comi.setId(idTaxes);
+									comisiones.add(comi);
+								}else if(tipoImpuesto.contentEquals("taxes")){
+									Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+									tax.setId(idTaxes);
+									list_tax.add(tax);
+								}
+							}while(cursorPI.moveToNext());	
+						}
+					}
+					p.setNombre(nombre);
+					p.setArtista(artista);
+					p.setPath_imagen(foto);
+					p.setTipo(tipo);
+					p.setTalla(talla);
+					p.setPrecio(precio);
+					p.setCantidad(cantidadTotal);
+					p.setComisiones(comisiones);
+					p.setTaxes(list_tax);
+					p = verifyImage(p);
+					idProducts.add(idProd);
+				}
+				items.add(p);
+				Log.i("STAND_PROD", p.getNombre()+" "+p.getTipo()+" "+p.getTalla()+" "+cantidad);
+			}while(c.moveToNext());
+			adapter.notifyDataSetChanged();
+		}else{
+			items.clear();
+			adapter.notifyDataSetChanged();
+		}
+		if(items.isEmpty()){
+			btnCierre.setVisibility(View.INVISIBLE);
+		}else{
+			btnCierre.setVisibility(View.VISIBLE);
+		}
+		c.close();
 		//}
 		db.close();
 	}
@@ -352,6 +362,7 @@ public class FragmentStandProd extends Fragment {
 			showDetails(menuInfo.position);
 			return true;
 		case CONTEXTMENU_CHANGECOMISION:
+				changeComision(menuInfo.position);
 			return true;
 		case CONTEXTMENU_ADDCORTESIA:
 			listenerCortesia.onSetCortesia((Product)list.getAdapter().getItem(menuInfo.position), menuInfo.position, s);
@@ -441,7 +452,25 @@ public class FragmentStandProd extends Fragment {
 		public String getNombre(){ return name;}
 		public int getImage(){return image;}
 	}
-
+	
+	private void changeComision(int position){
+		DialogUpdateComision dialog = new DialogUpdateComision();
+		Product p = (Product)list.getAdapter().getItem(position);
+		Bundle b = new Bundle();
+		b.putString("nombre", p.getNombre());
+		b.putString("stand", s.getName());
+		List<Comisiones> comisiones = p.getComisiones();
+		Comisiones comision = null;
+		for(Comisiones com:comisiones){
+			if(com.getName().contentEquals("Vendedor")){
+				comision = com;
+			}
+		}
+		dialog.setComision(comision);
+		dialog.setArguments(b);
+		dialog.show(getFragmentManager(), "Comisiones");
+	}
+	
 	private void showDetails(int position){
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct((Product)list.getAdapter().getItem(position));

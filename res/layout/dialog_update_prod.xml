@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -17,8 +13,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/azul"
+                android:background="@drawable/fondo_botonbar_a"
                 android:text="@string/btn_aceptar"
+                style="?android:attr/buttonBarStyle"
                 android:textColor="@color/blanco" />
 
             <Button
@@ -26,10 +23,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/azul_textos"
+                android:background="@drawable/fondo_botonbar_b"
                 android:text="@string/btn_cancelar"
+                style="?android:attr/buttonBarStyle"
                 android:textColor="@color/blanco" />
         </LinearLayout>
+
+        <ScrollView 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingTop="@dimen/activity_vertical_margin"
+		   	android:paddingRight="@dimen/activity_horizontal_margin"
+		   	android:paddingLeft="@dimen/activity_horizontal_margin"  >
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,12 +57,14 @@
                     android:contentDescription="@string/cnt"
                     android:src="@drawable/teeshirt" />
 
-                <Button
+                <ImageView
                     android:id="@+id/btnCamera"
-                    style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/im_por"
                     android:onClick="takePicture"
+                    android:padding="5dp"
+                    android:src="@drawable/mas"
                     android:text="@string/mas" />
             </FrameLayout>
 
@@ -149,6 +161,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artista_dialogo_prod"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/azul_textos" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/azul_textos" />
 
         <Spinner
             android:id="@+id/spinnerArtista"
@@ -250,21 +276,22 @@
                 android:layout_gravity="right"
                 android:layout_weight="1"
                 android:orientation="horizontal" >
-
-                <RadioButton
-                    android:id="@+id/radioBT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/r_bruto"
-                    android:textColor="@color/azul_textos" />
-
+                
                 <RadioButton
                     android:id="@+id/radioAT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/r_neto"
+                    android:checked="true"
                     android:textColor="@color/azul_textos" />
+
+                <RadioButton
+                    android:id="@+id/radioBT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/r_bruto"
+                    android:textColor="@color/azul_textos" />
+
             </RadioGroup>
         </LinearLayout>
 
@@ -272,6 +299,7 @@
             android:id="@+id/listComisiones"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="vertical" >
         </LinearLayout>
 
@@ -293,15 +321,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
-
-            <EditText
-                android:id="@+id/editImpuestosNombre"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/hint_taxes"
-                android:inputType="text"
-                android:visibility="visible" />
 
             <EditText
                 android:id="@+id/editImpuestoCantidad"
@@ -332,8 +351,10 @@
             android:id="@+id/listImpuestos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:animateLayoutChanges="true"
             android:orientation="vertical" >
         </LinearLayout>
     </LinearLayout>
-
 </ScrollView>
+</LinearLayout>

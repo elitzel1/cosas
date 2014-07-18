@@ -28,9 +28,11 @@ import com.clicky.liveshows.utils.Agencia;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Excel;
+import com.clicky.liveshows.utils.PDF;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Gastos;
 import com.clicky.liveshows.utils.Taxes;
+import com.itextpdf.text.Document;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -44,6 +46,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,6 +68,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	
 	private DBAdapter dbHelper;
 	private Excel excel;
+	private PDF pdf;
 	
 	private ArrayList<Agencia> agencias;
 	private ArrayList<Gastos> gastos;
@@ -96,6 +100,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 
 		dbHelper = new DBAdapter(this);
 		excel = new Excel(this);
+		pdf = new PDF(this);
 		
 		products = new ArrayList<Product>();
 		artistas  = new HashMap<Integer, String>();
@@ -214,6 +219,12 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	}
 	
 	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+	}
+	
+	@Override
 	public void onFinishDatePickerDialog(int year, int month, int day) {
 		dbHelper.open();
 		dbHelper.createFecha(""+day+"/"+month+"/"+year);
@@ -299,21 +310,28 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	public void enviarMail(View v){
 		String mail = "";
 		boolean acepta = false;
+		int tipo = -1;
 		if(v == (Button)findViewById(R.id.enviarInterno)){
 			mail = ((EditText)findViewById(R.id.mailInterno)).getText().toString();
 			acepta = validaCorreo(mail);
 			if(acepta){
+				tipo = 0;
 				getReport(0, "","","");
 			}
 		}else if(v == (Button)findViewById(R.id.enviarVenue)){
 			mail = ((EditText)findViewById(R.id.mailVenue)).getText().toString();
 			acepta = validaCorreo(mail);
 			if(acepta){
-				getReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
+				tipo = 1;
+				getPDFReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
 			}	
 		}
 		if(acepta){
-			String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
+			String reporte = "";
+			if(tipo == 0)
+				reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
+			else if(tipo == 1)
+				reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.pdf";
 			Intent email = new Intent(Intent.ACTION_SEND);
 			email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail});		  
 			email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
@@ -513,6 +531,8 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				
 				int cant = cursorProd.getInt(5);
 				int asignados = 0;
+				
+				/**CORRIGE ESTO**/
 				Cursor cursorStandProd = dbHelper.fetchStandProductDetail(prod.getId(),idfecha);
 				if(cursorStandProd.moveToFirst()){
 					do{
@@ -1163,6 +1183,19 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void getPDFReport(int tipo,String agency, String contact,String artista){
+		getProducts(artista);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		Document docPdf = pdf.createPDFHorizontal("sales_report.pdf");
+		
+		pdf.addImage(25,530,docPdf);
+		
+		pdf.tableVentas(docPdf, products,480);
+		
+		docPdf.close();
 	}
 
 }

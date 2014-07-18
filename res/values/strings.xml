@@ -60,7 +60,7 @@
     <string name="cantidad_disponible">Amount Available</string>
     <string name="textdivisa">Aún no ingresa tipo de cambio</string>
     <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
-    <string name="album_name">Merch</string>
+    <string name="album_name">MerchSys</string>
 
     <!-- Errores -->
     <string name="sin_artista">Escriba el nombre de un artista</string>
@@ -83,6 +83,7 @@
     <string name="err_com_noval">Comisión no valida</string>
     <string name="err_op_uno">Error al guardar la opción 1 de cortesia</string>
     <string name="err_op_dos">Error al guardar la opción 2 de cortesia</string>
+    <string name="err_cantidad">The amount of products is incorrect</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -207,6 +208,8 @@
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	
 	<string name="long_change">Cambiar comisión</string>
+	<string name="producto">Producto</string>
+	
 	<string name="update_exitoso">Actualización Exitosa</string>
 	<string name="update_noexitoso">Actualización No Exitosa</string>
 </resources>

@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -134,9 +135,15 @@ public class ActivityAgregarProductos extends Activity {
 				int c = adapter.getItem(i).getCantidad()-adapter.getItem(i).getCantidadStand();
 				if(0<=c && adapter.getItem(i).getCantidadStand() > 0){
 					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
-							long comId = dbHelper.createImpuesto(comision.getName(), "comision_stand", comision.getCantidad(), comision.getIva(), comision.getTipo());
-							if(comId != -1)
-								dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);	
+						long comId = dbHelper.createImpuesto("Vendedor", "comision_stand", comision.getCantidad(), comision.getTipo(), comision.getIva());
+						if(comId != -1){
+							long prod_id = dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);
+							if(prod_id != -1)
+								dbHelper.createImpuestoProducto((int)prod_id, (int)comId);
+							else
+								Log.i("ERROR", "No se creo impuesto");
+							}else
+								Log.i("ERROR", "No se creo impuesto");
 						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
 					}else{
 					}
@@ -150,7 +157,12 @@ public class ActivityAgregarProductos extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
+	
+	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+	}
 
 	private void addProduct(String nombre, String tipo, String img, int cantidad, int cantidadTotal, String talla, String artista,int id){
 
@@ -158,29 +170,6 @@ public class ActivityAgregarProductos extends Activity {
 		item.setNombre(nombre);
 		item.setTipo(tipo);
 		item.setId(id);
-		if(img.contentEquals("")){
-			if(tipo.contentEquals("taza")){
-				item.setId_imagen(R.drawable.mug);
-			}
-			if(tipo.contentEquals("camisa")){
-				item.setId_imagen(R.drawable.teeshirt);
-			}
-			if(tipo.contentEquals("sudadera")){
-
-				item.setId_imagen(R.drawable.teeshirtlong);
-			}
-			if(tipo.contentEquals("disco")){
-
-				item.setId_imagen(R.drawable.cd);
-			}
-			if(tipo.contentEquals("pluma")){
-
-				item.setId_imagen(R.drawable.werelupe);
-			}
-		}else{
-			item.setPath_imagen(img);
-			item.setId_imagen(0);
-		}
 
 		item.setCantidad(cantidad);
 		item.setTalla(talla);

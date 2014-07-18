@@ -14,6 +14,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AdapterCloseStand extends ArrayAdapter<Product> {
 
@@ -74,6 +75,8 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 						if(!Caption.getEditableText().toString().contentEquals("")){
 							if(Integer.parseInt(Caption.getEditableText().toString())>0&&Integer.parseInt(Caption.getEditableText().toString())<=item.getCantidadStand()){
 								items.get(pos).setProdNo(Integer.parseInt(Caption.getEditableText().toString()));
+							}else{
+								Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
 							}
 
 						}
@@ -88,7 +91,8 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 			if(!holder.editCantidad.getEditableText().toString().contentEquals("")){
 				if(Integer.parseInt(holder.editCantidad.getEditableText().toString())>0&&Integer.parseInt(holder.editCantidad.getEditableText().toString())<=item.getCantidadStand()){
 					items.get(position).setProdNo(Integer.parseInt(holder.editCantidad.getEditableText().toString()));
-
+				}else{
+					Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
 				}
 
 			}

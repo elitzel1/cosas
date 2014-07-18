@@ -3,6 +3,7 @@ package com.clicky.liveshows;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 public class Settings extends PreferenceActivity {
@@ -26,7 +27,7 @@ public class Settings extends PreferenceActivity {
 			//
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
-			finish();
+			NavUtils.navigateUpFromSameTask(this);
 			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		}
@@ -36,6 +37,12 @@ public class Settings extends PreferenceActivity {
 	private void setupActionBar(){
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
+	}
+	
+	@Override
+	public void onBackPressed(){
+		NavUtils.navigateUpFromSameTask(this);
+		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 	}
 
 }

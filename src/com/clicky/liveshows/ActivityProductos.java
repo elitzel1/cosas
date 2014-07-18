@@ -231,7 +231,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 								Comisiones com = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
 								com.setId(idTaxes);
  								list_com.add(com);
-							}else{
+							}else if(tipoImpuesto.contentEquals("taxes")){
 								//list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
 								Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
 								tax.setId(idTaxes);

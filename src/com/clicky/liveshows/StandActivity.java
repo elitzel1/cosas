@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogStand.OnStandNuevo;
+import com.clicky.liveshows.DialogUpdateComision.OnChangeComision;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
 import com.clicky.liveshows.FragmentStandProd.OnNewCortesia;
 import com.clicky.liveshows.FragmentStands.onFragmentCreate;
@@ -15,6 +16,7 @@ import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.PDF;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
+import com.clicky.liveshows.utils.Taxes;
 import com.itextpdf.text.Document;
 
 import android.os.Bundle;
@@ -29,7 +31,7 @@ import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
-public class StandActivity extends Activity implements OnStandNuevo,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
+public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
 	Product product;
@@ -92,6 +94,12 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		return super.onOptionsItemSelected(item);
 	}
 	
+	@Override
+	public void onBackPressed(){
+		NavUtils.navigateUpFromSameTask(this);
+		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
+	}
+	
 	private void openSettings(){
 		Intent i = new Intent(this,Settings.class);
 		startActivity(i);
@@ -110,6 +118,8 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 				PDF pdf = new PDF(this);
 				Document docPdf = pdf.createPDF("stand.pdf");
 				List<Product> prodList = new ArrayList<Product>(); 
+				List<Comisiones> comisiones = new ArrayList<Comisiones>();
+				comisiones.add(stand.getComision());
 				do{
 					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
 					int cantidad = c.getInt(1);
@@ -121,20 +131,60 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 						do{
 							//int id = cursor.getInt(0);
 							String nombre = cursor.getString(1);
+							//int idArtista = cursor.getInt(9);
+							//String artista = artistas.get(idArtista);
 							String tipo = cursor.getString(2);
-							int idArtista = cursor.getInt(9);
+							String foto = cursor.getString(3);
 							String talla = cursor.getString(6);
 							String precio = cursor.getString(7);
 							int cantidadTotal = cursor.getInt(4);
-							Cursor cArtista = dbHelper.fetchArtista(idArtista);
-							if(cArtista.moveToFirst()){
-								p.setArtista(cArtista.getString(1));
+							//db.createImpuestoProducto(id, idCom);
+							
+							List<Taxes> list_tax = new ArrayList<Taxes>();
+							List<Integer> id_impuestos = new ArrayList<Integer>();
+							Cursor cursorI=dbHelper.fetchProductImpuestoProd(idProd);
+							if(cursorI.moveToNext()){
+								do{
+									id_impuestos.add(cursorI.getInt(1));
+								}while(cursorI.moveToNext());
+							}
+							cursorI.close();
+
+							for(int j=0;j<id_impuestos.size();j++){
+								Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
+
+								if(cursorPI.moveToNext()){
+									do{
+										//taxes
+										//comision
+										//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+										int idTaxes = cursorPI.getInt(0);
+										String nombreI = cursorPI.getString(1);
+										String porcentaje = cursorPI.getString(2);
+										String tipoImpuesto = cursorPI.getString(3);
+										if(tipoImpuesto.contentEquals("comision")){
+											String iva = cursorPI.getString(4);
+											String tipoPeso = cursorPI.getString(5);
+											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+											comi.setId(idTaxes);
+											comisiones.add(comi);
+										}else{
+											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+											tax.setId(idTaxes);
+											list_tax.add(tax);
+										}
+									}while(cursorPI.moveToNext());	
+								}
 							}
 							p.setNombre(nombre);
+							//p.setArtista(artista);
+							p.setPath_imagen(foto);
 							p.setTipo(tipo);
 							p.setTalla(talla);
 							p.setPrecio(precio);
 							p.setCantidad(cantidadTotal);
+							p.setComisiones(comisiones);
+							p.setTaxes(list_tax);
 						}while(cursor.moveToNext());
 					}
 					prodList.add(p);
@@ -219,9 +269,9 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 				String nombre =  cursor.getString(1);
 				String encargado = cursor.getString(2);
 				int comision = cursor.getInt(3);
-				String iva = cursor.getString(4);
-				String tipo = cursor.getString(5);
-				Comisiones com = new Comisiones("vendedor", comision, iva, tipo);
+				String iva = cursor.getString(5);
+				String tipo = cursor.getString(4);
+				Comisiones com = new Comisiones("Vendedor", comision, iva, tipo);
 				newStand(id, nombre, encargado, com);
 				if(cursor.isFirst()){
 					Stand first = new Stand(id,nombre, encargado, com);
@@ -285,6 +335,10 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 		dbHelper.close();
 	}
 
+	private void makeToast(int resource){
+		Toast.makeText(this, resource, Toast.LENGTH_SHORT).show();
+	}
+	
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
@@ -305,6 +359,28 @@ public class StandActivity extends Activity implements OnStandNuevo,onStandSelec
 
 		}
 		dbHelper.close();
+	}
+	
+	@Override
+	public void setNewComision(Comisiones com) {
+		// TODO Auto-generated method stub
+		dbHelper.open();
+		
+		if(dbHelper.updateComision(com.getId(), com.getCantidad(), com.getIva(), com.getTipo())){
+			makeToast(R.string.update_exitoso);
+			boolean hayDetalle = 
+					(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+			if(hayDetalle) {
+				((FragmentStandProd)getFragmentManager().
+					findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+			}
+		}else{
+			makeToast(R.string.update_noexitoso);
+		}
+		
+		dbHelper.close();
+		
 	}
 
 }

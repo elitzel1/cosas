@@ -27,6 +27,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -237,6 +238,12 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onBackPressed(){
+		super.onBackPressed();
+		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 	}
 	
 	public void onResume(){

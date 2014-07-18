@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AdapterListaAgregaProductos extends ArrayAdapter<Product> {
 	Context context;
@@ -70,7 +71,12 @@ public class AdapterListaAgregaProductos extends ArrayAdapter<Product> {
 					if(Caption.getEditableText()!=null){
 						if(!Caption.getEditableText().toString().contentEquals("")){
 							if(Integer.parseInt(Caption.getEditableText().toString())>0){
-								items.get(pos).setCantidadStand(Integer.parseInt(Caption.getEditableText().toString()));
+								if(Integer.parseInt(Caption.getEditableText().toString()) < items.get(pos).getCantidad())
+									items.get(pos).setCantidadStand(Integer.parseInt(Caption.getEditableText().toString()));
+								else{
+									items.get(pos).setCantidadStand(Integer.parseInt(Caption.getEditableText().toString()));
+									Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
+								}
 							}
 
 						}
@@ -78,6 +84,19 @@ public class AdapterListaAgregaProductos extends ArrayAdapter<Product> {
 				}
 			}
 		});
+		
+		if(position==items.size()){
+			if(!holder.editCantidad.getEditableText().toString().contentEquals("")){
+				if(Integer.parseInt(holder.editCantidad.getEditableText().toString())>0&&Integer.parseInt(holder.editCantidad.getEditableText().toString())<=item.getCantidad()){
+					items.get(position).setCantidadStand(Integer.parseInt(holder.editCantidad.getEditableText().toString()));
+				}else{
+					items.get(position).setCantidadStand(Integer.parseInt(holder.editCantidad.getEditableText().toString()));
+					Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
+				}
+
+			}
+	
+		}
 		Log.i("PROD","position: "+position+" Cantidad: "+item.getCantidadStand());
 
 		return view;
