@@ -204,4 +204,17 @@
 	
 	<string name="update_exitoso">Actualización Exitosa</string>
 	<string name="update_noexitoso">Actualización No Exitosa</string>
+	<string name="d_com_agregada">Comisión Agregada</string>
+	<string name="d_tax_agregada">Tax added</string>
+	<string name="d_com_nov">Comision no válida</string>
+	<string name="d_tax_nov">Tax no válido</string>
+	<string name="d_com_err">Error</string>
+	<string name="d_talla_agregada">Talla Agregada</string>
+	<string name="d_talla_can">Cantidad no válida</string>
+	<string name="d_eliminado">Eliminado</string>
+	<string name="p_anadido">Producto añadido</string>
+	<string name="p_anadido_ad">Adicional añadido</string>
+	<string name="p_anadido_cor">Cortesia añadida</string>
+	<string name="p_eliminado">Producto eliminado</string>
+	<string name="s_ananido">Stand añadido</string>
 </resources>

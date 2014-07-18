@@ -410,6 +410,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			}
 			p.setId((int)idRow);
 			addProduct(p,null);
+			makeToast(R.string.p_anadido);
 		}
 		dbHelper.close();
 	}
@@ -574,6 +575,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				p.setTotalCantidad(p.getTotalCantidad()+Integer.parseInt(adicional));
 				p.setCantidad(p.getCantidad()+Integer.parseInt(adicional));
 				Log.i("ADICIONALES", nombre+" "+adicional+" "+p.getId()+" "+p.getArtista()+" "+p.getNombre());
+				makeToast(R.string.p_anadido_ad);
 			}
 			dbHelper.close();
 
@@ -604,9 +606,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				if(dbHelper.deleteProduct(p.getId())){
 					adapter.notifyDataSetChanged();
 					Log.i("DB", " eliminado");
+					makeToast(R.string.p_eliminado);
 				}
 				else
 					Log.e("BD", "Error al eliminiar ");
+				makeToast(R.string.d_com_err);
 				/* Remove it from the list.*/
 				dbHelper.close();
 			}
@@ -687,9 +691,10 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				int cantidad = total;
 				p.setCantidad(cantidad);
 				dbHelper.updateProducto(p.getId(), cantidad);
+				makeToast(R.string.p_anadido_cor);
 			}
 		}else{
-
+			makeToast(R.string.d_com_err);
 		}
 		dbHelper.close();
 	}

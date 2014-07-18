@@ -399,7 +399,11 @@ public final class R {
         public static final int d_adicionales=0x7f080082;
         public static final int d_artista=0x7f08007f;
         public static final int d_cantidad=0x7f08007e;
+        public static final int d_com_agregada=0x7f080094;
+        public static final int d_com_err=0x7f080098;
+        public static final int d_com_nov=0x7f080096;
         public static final int d_cortesias=0x7f080080;
+        public static final int d_eliminado=0x7f08009b;
         public static final int d_no_adi=0x7f080083;
         public static final int d_no_cor=0x7f080081;
         /**  Detalles PRod 
@@ -407,6 +411,10 @@ public final class R {
         public static final int d_nombre=0x7f08007a;
         public static final int d_precio=0x7f08007d;
         public static final int d_talla=0x7f08007c;
+        public static final int d_talla_agregada=0x7f080099;
+        public static final int d_talla_can=0x7f08009a;
+        public static final int d_tax_agregada=0x7f080095;
+        public static final int d_tax_nov=0x7f080097;
         public static final int d_tipo=0x7f08007b;
         public static final int din=0x7f080024;
         /**  Cierre Stand 
@@ -467,6 +475,9 @@ public final class R {
         public static final int nombre_emp=0x7f080056;
         public static final int nota=0x7f080067;
         public static final int otro=0x7f080010;
+        public static final int p_anadido=0x7f08009c;
+        public static final int p_anadido_ad=0x7f08009d;
+        public static final int p_anadido_cor=0x7f08009e;
         public static final int p_comision_g=0x7f08008b;
         public static final int p_comisiones=0x7f080088;
         public static final int p_divisa_g=0x7f08008a;
@@ -474,6 +485,7 @@ public final class R {
          */
         public static final int p_divisas=0x7f080085;
         public static final int p_dolar=0x7f080086;
+        public static final int p_eliminado=0x7f08009f;
         public static final int p_euro=0x7f080087;
         public static final int p_op_guar=0x7f08008e;
         public static final int p_op_guar_d=0x7f08008f;
@@ -488,6 +500,7 @@ public final class R {
         public static final int r_bruto=0x7f080058;
         public static final int r_neto=0x7f080057;
         public static final int reportes=0x7f080069;
+        public static final int s_ananido=0x7f0800a0;
         public static final int s_cantidad=0x7f080053;
         public static final int s_cantidad_stand=0x7f080054;
         public static final int s_comision=0x7f080055;
