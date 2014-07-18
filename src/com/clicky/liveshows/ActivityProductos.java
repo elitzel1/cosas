@@ -417,6 +417,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			}
 			p.setId((int)idRow);
 			addProduct(p,null);
+			makeToast(R.string.p_anadido);
 		}
 		dbHelper.close();
 	}
@@ -516,7 +517,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			findViewById(R.id.btnStand).setVisibility(View.VISIBLE);
 		}
 		Product item = p;
-		item.setId_imagen(R.drawable.werelupe);
+		item.setId_imagen(R.drawable.ic_launcher);
 		if(item.getPath_imagen().contentEquals("")){
 			for(TipoProduct prod:tipos){
 				if(prod.getNombre().contentEquals(item.getTipo())){
@@ -581,6 +582,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				p.setTotalCantidad(p.getTotalCantidad()+Integer.parseInt(adicional));
 				p.setCantidad(p.getCantidad()+Integer.parseInt(adicional));
 				Log.i("ADICIONALES", nombre+" "+adicional+" "+p.getId()+" "+p.getArtista()+" "+p.getNombre());
+				makeToast(R.string.p_anadido_ad);
 			}
 			dbHelper.close();
 			adapter.notifyDataSetChanged();
@@ -612,9 +614,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				if(dbHelper.deleteProduct(p.getId())){
 					adapter.notifyDataSetChanged();
 					Log.i("DB", " eliminado");
+					makeToast(R.string.p_eliminado);
 				}
 				else
 					Log.e("BD", "Error al eliminiar ");
+				makeToast(R.string.d_com_err);
 				/* Remove it from the list.*/
 				dbHelper.close();
 			}
@@ -746,7 +750,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 					} else if (name.contentEquals("image")){
 						int idr =getResources().getIdentifier(parser.nextText(), "drawable", getPackageName());
 						if(idr==0){
-							currentLocal.setImage(R.drawable.werelupe);
+							currentLocal.setImage(R.drawable.ic_launcher);
 						}
 						else{
 							currentLocal.setImage(idr);

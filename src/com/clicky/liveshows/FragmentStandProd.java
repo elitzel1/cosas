@@ -414,7 +414,7 @@ public class FragmentStandProd extends Fragment {
 					} else if (name.contentEquals("image")){
 						int idr =getResources().getIdentifier(parser.nextText(), "drawable", getActivity().getPackageName());
 						if(idr==0){
-							currentLocal.setImage(R.drawable.werelupe);
+							currentLocal.setImage(R.drawable.ic_launcher);
 						}
 						else{
 							currentLocal.setImage(idr);

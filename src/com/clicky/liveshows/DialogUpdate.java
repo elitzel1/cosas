@@ -214,7 +214,7 @@ public class DialogUpdate extends DialogFragment {
 			public void onClick(View v) {
 				String com = (String)spinnerComisiones.getSelectedItem();
 				if(!com.contentEquals("Elija comision")){
-					if(editComisiones.getEditableText()!=null)
+					if(editComisiones.getEditableText()!=null){
 						if(!editComisiones.getEditableText().toString().equals("")){
 							if(Integer.parseInt(editComisiones.getEditableText().toString())>0){
 								int selected = radioGroup.getCheckedRadioButtonId();
@@ -224,8 +224,14 @@ public class DialogUpdate extends DialogFragment {
 								list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
 								countC++;
 								addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
-							}
-						}
+								editComisiones.setText("");
+								listener.makeToastDialog(R.string.d_com_agregada);
+							}else{
+								listener.makeToastDialog(R.string.d_com_nov);}
+						}else{
+							listener.makeToastDialog(R.string.d_com_err);}
+					}else{
+						listener.makeToastDialog(R.string.d_com_err);}
 				}
 			}
 		});
@@ -242,13 +248,19 @@ public class DialogUpdate extends DialogFragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
-				if(!amount.contentEquals(""))
+				if(!amount.contentEquals("")){
 					if(Integer.parseInt(amount)>0){
 						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
 						countT++;
 						addView("Tax", amount , countT, mLinearT);
-
+						((EditText)view.findViewById(R.id.editImpuestoCantidad)).setText("");
+						listener.makeToastDialog(R.string.d_tax_agregada);
+					}else{
+						listener.makeToastDialog(R.string.d_tax_nov);
 					}
+				}else{
+					listener.makeToastDialog(R.string.d_tax_nov);
+				}
 			}
 		});
 

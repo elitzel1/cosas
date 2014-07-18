@@ -214,7 +214,7 @@ public class DialogDetails extends DialogFragment {
 			/* Associate the Bitmap to the ImageView */
 			img.setImageBitmap(bitmap);
 		}catch(OutOfMemoryError e){
-			img.setImageResource(R.drawable.lupeb);
+			img.setImageResource(R.drawable.ic_launcher);
 		}
 	}
 

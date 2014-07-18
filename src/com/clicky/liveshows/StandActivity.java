@@ -211,8 +211,9 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		dbHelper.open();
 		long id= dbHelper.createStand(nombre, com.getCantidad(), com.getTipo(), com.getIva(), encargado);
 		if(id==-1){
-			
+			makeToast(R.string.d_com_err);
 		}else{
+			makeToast(R.string.s_ananido);
 			newStand(id, nombre, encargado, com);
 		}
 		dbHelper.close();
@@ -322,14 +323,18 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
 					((FragmentStandProd)getFragmentManager().
 							findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
-					Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());	
+					Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());
+					makeToast(R.string.p_anadido_ad);
 				}else{
+					makeToast(R.string.d_com_err);
 					Log.i("ERROR","StandProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 				}
 			}else{
+				makeToast(R.string.d_com_err);
 				Log.i("ERROR","UpdateProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 			}
 		}else{
+			makeToast(R.string.d_com_err);
 			Log.i("ERROR","operacion"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 		}
 		dbHelper.close();
@@ -354,9 +359,10 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				p.setCantidadStand(cantidad);
 				dbHelper.updateProducto(p.getId(), cantidad);
 				dbHelper.updateStandProducto(p.getId(),stand.getId(), cantidad);
+				makeToast(R.string.p_anadido_cor);
 			}
 		}else{
-
+			makeToast(R.string.d_com_err);
 		}
 		dbHelper.close();
 	}

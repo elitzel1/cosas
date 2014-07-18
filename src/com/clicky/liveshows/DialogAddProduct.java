@@ -78,7 +78,7 @@ public class DialogAddProduct extends DialogFragment {
 	private EditText editTalla;
 	private boolean enableOtraTalla = true;
 	private boolean visibleTallaMenos = false;
-	
+
 	View view;
 	interface OnDialogListener{
 		public void articuloNuevo(Product p, int idImg);
@@ -115,19 +115,19 @@ public class DialogAddProduct extends DialogFragment {
 		ImageView menosC =(ImageView)view.findViewById(R.id.btnComLess);
 		ImageView menosT =(ImageView)view.findViewById(R.id.btnTaxesLess);
 		checkTalla = (CheckBox)view.findViewById(R.id.checkBox1);
-		
+
 		idImagen=0;
 		path="";
-		
+
 		Bundle b =  getArguments();
 		tipos = b.getStringArray("tipos");
 		idImages = b.getIntArray("imagenes");
-		
+
 		/**Spinner TALLA***/
 		ArrayAdapter<String> tallasAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item,tallas);
 		tallasAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerTallas.setAdapter(tallasAdapter);
-		
+
 		/**Spinne TIPOS***/
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_item, tipos);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -172,7 +172,7 @@ public class DialogAddProduct extends DialogFragment {
 
 			}
 		});
-		
+
 		//Otra talla
 		btnOtraTalla.setOnClickListener(new OnClickListener() {
 			@Override
@@ -188,7 +188,7 @@ public class DialogAddProduct extends DialogFragment {
 					editTalla.setVisibility(View.VISIBLE);
 					enableOtraTalla=false;
 				}
-				
+
 			}
 		});
 
@@ -205,19 +205,19 @@ public class DialogAddProduct extends DialogFragment {
 		countC=0; //Contador Comisiones
 		countT=0; //Contador Impuestos
 		countTallas=0; //Contador Tallas
-		
+
 		mLinearC = (LinearLayout)view.findViewById(R.id.listComisiones);  //Linear comisiones
 		mLinearC.setOrientation(LinearLayout.VERTICAL);
-		
+
 		list_taxes = new ArrayList<Taxes>();
 		list_comisiones = new ArrayList<Comisiones>();
-		
+
 		/**Comisiones Cantidad, tipo e IVA****/
 		editComisiones=(EditText)view.findViewById(R.id.editComisiones);
 		radioGroup = (RadioGroup)view.findViewById(R.id.radioComisionT);
 		radioGroup2 =(RadioGroup)view.findViewById(R.id.radioComisionP);
 		ImageView btnComision = (ImageView)view.findViewById(R.id.btnComision);
-		
+
 		//Se agrega comision
 		btnComision.setOnClickListener(new OnClickListener() {
 			@Override
@@ -235,13 +235,22 @@ public class DialogAddProduct extends DialogFragment {
 								countC++;
 								addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
 								editComisiones.setText("");
-								spinnerComisiones.setSelection(0);
+								listener.makeToastDialog(R.string.d_com_agregada);
+								if(visibleComision==false){
+									view.findViewById(R.id.btnComLess).setVisibility(View.VISIBLE);
+									visibleComision=true;
+								}
+							}else{
+								listener.makeToastDialog(R.string.d_com_nov);
 							}
+						}else{
+
+							listener.makeToastDialog(R.string.d_com_err);
 						}
-					if(visibleComision==false){
-						view.findViewById(R.id.btnComLess).setVisibility(View.VISIBLE);
-						visibleComision=true;
-					}
+
+				}else{
+
+					listener.makeToastDialog(R.string.d_com_err);
 				}
 			}
 		});
@@ -250,7 +259,7 @@ public class DialogAddProduct extends DialogFragment {
 		mLinearT =(LinearLayout)view.findViewById(R.id.listImpuestos);
 		mLinearT.setOrientation(LinearLayout.VERTICAL);
 		ImageView btnImpuesto = (ImageView)view.findViewById(R.id.btnTaxes);
-		
+
 		/*Agregar impuesto**/
 		btnImpuesto.setOnClickListener(new OnClickListener() {
 
@@ -258,16 +267,22 @@ public class DialogAddProduct extends DialogFragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
-				if(!amount.contentEquals(""))
-				if(Integer.parseInt(amount)>0){
-					list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
-					countT++;
-					addView("Tax", amount , countT, mLinearT);
-					((EditText)view.findViewById(R.id.editImpuestoCantidad)).setText("");
-					if(visibleTaxes==false){
-						view.findViewById(R.id.btnTaxesLess).setVisibility(View.VISIBLE);
-						visibleTaxes=true;
+				if(!amount.contentEquals("")){
+					if(Integer.parseInt(amount)>0){
+						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
+						countT++;
+						addView("Tax", amount , countT, mLinearT);
+						listener.makeToastDialog(R.string.d_tax_agregada);
+						((EditText)view.findViewById(R.id.editImpuestoCantidad)).setText("");
+						if(visibleTaxes == false){
+							view.findViewById(R.id.btnTaxesLess).setVisibility(View.VISIBLE);
+							visibleTaxes=true;
+						}
+					}else{
+						listener.makeToastDialog(R.string.d_tax_nov);
 					}
+				}else{
+					listener.makeToastDialog(R.string.d_com_err);
 				}
 			}
 		});
@@ -299,7 +314,6 @@ public class DialogAddProduct extends DialogFragment {
 			}
 		}); 
 		
-		
 		//Se agrega una talla
 		masTallas.setOnClickListener(new OnClickListener() {
 			@Override
@@ -316,22 +330,28 @@ public class DialogAddProduct extends DialogFragment {
 							return;
 						}
 				}
-				
-				//if(!com.contentEquals()){
-					if(editCantidadTallas.getEditableText()!=null)
-						if(!editCantidadTallas.getEditableText().toString().equals("")){
-							if(Integer.parseInt(editCantidadTallas.getEditableText().toString())>0){
-								list_tallas.add(new Talla(com,editCantidadTallas.getEditableText().toString()));
-								countTallas++;
-								
-								addView(com,editCantidadTallas.getEditableText().toString(), countTallas, mLinearTallas);
-								editCantidadTallas.setText("");
+		
+				if(editCantidadTallas.getEditableText()!=null){
+					if(!editCantidadTallas.getEditableText().toString().equals("")){
+						if(Integer.parseInt(editCantidadTallas.getEditableText().toString())>0){
+							list_tallas.add(new Talla(com,editCantidadTallas.getEditableText().toString()));
+							countTallas++;
+							addView(com,editCantidadTallas.getEditableText().toString(), countTallas, mLinearTallas);
+							listener.makeToastDialog(R.string.d_talla_agregada);
+							editCantidadTallas.setText("");
+							if(visibleTallaMenos==false){
+								view.findViewById(R.id.btnMenosTalla).setVisibility(View.VISIBLE);
+								visibleTallaMenos=true;
 							}
-			//			}
-					if(visibleTallaMenos==false){
-						view.findViewById(R.id.btnMenosTalla).setVisibility(View.VISIBLE);
-						visibleTallaMenos=true;
+						}else{
+							listener.makeToastDialog(R.string.d_talla_can);
+						}
+					}else{
+						listener.makeToastDialog(R.string.d_com_err);
 					}
+				}
+				else{
+					listener.makeToastDialog(R.string.d_com_err);
 				}
 			}
 		});
@@ -366,6 +386,7 @@ public class DialogAddProduct extends DialogFragment {
 					mLinearC.removeView(temp);
 					countC--;
 					list_comisiones.remove(list_comisiones.size()-1);
+					listener.makeToastDialog(R.string.d_eliminado);
 				}				
 			}
 		});
@@ -382,6 +403,7 @@ public class DialogAddProduct extends DialogFragment {
 					mLinearT.removeView(temp);
 					countT--;
 					list_taxes.remove(list_taxes.size()-1);
+					listener.makeToastDialog(R.string.d_eliminado);
 				}
 			}
 		});
