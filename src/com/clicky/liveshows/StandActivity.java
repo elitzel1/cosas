@@ -253,14 +253,14 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 			makeToast(R.string.d_com_err);
 		}else{
 			makeToast(R.string.s_ananido);
-			newStand(id, nombre, encargado, com);
+			newStand(id, nombre, encargado, com,0,0,0,0,0,0);
 		}
 		dbHelper.close();
 	}
 	
 
-	public void newStand(long id, String nombre, String encargado, Comisiones com){
-		Stand stand = new Stand(id,nombre, encargado, com);
+	public void newStand(long id, String nombre, String encargado, Comisiones com, double efectivo, double banamex, double banorte, double santander, double amex, double other){
+		Stand stand = new Stand(id,nombre, encargado, com, efectivo, banamex, banorte, santander, amex, other);
 		frag.setStand(stand);
 		//onStandSeleccionado(stand);
 	}
@@ -311,10 +311,16 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				int comision = cursor.getInt(3);
 				String iva = cursor.getString(5);
 				String tipo = cursor.getString(4);
+				double efectivo = cursor.getDouble(6);
+				double banamex = cursor.getDouble(7);
+				double banorte = cursor.getDouble(8);
+				double santander = cursor.getDouble(9);
+				double amex = cursor.getDouble(10);
+				double other = cursor.getDouble(11);
 				Comisiones com = new Comisiones("Vendedor", comision, iva, tipo);
-				newStand(id, nombre, encargado, com);
+				newStand(id, nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other);
 				if(cursor.isFirst()){
-					Stand first = new Stand(id,nombre, encargado, com);
+					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other);
 					onStandSeleccionado(first);
 				}
 		}while(cursor.moveToNext());
@@ -362,7 +368,13 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
 					((FragmentStandProd)getFragmentManager().
 							findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
-					Log.i("ADICIONALES", p.getId()+" "+p.getArtista()+" "+p.getNombre());
+					boolean hayDetalle = 
+							(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+					if(hayDetalle) {
+						((FragmentStandProd)getFragmentManager().
+							findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+					}
 					makeToast(R.string.p_anadido_ad);
 				}else{
 					makeToast(R.string.d_com_err);
@@ -373,7 +385,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				Log.i("ERROR","UpdateProduct"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 			}
 		}else{
-			makeToast(R.string.d_com_err);
+			makeToast(R.string.err_cantidad);
 			Log.i("ERROR","operacion"+ p.getId()+" "+p.getArtista()+" "+p.getNombre());
 		}
 		dbHelper.close();
@@ -398,10 +410,17 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				p.setCantidadStand(cantidad);
 				dbHelper.updateProducto(p.getId(), cantidad);
 				dbHelper.updateStandProducto(p.getId(),stand.getId(), cantidad);
+				boolean hayDetalle = 
+						(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+				if(hayDetalle) {
+					((FragmentStandProd)getFragmentManager().
+						findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+				}
 				makeToast(R.string.p_anadido_cor);
 			}
 		}else{
-			makeToast(R.string.d_com_err);
+			makeToast(R.string.err_cantidad);
 		}
 		dbHelper.close();
 	}

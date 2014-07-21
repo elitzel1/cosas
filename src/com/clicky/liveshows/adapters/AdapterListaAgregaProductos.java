@@ -71,7 +71,7 @@ public class AdapterListaAgregaProductos extends ArrayAdapter<Product> {
 					if(Caption.getEditableText()!=null){
 						if(!Caption.getEditableText().toString().contentEquals("")){
 							if(Integer.parseInt(Caption.getEditableText().toString())>0){
-								if(Integer.parseInt(Caption.getEditableText().toString()) < items.get(pos).getCantidad())
+								if(Integer.parseInt(Caption.getEditableText().toString()) <= items.get(pos).getCantidad())
 									items.get(pos).setCantidadStand(Integer.parseInt(Caption.getEditableText().toString()));
 								else{
 									items.get(pos).setCantidadStand(Integer.parseInt(Caption.getEditableText().toString()));

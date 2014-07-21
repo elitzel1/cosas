@@ -560,6 +560,12 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				dbHelper.updateProducto(prod.getId(), cant, (cant-asignados));
 			}while(cursorProd.moveToNext());
 		}
+		Cursor cursorStand = dbHelper.fetchAllStand();
+		if(cursorStand.moveToFirst()){
+			do{
+				dbHelper.updateStandCierre(cursorStand.getLong(0), 0, 0, 0, 0, 0, 0);
+			}while(cursorStand.moveToNext());
+		}
 		dbHelper.deleteDia();
 		dbHelper.close();
 		setResult(RESULT_OK);

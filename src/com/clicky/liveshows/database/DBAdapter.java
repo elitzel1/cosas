@@ -355,7 +355,8 @@ public class DBAdapter {
 	}
 
 	public Cursor fetchAllStand(){
-		return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand
+		return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand,
+				colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,colCantidadSantander,colCantidadAmex,colCantidadOtro
 		}, null, null, null,
 		null, null);
 	}
@@ -564,12 +565,21 @@ public class DBAdapter {
 	}
 
 	private ContentValues createContentValuesStand(String nombre,String empleado,int comision,String tipo ,String iva){
+			//,double efectivo, double banamex, double banorte, double santander, double amex, double otro){
 		ContentValues values = new ContentValues();
 		values.put(colNombreStand, nombre);
 		values.put(colNombreEmpleado, empleado);
 		values.put(colComisionStand, comision);
 		values.put(colTipoCStand, tipo);
 		values.put(colIVAStand, iva);
+		/*
+		values.put(colCantidadEfectivo, efectivo);
+		values.put(colCantidadBanamex, banamex);
+		values.put(colCantidadBanorte, banorte);
+		values.put(colCantidadSantander, santander);
+		values.put(colCantidadAmex, amex);
+		values.put(colCantidadOtro, otro);
+		*/
 		return values;
 	}
 

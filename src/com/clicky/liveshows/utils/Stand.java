@@ -9,10 +9,9 @@ public class Stand {
 	String encargado;
 	Comisiones comisiones;
 	List<Product> products;
+	double efectivo,banamex,banorte,santander,amex,other;
 	
-	public Stand(){
-		
-	}
+	public Stand(){}
 	
 	public Stand(long id, String name,String encargado,Comisiones comisiones){
 		this.id  = id;
@@ -21,6 +20,18 @@ public class Stand {
 		this.comisiones=comisiones;
 	}
 	
+	public Stand(long id, String name,String encargado,Comisiones comisiones, double efectivo, double banamex, double banorte, double santaner, double amex, double other){
+		this.id  = id;
+		this.name=name;
+		this.encargado=encargado;
+		this.comisiones=comisiones;
+		this.efectivo = efectivo;
+		this.banamex = banamex;
+		this.banorte = banorte;
+		this.santander = santaner;
+		this.amex = amex;
+		this.other = other;
+	}
 	
 	public long getId() {
 		return id;
@@ -57,11 +68,12 @@ public class Stand {
 	public void setComision(Comisiones comision) {
 		this.comisiones = comision;
 	}
-//	public String getTipoComision() {
-//		return tipoComision;
-//	}
-//	public void setTipoComision(String neto) {
-//		this.tipoComision = neto;
-//	}
+	
+	public boolean isOpened(){
+		if(this.efectivo == 0 && this.banamex == 0 && this.banorte == 0 && this.santander == 0 && this.amex == 0 && this.other == 0)
+			return true;
+		else
+			return false;
+	}
 	
 }

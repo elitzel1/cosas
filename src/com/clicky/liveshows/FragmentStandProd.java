@@ -43,7 +43,7 @@ import android.widget.TextView;
 @SuppressLint("UseSparseArrays")
 public class FragmentStandProd extends Fragment {
 
-	LinearLayout empty;
+	LinearLayout empty,closed;
 	TextView txtNombre;
 	TextView txtEncargado;
 	TextView txtComision;
@@ -96,6 +96,7 @@ public class FragmentStandProd extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_stand_prod, container, false); 
 		
 		empty = (LinearLayout)v.findViewById(R.id.vacio);
+		closed = (LinearLayout)v.findViewById(R.id.closed);
 		txtEncargado = (TextView)v.findViewById(R.id.txtEncargado);
 		txtComision = (TextView)v.findViewById(R.id.txtComision);
 		list=(ListView)v.findViewById(R.id.listStandProd);
@@ -177,6 +178,10 @@ public class FragmentStandProd extends Fragment {
 		this.idFecha = idFecha;
 		this.s=s;
 		empty.setVisibility(View.GONE);
+		if(s.isOpened())
+			closed.setVisibility(View.GONE);
+		else
+			closed.setVisibility(View.VISIBLE);
 		Comisiones com = s.getComision();
 		txtEncargado.setText(s.getEncargado());
 		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getTipo());//CORREGIR AQUI

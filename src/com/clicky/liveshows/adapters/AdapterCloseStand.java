@@ -73,7 +73,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 					final EditText Caption = (EditText) v;
 					if(Caption.getEditableText()!=null){
 						if(!Caption.getEditableText().toString().contentEquals("")){
-							if(Integer.parseInt(Caption.getEditableText().toString())<=item.getCantidadStand()){
+							if(Integer.parseInt(Caption.getEditableText().toString()) <= item.getCantidadStand()){
 								items.get(pos).setProdNo(Integer.parseInt(Caption.getEditableText().toString()));
 							}else{
 								Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
