@@ -14,7 +14,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -137,13 +136,9 @@ public class ActivityAgregarProductos extends Activity {
 					if(dbHelper.updateProducto(adapter.getItem(i).getId(), c)){
 						long comId = dbHelper.createImpuesto("Vendedor", "comision_stand", comision.getCantidad(), comision.getTipo(), comision.getIva());
 						if(comId != -1){
-							long prod_id = dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);
-							if(prod_id != -1)
-								dbHelper.createImpuestoProducto((int)prod_id, (int)comId);
-							else
-								Log.i("ERROR", "No se creo impuesto");
-							}else
-								Log.i("ERROR", "No se creo impuesto");
+							dbHelper.createStandProducto(id, adapter.getItem(i).getId(), idFecha, adapter.getItem(i).getCantidadStand(),(int)comId);
+						}else
+							Log.i("ERROR", "No se creo impuesto");
 						Log.i("ACEPTAR", "ID: "+id+" Cantidad Stand: "+adapter.getItem(i).getCantidadStand()+" Cantidad: "+adapter.getItem(i).getCantidad());
 					}else{
 					}

@@ -37,6 +37,8 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -604,23 +606,11 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			Log.i("AP", "POSITION "+menuInfo.position);
 
 			Product p=(Product)list.getAdapter().getItem(menuInfo.position);
-			if(p.getId()==-1){
+			if(p.getId() == -1){
 				products.remove(menuInfo.position);
 				adapter.notifyDataSetChanged();
 			}else{
-				dbHelper.open();
-				products.remove(menuInfo.position);
-
-				if(dbHelper.deleteProduct(p.getId())){
-					adapter.notifyDataSetChanged();
-					Log.i("DB", " eliminado");
-					makeToast(R.string.p_eliminado);
-				}
-				else
-					Log.e("BD", "Error al eliminiar ");
-				makeToast(R.string.d_com_err);
-				/* Remove it from the list.*/
-				dbHelper.close();
+				deleteItem(menuInfo.position);
 			}
 			return true; /* true means: "we handled the event". */
 
@@ -644,6 +634,53 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		}
 
 		return false;
+	}
+	
+	private void deleteItem(final int position){
+		final Product p = products.get(position);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(getResources().getString(R.string.alert_delete) +" " + p.getNombre()+ "?");
+		builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dbHelper.open();
+				
+				ArrayList<Integer> idsStand = new ArrayList<Integer>();
+				
+				Cursor cursorProds = dbHelper.fetchProductoStand(p.getId());
+				if(cursorProds.moveToFirst()){
+					do{
+						int idProdStand = cursorProds.getInt(0);
+						idsStand.add(idProdStand);
+					}while(cursorProds.moveToNext());
+				}
+				
+				for(int i = 0; i < idsStand.size(); i++){
+					dbHelper.deleteInfoProdStand(idsStand.get(i));
+				}
+				if(dbHelper.deleteProduct(p.getId())){
+					products.remove(position);
+					adapter.notifyDataSetChanged();
+					Log.i("DB", " eliminado");
+					makeToast(R.string.p_eliminado);
+				}
+				else{
+					Log.e("BD", "Error al eliminiar ");
+					makeToast(R.string.d_com_err);
+				}
+				/* Remove it from the list.*/
+				dbHelper.close();
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
 	}
 
 	private void updateItem(int position){

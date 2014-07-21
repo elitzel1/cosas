@@ -10,4 +10,5 @@
     <color name="azul_textos">#0a3866</color>
     <color name="azul_selected">#4e91eb</color>
     <color name="azul_textos_selected">#2b587b</color>
+    <color name="azul_transparente">#66347af0</color>
 </resources>

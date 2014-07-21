@@ -65,11 +65,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		int bandEvento = prefs.getInt("evento", 0);
-		if(bandEvento==1){
-			toActivityProducto();
-		}
 		spinnerLocal = (Spinner) findViewById(R.id.spinnerLocacion);
 		spinnerTipoMoneda = (Spinner)findViewById(R.id.spinnerMoneda);
 		editCapacidad = (EditText)findViewById(R.id.editCapacidad);
@@ -94,7 +89,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
 				if(event.getAction() == MotionEvent.ACTION_UP){
 					DatePickerFragment fragment  = new DatePickerFragment();
 					fragment.show(getFragmentManager(), "datePicker");
@@ -122,7 +116,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -134,6 +127,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 				artistas.add(editArtista.getEditableText().toString());
 				countA++;
 				addView(editArtista.getEditableText().toString(),countA,mLinear);
+				makeToast(R.string.m_art_agregado);
 				if(visibleArtista==false){
 					findViewById(R.id.btnEliminarArtista).setVisibility(View.VISIBLE);
 					visibleArtista=true;
@@ -279,7 +273,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -296,6 +289,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		fechas.add(day+"/"+month+"/"+year);
 		countD++;
 		addView(""+day+"/"+month+"/"+year, countD, mLinearDate);
+		makeToast(R.string.m_date_agregado);
 		if(visibleDate==false){
 			findViewById(R.id.btnEliminarFecha).setVisibility(View.VISIBLE);
 			visibleDate=true;

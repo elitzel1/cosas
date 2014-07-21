@@ -3,6 +3,7 @@ package com.clicky.liveshows;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +47,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,6 +78,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	List<Product> products;
 	private int[]art;
 	
+	double totalVenta = 0;
 	int idEvento,idfecha,capacidad;
 	int posVenue=0;
 	String evento,fecha,local;
@@ -431,9 +432,9 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			
 			@Override
 			public void onClick(View v) {
-				getReport(2, agencias.get(spin.getSelectedItemPosition()).getNombre(), agencias.get(spin.getSelectedItemPosition()).getContacto(),artista);
+				getPDFReport(2, agencias.get(spin.getSelectedItemPosition()).getNombre(), agencias.get(spin.getSelectedItemPosition()).getContacto(),artista);
 				if(validaCorreo(mail.getText().toString())){
-					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
+					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.pdf";
 					Intent email = new Intent(Intent.ACTION_SEND);
 					email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail.getText().toString()});		  
 					email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
@@ -692,6 +693,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		products.clear();
 		totales.clear();
 		dbHelper.open();
+		totalVenta = 0;
 		if(artista.equals("")){
 			Cursor cursorProd = dbHelper.fetchAllProductos();
 			if(cursorProd.moveToFirst()){
@@ -760,8 +762,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 									String iva = cursorPI.getString(4);
 									String tipoPeso = cursorPI.getString(5);
 									list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
-								}else{
-
+								}else if(tipoImpuesto.equals("taxes")){
 									list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
 								}
 							}while(cursorPI.moveToNext());	
@@ -791,6 +792,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					}
 					
 					p.setProdNo(ventas);
+					totalVenta += ventas * Double.parseDouble(p.getPrecio());
 					addProduct(p, a);
 					
 					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
@@ -880,8 +882,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 									String iva = cursorPI.getString(4);
 									String tipoPeso = cursorPI.getString(5);
 									list_com.add(new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso));
-								}else{
-
+								}else if(tipoImpuesto.equals("taxes")){
 									list_tax.add(new Taxes(nombreI, Integer.parseInt(porcentaje)));
 								}
 							}while(cursorPI.moveToNext());	
@@ -911,6 +912,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					}
 					
 					p.setProdNo(ventas);
+					totalVenta += ventas * Double.parseDouble(p.getPrecio());
 					addProduct(p, a);
 					
 					Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
@@ -980,7 +982,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(22, 15, "GROSS TOTAL\nUS$DLLS", 12, hoja1);
 			
 			Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
-			double tax = 0, gross = 0, venueFee = 0, royaltyFee = 0;
+			double tax = 0, gross = 0, venueFee = 0, royaltyFee = 0,promotorFee = 0,  otherFee = 0;
 			
 			excel.writeCell(18, 13, "RATE EXCHANGE US$1 =", 12, hoja1);
 			excel.writeCell(19, 13, ""+priceUs, 11, hoja1);
@@ -1059,6 +1061,10 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 						venueFee += aux;
 					}else if(com.getName().equals("AGENCY")){
 						royaltyFee += aux;
+					}else if(com.getName().equals("PROMOTOR")){
+						promotorFee += aux;
+					}else if(com.getName().equals("OTHER")){
+						otherFee += aux;
 					}
 				}
 			}
@@ -1089,78 +1095,84 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			}else if(tipo == 0){
 				excel.writeCell(18, 22+products.size(), "ROYALTY FEE", 6, hoja1);
 				excel.writeCell(18, 23+products.size(), "VENUE FEE", 6, hoja1);
+				excel.writeCell(18, 24+products.size(), "PROMOTOR", 6, hoja1);
+				excel.writeCell(18, 25+products.size(), "OTHER", 6, hoja1);
 				
 				excel.writeCell(19, 22+products.size(), ""+royaltyFee, 5, hoja1);
 				excel.writeCell(19, 23+products.size(), ""+venueFee, 5, hoja1);
+				excel.writeCell(19, 24+products.size(), ""+promotorFee, 5, hoja1);
+				excel.writeCell(19, 25+products.size(), ""+otherFee, 5, hoja1);
 				
 				excel.writeCell(22, 22+products.size(), ""+(royaltyFee/priceUs), 11, hoja1);
 				excel.writeCell(22, 23+products.size(), ""+(venueFee/priceUs), 11, hoja1);
+				excel.writeCell(22, 24+products.size(), ""+(promotorFee/priceUs), 11, hoja1);
+				excel.writeCell(22, 25+products.size(), ""+(otherFee/priceUs), 11, hoja1);
 				
-				excel.writeCell(18, 25+products.size(), "GASTOS OPERATIVOS", 7, hoja1);
-				excel.writeCell(20, 25+products.size(), "FACTURA", 7, hoja1);
-				excel.writeCell(21, 25+products.size(), "NOTA", 7, hoja1);
+				excel.writeCell(18, 27+products.size(), "GASTOS OPERATIVOS", 7, hoja1);
+				excel.writeCell(20, 27+products.size(), "FACTURA", 7, hoja1);
+				excel.writeCell(21, 27+products.size(), "NOTA", 7, hoja1);
 				
 				double totalGastos = 0;
 				for(int i = 0; i< gastos.size(); i++){
 					totalGastos += gastos.get(i).getCantidad();
-					excel.writeCell(18, (26+products.size()+i), gastos.get(i).getConcepto(), 3, hoja1);
-					excel.writeCell(19, (26+products.size()+i), ""+gastos.get(i).getCantidad(), 5, hoja1);
+					excel.writeCell(18, (28+products.size()+i), gastos.get(i).getConcepto(), 3, hoja1);
+					excel.writeCell(19, (28+products.size()+i), ""+gastos.get(i).getCantidad(), 5, hoja1);
 					if(gastos.get(i).getComprobante().equals("Factura"))
-						excel.writeCell(20, (26+products.size()+i), "X", 8, hoja1);
+						excel.writeCell(20, (28+products.size()+i), "X", 8, hoja1);
 					else if(gastos.get(i).getComprobante().equals("Nota"))
-						excel.writeCell(21, (26+products.size()+i), "X", 8, hoja1);
+						excel.writeCell(21, (28+products.size()+i), "X", 8, hoja1);
 				}
-				excel.writeCell(18, 27+products.size()+gastos.size(), "SUBTOTAL", 7, hoja1);
-				excel.writeCell(19, 27+products.size()+gastos.size(), ""+totalGastos, 5, hoja1);
+				excel.writeCell(18, 29+products.size()+gastos.size(), "SUBTOTAL", 7, hoja1);
+				excel.writeCell(19, 29+products.size()+gastos.size(), ""+totalGastos, 5, hoja1);
 				
-				excel.writeCell(18, 29+products.size()+gastos.size(), "SUELDOS/BONOS/COMISIONES", 7, hoja1);
-				excel.writeCell(20, 29+products.size()+gastos.size(), "FACTURA", 7, hoja1);
-				excel.writeCell(21, 29+products.size()+gastos.size(), "NOTA", 7, hoja1);
+				excel.writeCell(18, 31+products.size()+gastos.size(), "SUELDOS/BONOS/COMISIONES", 7, hoja1);
+				excel.writeCell(20, 31+products.size()+gastos.size(), "FACTURA", 7, hoja1);
+				excel.writeCell(21, 31+products.size()+gastos.size(), "NOTA", 7, hoja1);
 				
 				double totalSueldos = 0;
 				for(int i = 0; i < sueldos.size(); i++){
 					totalSueldos += sueldos.get(i).getCantidad();
-					excel.writeCell(18, (30+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 3, hoja1);
-					excel.writeCell(19, (30+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
+					excel.writeCell(18, (32+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 3, hoja1);
+					excel.writeCell(19, (32+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
 					if(sueldos.get(i).getComprobante().equals("Factura"))
-						excel.writeCell(20, (30+products.size()+gastos.size()+i), "X", 8, hoja1);
+						excel.writeCell(20, (32+products.size()+gastos.size()+i), "X", 8, hoja1);
 					else if(sueldos.get(i).getComprobante().equals("Nota"))
-						excel.writeCell(21, (30+products.size()+gastos.size()+i), "X", 8, hoja1);
+						excel.writeCell(21, (32+products.size()+gastos.size()+i), "X", 8, hoja1);
 				}
-				excel.writeCell(18, 31+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 7, hoja1);
-				excel.writeCell(19, 31+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
+				excel.writeCell(18, 33+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 7, hoja1);
+				excel.writeCell(19, 33+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
-				excel.writeCell(18, 33+products.size()+gastos.size()+sueldos.size(), "TOTAL GASTOS OPERATIVOS", 0, hoja1);
-				excel.writeCell(20, 33+products.size()+gastos.size()+sueldos.size(), ""+totalGastos, 5, hoja1);
-				excel.writeCell(18, 34+products.size()+gastos.size()+sueldos.size(), "TOTAL SUELDOS/BONOS/COMISIONES", 0, hoja1);
-				excel.writeCell(20, 34+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
+				excel.writeCell(18, 35+products.size()+gastos.size()+sueldos.size(), "TOTAL GASTOS OPERATIVOS", 0, hoja1);
+				excel.writeCell(20, 35+products.size()+gastos.size()+sueldos.size(), ""+totalGastos, 5, hoja1);
+				excel.writeCell(18, 36+products.size()+gastos.size()+sueldos.size(), "TOTAL SUELDOS/BONOS/COMISIONES", 0, hoja1);
+				excel.writeCell(20, 36+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
 				double depositar = totalSueldos+totalGastos;
-				excel.writeCell(18, 36+products.size()+gastos.size()+sueldos.size(), "TOTAL A DEPOSITAR", 0, hoja1);
-				excel.writeCell(20, 36+products.size()+gastos.size()+sueldos.size(), ""+depositar, 5, hoja1);
+				excel.writeCell(18, 38+products.size()+gastos.size()+sueldos.size(), "TOTAL A DEPOSITAR", 0, hoja1);
+				excel.writeCell(20, 38+products.size()+gastos.size()+sueldos.size(), ""+depositar, 5, hoja1);
 				
-				excel.writeCell(18, 38+products.size()+gastos.size()+sueldos.size(), "INGRESOS RECIBIDOS", 0, hoja1);
+				excel.writeCell(18, 40+products.size()+gastos.size()+sueldos.size(), "INGRESOS RECIBIDOS", 0, hoja1);
 				
-				excel.writeCell(18, 39+products.size()+gastos.size()+sueldos.size(), "EFECTIVO", 3, hoja1);
-				excel.writeCell(18, 40+products.size()+gastos.size()+sueldos.size(), "TC BANAMEX", 3, hoja1);
-				excel.writeCell(18, 41+products.size()+gastos.size()+sueldos.size(), "TC BANORTE", 3, hoja1);
-				excel.writeCell(18, 42+products.size()+gastos.size()+sueldos.size(), "TC SANTANDER", 3, hoja1);
-				excel.writeCell(18, 43+products.size()+gastos.size()+sueldos.size(), "TC AMEX", 3, hoja1);
-				excel.writeCell(18, 44+products.size()+gastos.size()+sueldos.size(), "OTROS", 3, hoja1);
+				excel.writeCell(18, 41+products.size()+gastos.size()+sueldos.size(), "EFECTIVO", 3, hoja1);
+				excel.writeCell(18, 42+products.size()+gastos.size()+sueldos.size(), "TC BANAMEX", 3, hoja1);
+				excel.writeCell(18, 43+products.size()+gastos.size()+sueldos.size(), "TC BANORTE", 3, hoja1);
+				excel.writeCell(18, 44+products.size()+gastos.size()+sueldos.size(), "TC SANTANDER", 3, hoja1);
+				excel.writeCell(18, 45+products.size()+gastos.size()+sueldos.size(), "TC AMEX", 3, hoja1);
+				excel.writeCell(18, 46+products.size()+gastos.size()+sueldos.size(), "OTROS", 3, hoja1);
 				
-				excel.writeCell(20, 39+products.size()+gastos.size()+sueldos.size(), ""+efectivo, 5, hoja1);
-				excel.writeCell(20, 40+products.size()+gastos.size()+sueldos.size(), ""+banamex, 5, hoja1);
-				excel.writeCell(20, 41+products.size()+gastos.size()+sueldos.size(), ""+banorte, 5, hoja1);
-				excel.writeCell(20, 42+products.size()+gastos.size()+sueldos.size(), ""+santander, 5, hoja1);
-				excel.writeCell(20, 43+products.size()+gastos.size()+sueldos.size(), ""+amex, 5, hoja1);
-				excel.writeCell(20, 44+products.size()+gastos.size()+sueldos.size(), ""+otros, 5, hoja1);
+				excel.writeCell(20, 41+products.size()+gastos.size()+sueldos.size(), ""+efectivo, 5, hoja1);
+				excel.writeCell(20, 42+products.size()+gastos.size()+sueldos.size(), ""+banamex, 5, hoja1);
+				excel.writeCell(20, 43+products.size()+gastos.size()+sueldos.size(), ""+banorte, 5, hoja1);
+				excel.writeCell(20, 44+products.size()+gastos.size()+sueldos.size(), ""+santander, 5, hoja1);
+				excel.writeCell(20, 45+products.size()+gastos.size()+sueldos.size(), ""+amex, 5, hoja1);
+				excel.writeCell(20, 46+products.size()+gastos.size()+sueldos.size(), ""+otros, 5, hoja1);
 				
 				double depositado = efectivo+banamex+banorte+santander+amex+otros;
-				excel.writeCell(18, 45+products.size()+gastos.size()+sueldos.size(), "TOTAL DEPOSITADO", 0, hoja1);
-				excel.writeCell(20, 45+products.size()+gastos.size()+sueldos.size(), ""+depositado, 5, hoja1);
+				excel.writeCell(18, 47+products.size()+gastos.size()+sueldos.size(), "TOTAL DEPOSITADO", 0, hoja1);
+				excel.writeCell(20, 47+products.size()+gastos.size()+sueldos.size(), ""+depositado, 5, hoja1);
 				
-				excel.writeCell(18, 47+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 0, hoja1);
-				excel.writeCell(20, 47+products.size()+gastos.size()+sueldos.size(), ""+(depositado-depositar), 5, hoja1);
+				excel.writeCell(18, 49+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 0, hoja1);
+				excel.writeCell(20, 49+products.size()+gastos.size()+sueldos.size(), ""+(depositado-depositar), 5, hoja1);
 				
 				excel.writeCell(15, 5, "ATTENDANCE", 6, hoja1);
 				excel.writeCell(15, 7, "PERCAP", 6, hoja1);
@@ -1188,12 +1200,63 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	private void getPDFReport(int tipo,String agency, String contact,String artista){
 		getProducts(artista);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String[] headers = {"PRICE SALE IN US","#","ITEM","STYLE","SIZE","TOTAL\nINVENTORY","PRICE SALE","DAMAGE","COMPS\nVENUE",
+				"COMPS\nOFFICE\nPRODUCTION",prefs.getString("op1", "OTHER"),prefs.getString("op2", "OTHER"),"FINAL\nINVENTORY",
+				"SALES PIECES","GROSS TOTAL","% SALES","GROSS TOTAL\nUS$DLLS"};
+		Double priceUs = Double.parseDouble(prefs.getString("divisa", "0"));
+		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
+		df.applyPattern("$#,###.00");
 		
 		Document docPdf = pdf.createPDFHorizontal("sales_report.pdf");
 		
-		pdf.addImage(25,530,docPdf);
+		pdf.addImage(25,540,docPdf);
+		pdf.createHeadings(415, 535, 14, "SALES REPORT (IN "+prefs.getString("moneda", "")+")");
 		
-		pdf.tableVentas(docPdf, products,480);
+		pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE","AGENCY","CONTACT"}, 
+				new String[]{fecha,evento,local,agency,contact}, docPdf.leftMargin(), 515);
+		
+		pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
+				new String[]{""+capacidad,df.format(totalVenta/capacidad),df.format(totalVenta),df.format(priceUs)+" "+prefs.getString("moneda", "")}, 620, 515);
+		
+		pdf.tableVentas(docPdf, products, headers, totalVenta, 410);
+		int pos = 390 - (38*products.size());
+		int x = 650;
+		
+		double taxes = 0, venueFee = 0, royaltyFee = 0;
+		for(Product prod : products){
+			double subTotal = totalVenta;
+			
+			for(Taxes tax : prod.getTaxes()){
+				taxes += totalVenta * (tax.getAmount()* 0.01); 
+				subTotal -= totalVenta * (tax.getAmount()* 0.01);
+			}
+			
+			for(Comisiones com : prod.getComisiones()){
+				double cant = 0, aux = 0;
+				if(com.getTipo().equals("After taxes")){
+					cant = subTotal;
+				}else if(com.getTipo().equals("Before Taxes")){
+					cant = totalVenta;
+				}
+				if(com.getIva().equals("%")){
+					aux = cant * (com.getCantidad() * 0.01);  
+				}else if(com.getIva().equals("$")){
+					aux = com.getCantidad() * prod.getProdNo();
+				}
+				if(com.getName().equals("VENUE")){
+					venueFee += aux;
+				}else if(com.getName().equals("AGENCY")){
+					royaltyFee += aux;
+				}
+			}
+		}
+		pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","TAX","GROSS NET"}, new double[]{totalVenta,taxes,(totalVenta-taxes)}, x, (pos));
+		
+		if(tipo == 1){
+			pdf.tableNum(docPdf, new String[]{"VENUE FEE"}, new double[]{venueFee}, x, (pos-55));
+		}else if(tipo == 2){
+			pdf.tableNum(docPdf, new String[]{"ROYALTY FEE"}, new double[]{royaltyFee}, x, (pos-55));
+		}
 		
 		docPdf.close();
 	}

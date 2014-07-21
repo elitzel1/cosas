@@ -1,6 +1,8 @@
 package com.clicky.liveshows;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
@@ -19,7 +21,10 @@ import com.clicky.liveshows.utils.Stand;
 import com.clicky.liveshows.utils.Taxes;
 import com.itextpdf.text.Document;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -31,6 +36,7 @@ import android.view.View;
 import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
+@SuppressLint("UseSparseArrays")
 public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
@@ -113,90 +119,123 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	private void printProducts(){
 		if(stand != null){
 			dbHelper.open();
+			HashMap<Integer, String> artistas  = new HashMap<Integer, String>();
+			Cursor cArtistas = dbHelper.fetchAllArtistas();
+			if(cArtistas.moveToFirst()){
+				do{
+					int id = cArtistas.getInt(0);
+					String name = cArtistas.getString(1);
+					artistas.put(id, name);
+				}while(cArtistas.moveToNext());
+			}
+			cArtistas.close();
 			Cursor c  = dbHelper.fetchStandProduct(stand.getId(),idFecha);
 			if(c.moveToFirst()){
 				PDF pdf = new PDF(this);
 				Document docPdf = pdf.createPDF("stand.pdf");
 				List<Product> prodList = new ArrayList<Product>(); 
 				List<Comisiones> comisiones = new ArrayList<Comisiones>();
-				comisiones.add(stand.getComision());
 				do{
 					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
+					int prodStandId = c.getInt(0);
 					int cantidad = c.getInt(1);
 					int idProd = c.getInt(3);
 					p.setCantidadStand(cantidad);
 					p.setId(idProd);
-					Cursor cursor = dbHelper.fetchProducto(idProd);
-					if(cursor.moveToFirst()){
+					Cursor cursorStandImp = dbHelper.fetchProductImpuestoProd(prodStandId);
+					if(cursorStandImp.moveToFirst()){
 						do{
-							//int id = cursor.getInt(0);
-							String nombre = cursor.getString(1);
-							//int idArtista = cursor.getInt(9);
-							//String artista = artistas.get(idArtista);
-							String tipo = cursor.getString(2);
-							String foto = cursor.getString(3);
-							String talla = cursor.getString(6);
-							String precio = cursor.getString(7);
-							int cantidadTotal = cursor.getInt(4);
-							//db.createImpuestoProducto(id, idCom);
-							
-							List<Taxes> list_tax = new ArrayList<Taxes>();
-							List<Integer> id_impuestos = new ArrayList<Integer>();
-							Cursor cursorI=dbHelper.fetchProductImpuestoProd(idProd);
-							if(cursorI.moveToNext()){
-								do{
-									id_impuestos.add(cursorI.getInt(1));
-								}while(cursorI.moveToNext());
-							}
-							cursorI.close();
-
-							for(int j=0;j<id_impuestos.size();j++){
-								Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
-
-								if(cursorPI.moveToNext()){
-									do{
-										//taxes
-										//comision
-										//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
-										int idTaxes = cursorPI.getInt(0);
-										String nombreI = cursorPI.getString(1);
-										String porcentaje = cursorPI.getString(2);
-										String tipoImpuesto = cursorPI.getString(3);
-										if(tipoImpuesto.contentEquals("comision")){
-											String iva = cursorPI.getString(4);
-											String tipoPeso = cursorPI.getString(5);
-											Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
-											comi.setId(idTaxes);
-											comisiones.add(comi);
-										}else{
-											Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
-											tax.setId(idTaxes);
-											list_tax.add(tax);
-										}
-									}while(cursorPI.moveToNext());	
+							Cursor cursorSI = dbHelper.fetchImpuestos(cursorStandImp.getLong(1));
+							if(cursorSI.moveToFirst()){
+								int idTaxes = cursorSI.getInt(0);
+								String nombreI = cursorSI.getString(1);
+								String porcentaje = cursorSI.getString(2);
+								String tipoImpuesto = cursorSI.getString(3);
+								String iva = cursorSI.getString(4);
+								String tipoPeso = cursorSI.getString(5);
+								if(tipoImpuesto.contentEquals("comision_stand")){
+									Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+									comi.setId(idTaxes);
+									comisiones.add(comi);
 								}
 							}
-							p.setNombre(nombre);
-							//p.setArtista(artista);
-							p.setPath_imagen(foto);
-							p.setTipo(tipo);
-							p.setTalla(talla);
-							p.setPrecio(precio);
-							p.setCantidad(cantidadTotal);
-							p.setComisiones(comisiones);
-							p.setTaxes(list_tax);
-						}while(cursor.moveToNext());
+						}while(cursorStandImp.moveToNext());
+					}
+					Cursor cursor = dbHelper.fetchProducto(idProd);
+					if(cursor.moveToFirst()){
+						String nombre = cursor.getString(1);
+						int idArtista = cursor.getInt(9);
+						String artista = artistas.get(idArtista);
+						String tipo = cursor.getString(2);
+						String foto = cursor.getString(3);
+						String talla = cursor.getString(6);
+						String precio = cursor.getString(7);
+						int cantidadTotal = cursor.getInt(4);
+							
+						List<Taxes> list_tax = new ArrayList<Taxes>();
+						List<Integer> id_impuestos = new ArrayList<Integer>();
+						Cursor cursorI=dbHelper.fetchProductImpuestoProd(idProd);
+						if(cursorI.moveToFirst()){
+							do{
+								id_impuestos.add(cursorI.getInt(1));
+							}while(cursorI.moveToNext());
+						}
+						cursorI.close();
+
+						for(int j = 0;j < id_impuestos.size();j++){
+							Cursor cursorPI = dbHelper.fetchImpuestos(id_impuestos.get(j));
+		
+							if(cursorPI.moveToFirst()){
+								do{
+									//taxes
+									//comision
+									//colIdTaxes,colNombreT,colPorcentajeT,colTipoImpuesto,colIVA,colTipoPorPeso
+									int idTaxes = cursorPI.getInt(0);
+									String nombreI = cursorPI.getString(1);
+									String porcentaje = cursorPI.getString(2);
+									String tipoImpuesto = cursorPI.getString(3);
+									if(tipoImpuesto.contentEquals("comision")){
+										String iva = cursorPI.getString(4);
+										String tipoPeso = cursorPI.getString(5);
+										Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+										comi.setId(idTaxes);
+										comisiones.add(comi);
+									}else if(tipoImpuesto.contentEquals("taxes")){
+										Taxes tax = new Taxes(nombreI, Integer.parseInt(porcentaje));
+										tax.setId(idTaxes);
+										list_tax.add(tax);
+									}
+								}while(cursorPI.moveToNext());	
+							}
+						}
+						p.setNombre(nombre);
+						p.setArtista(artista);
+						p.setPath_imagen(foto);
+						p.setTipo(tipo);
+						p.setTalla(talla);
+						p.setPrecio(precio);
+						p.setCantidad(cantidadTotal);
+						p.setComisiones(comisiones);
+						p.setTaxes(list_tax);
 					}
 					prodList.add(p);
 				}while(c.moveToNext());
-				pdf.addImage(25,700,docPdf);
-				pdf.createHeadings(400, 600, 24, "Stand: "+stand.getName());
-				pdf.tableProducts(docPdf, prodList, 550);
+				
+				String[] headers = {"Cantidad","Producto","Artista","Talla","Precio","Comisión","Total"};
+				pdf.addImage(25,770,docPdf);
+				pdf.createHeadings(400, 720, 24, "Stand: "+stand.getName());
+				double totalVendedor = pdf.tableProducts(docPdf, prodList, headers,680);
+				pdf.tableNum(docPdf, new String[]{"TOTAL"}, new double[]{totalVendedor}, 150, (680 - (40*prodList.size())));
 				pdf.addLine(50, 120);
-				pdf.createHeadings(80, 100, 14, "Gerente");
+				pdf.createHeadings(115, 100, 14, "Gerente");
 				pdf.addLine(320, 120);
-				pdf.createHeadings(350, 100, 14, stand.getEncargado());
+				pdf.createHeadings(380, 100, 14, stand.getEncargado());
 				docPdf.close();
+				File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/stand.pdf");
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
 			}else{
 				Toast.makeText(this, R.string.no_products, Toast.LENGTH_SHORT).show();
 			}

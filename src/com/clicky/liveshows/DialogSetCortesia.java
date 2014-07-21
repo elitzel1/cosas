@@ -49,7 +49,7 @@ public class DialogSetCortesia extends DialogFragment {
 		TextView txtNombre = (TextView)view.findViewById(R.id.txtProdAd);
 		Button btnAceptar = (Button)view.findViewById(R.id.btnAceptarA);
 		Button btnCancelar = (Button)view.findViewById(R.id.btnCancelarA);
-		 spinner = (Spinner)view.findViewById(R.id.spinnerTipo);
+		spinner = (Spinner)view.findViewById(R.id.spinnerTipo);
 		
 		Bundle b =getArguments();
 		txtNombre.setText(b.getString("nombre"));

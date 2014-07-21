@@ -255,7 +255,29 @@ public class DBAdapter {
 		int band =database.delete(TABLE_PRODCUT, colIdProduct + "="+rowId, null);
 		database.delete(TABLE_ADICIONAL, colProductoIdA+" ="+rowId, null);
 		deleteCortesias(rowId);
+		deleteTaxesProd(rowId);
+		deleteProductStand(rowId);
 		return band>0;
+	}
+	
+	public boolean deleteInfoProdStand(long rowId){
+		int band = 0;
+		band += deleteTaxesProd(rowId);
+		band += deleteVentas(rowId);
+		
+		return band > 0;
+	}
+	
+	private int deleteVentas(long rowId){
+		return database.delete(TABLE_SALES_PRODUCT, colStandProdFK+" ="+rowId, null);
+	}
+	
+	private int deleteTaxesProd(long rowId){
+		return database.delete(TABLE_TAXES_PRODUCT, colIdProductCK+" ="+rowId, null);
+	}
+	
+	private int deleteProductStand(long rowId){
+		return database.delete(TABLE_STAND_PROD, colProductoIdSP+" ="+rowId, null);
 	}
 	
 	private int deleteCortesias(long rowId){
@@ -268,8 +290,8 @@ public class DBAdapter {
 				colProductoIdSP+" = "+rowIdP;
 		int band = database.delete(TABLE_STAND_PROD, args, null);
 		return band>0;
-
 	}
+	
 	public void deleteTodo(){
 		database.delete(TABLE_EVENTO, null, null);
 		database.delete(TABLE_ARTISTA, null, null);
@@ -451,6 +473,12 @@ public class DBAdapter {
 		String []args = {colProductoIdSP + "=" + rowId,colStandIdSP + "=" + rowStandId};
 		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
 				colFechaIdSP, colProductoIdSP, colImpuestoProdId},null,args, null, null, null, null);
+		return mCursor;
+	}
+	
+	public Cursor fetchProductoStand(long rowId){
+		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId},colProductoIdSP+" = "+rowId,null, null, null, null, null);
 		return mCursor;
 	}
 	

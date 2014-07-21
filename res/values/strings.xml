@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">MerchSys</string>
+    <string name="version">Version 0.8</string>
+    <string name="developed">Developed by</string>
     <string name="action_settings">Settings</string>
     <string name="action_new">Add Product</string>
     <string name="action_print">Print</string>
@@ -61,6 +63,7 @@
     <string name="textdivisa">Aún no ingresa tipo de cambio</string>
     <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
     <string name="album_name">MerchSys</string>
+    <string name="alert_delete">Are you sure you want to delete </string>
 
     <!-- Errores -->
     <string name="sin_artista">Escriba el nombre de un artista</string>
@@ -124,7 +127,7 @@
     <string name="cortesias">Cortesias</string>
     <string name="lbl_total">Total</string>
     <string name="lbl_comision">Comision</string>
-    <string name="alert_cierre">Are you sure?</string>
+    <string name="alert_cierre">Do you want to send this stand\'s sales report?</string>
 
     <!-- Cierre dia -->
     <string name="viaticos">Gastos Operativos</string>
@@ -225,4 +228,6 @@
 	<string name="p_anadido_cor">Cortesia añadida</string>
 	<string name="p_eliminado">Producto eliminado</string>
 	<string name="s_ananido">Stand añadido</string>
+	<string name="m_art_agregado">Artista agregado</string>
+	<string name="m_date_agregado">Date added</string>
 </resources>
