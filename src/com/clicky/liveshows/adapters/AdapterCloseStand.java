@@ -2,6 +2,7 @@ package com.clicky.liveshows.adapters;
 
 import java.util.List;
 
+import com.clicky.liveshows.ActivityCierreStand;
 import com.clicky.liveshows.R;
 import com.clicky.liveshows.utils.Product;
 
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
@@ -35,6 +37,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 	public View getView(int position, View convertView, ViewGroup parent){
 		View view = convertView;
 		ViewHolder holder;
+		final int row = position;
 		if(view==null){
 			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			view = inflater.inflate(resource, parent, false);
@@ -66,6 +69,13 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 			holder.editCantidad.setText(oldText); 
 		}
 
+		holder.txtCortesias.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				((ActivityCierreStand)context).dialogCortesia(row);
+			}
+		});
+		
 		holder.editCantidad.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus){

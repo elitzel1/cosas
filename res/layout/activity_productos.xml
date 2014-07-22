@@ -40,20 +40,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/azul" />
 
-        <TextView
-            android:id="@+id/txtTarjetaCom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/azul" />
-
     </LinearLayout>
     <Button
         android:id="@+id/btnStand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/fondo_boton"
         android:text="@string/stand"
         android:visibility="gone"

@@ -64,6 +64,7 @@ public class FragmentStandProd extends Fragment {
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
 	protected static final int PRODUCTOS = 0;
+	protected static final int STAND = 1;
 
 	public interface OnNewAdicional{
 		public void onSetAdicional(Product product,int position,Stand stand);
@@ -159,7 +160,7 @@ public class FragmentStandProd extends Fragment {
 				b.putInt("fecha", idFecha);
 				b.putString("nombre", s.getName());
 				i.putExtra("extra", b);
-				startActivity(i);
+				startActivityForResult(i,STAND);
 				getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 			}
 		});
@@ -172,6 +173,11 @@ public class FragmentStandProd extends Fragment {
 	        if (resultCode == Activity.RESULT_OK) {
 	        	setStand(s,idFecha);
 	        }
+	    }else if (requestCode == STAND){
+	    	if (resultCode == Activity.RESULT_OK) {
+	    		((StandActivity)getActivity()).onGetData();
+	    		setStand(s,idFecha);
+	    	}
 	    }
 	}
 	

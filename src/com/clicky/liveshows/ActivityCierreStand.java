@@ -1,6 +1,7 @@
 package com.clicky.liveshows;
 
 import java.io.File;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,19 +30,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityCierreStand extends Activity implements OnItemClickListener,OnCortesiaListener {
+public class ActivityCierreStand extends Activity implements OnCortesiaListener, TextWatcher {
 
 	private DBAdapter dbHelper;
 	private PDF pdf;
@@ -49,9 +50,9 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	AdapterCloseStand adapter;
 	int id,idFecha;
 	int[] comisiones;
-	double totalVentas,comision;
+	double totalVentas,comision,depositado;
 	String nombre;
-	TextView txtTotal,txtComision;
+	TextView txtTotal,txtComision,txtFalta;
 	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro1,editOtro2,editOtro3;
 
 	@SuppressLint("UseSparseArrays")
@@ -72,6 +73,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		
 		txtTotal=(TextView)findViewById(R.id.txtTotal);
 		txtComision = (TextView)findViewById(R.id.txtComisiones);
+		txtFalta = (TextView)findViewById(R.id.txtFalta);
 		editEfectivo = (EditText)findViewById(R.id.editEfec);
 		editBanamex = (EditText)findViewById(R.id.editBanamex);
 		editBanorte = (EditText)findViewById(R.id.editBanorte);
@@ -84,6 +86,15 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		((TextView)findViewById(R.id.ingreso_1)).setText(prefs.getString("tipo1", "OTHER"));
 		((TextView)findViewById(R.id.ingreso_2)).setText(prefs.getString("tipo2", "OTHER"));
 		((TextView)findViewById(R.id.ingreso_3)).setText(prefs.getString("tipo3", "OTHER"));
+		
+		editEfectivo.addTextChangedListener(this);
+		editBanamex.addTextChangedListener(this);
+		editBanorte.addTextChangedListener(this);
+		editSantander.addTextChangedListener(this);
+		editAmex.addTextChangedListener(this);
+		editOtro1.addTextChangedListener(this);
+		editOtro2.addTextChangedListener(this);
+		editOtro3.addTextChangedListener(this);
 		
 		products = new ArrayList<Product>();
 		ListView list=(ListView)findViewById(R.id.listCierre);
@@ -116,6 +127,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				int cantidad = c.getInt(1);
 				int idProd = c.getInt(3);
 				p.setCantidadStand(cantidad);
+				p.setIdStand(idProd);
 				p.setId(c.getInt(0));
 				List<Comisiones> listCom = new ArrayList<Comisiones>();
 				List<Taxes> listTax = new ArrayList<Taxes>();
@@ -204,7 +216,6 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		
 		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products,comisiones);
 		list.setAdapter(adapter);
-		list.setOnItemClickListener(this);
 		
 		list.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
@@ -214,19 +225,26 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				totalVentas = 0;
 				comision = 0;
 				
-				DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
-				formatter.applyPattern("$#,###.00");
 				for(Product p : products){
 					if(p.getProdNo() >= 0){
 						totalVentas += (p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio()));
 						comision += setComision((p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio())),p.getComisiones(),p.getTaxes(),p.getCantidadStand()-p.getProdNo());
-						txtTotal.setText(formatter.format(totalVentas));
-						txtComision.setText(formatter.format(comision));
+						setCantidades();
 					}
 				}
 			}
 		});
 		
+	}
+	
+	private void setCantidades(){
+		DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+		formatter.applyPattern("$#,###.00");
+		formatter.setRoundingMode(RoundingMode.DOWN);
+		
+		txtTotal.setText(formatter.format(totalVentas));
+		txtComision.setText(formatter.format(comision));
+		txtFalta.setText(formatter.format(totalVentas-comision-depositado));
 	}
 
 	/**
@@ -272,33 +290,31 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 
 	}
 
-
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		// TODO Auto-generated method stub
+	public void dialogCortesia(int position){
 		DialogSetCortesia dialogA = new DialogSetCortesia();
 		Bundle params = new Bundle();
 		params.putString("nombre", products.get(position).getNombre());
 		params.putInt("position", position);
 		dialogA.setArguments(params);
 		dialogA.show(getFragmentManager(), "diagCor");
-		
 	}
 
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
 		Product p = products.get(position);
-		p.addCortesia(cortesia);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		dbHelper.open();
-		int total=p.getCantidad()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
-		if((total)>0){
-
-			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),id)>=0){
+		int total=p.getCantidadStand()-cortesia.getAmount();
+		if((total) >= 0){
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getIdStand(),id)>=0){
 				int cantidad = total;
-				p.setCantidad(cantidad);
-				dbHelper.updateProducto(p.getId(), cantidad);
+				p.addCortesia(cortesia);
+				p.setCantidadStand(cantidad);
+				comisiones[position] += cortesia.getAmount();
+				dbHelper.updateProducto(p.getIdStand(), cantidad);
+				dbHelper.updateStandProducto(p.getIdStand(),id, cantidad);
+				adapter.notifyDataSetChanged();
 			}
 		}else{
 
@@ -376,34 +392,40 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	}
 	
 	private void validaCierre(){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.alert_cierre);
-		builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				getReport();
-				File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand.pdf");
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
-				cierreStand();
-			}
-		});
-		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				cierreStand();
-			}
-		});
-		builder.create().show();
+		double fin = totalVentas-comision-depositado;
+		if(fin == 0){
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.alert_cierre);
+			builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					getReport();
+					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand.pdf");
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+					intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					startActivity(intent);
+					cierreStand();
+				}
+			});
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					cierreStand();
+				}
+			});
+			builder.create().show();
+		}else{
+			Toast.makeText(this, "La cantidad depositada es erronea", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	private void cierreStand(){
 		cierreProds();
 		finish();
+		setResult(RESULT_OK);
 		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 	}
 	
@@ -412,9 +434,10 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		String[] headers = {"PRICE SALE IN US","#","ITEM","STYLE","SIZE","TOTAL\nINVENTORY","PRICE SALE","DAMAGE","COMPS\nVENUE",
 				"COMPS\nOFFICE\nPRODUCTION",prefs.getString("op1", "OTHER"),prefs.getString("op2", "OTHER"),"FINAL\nINVENTORY",
 				"SALES PIECES","GROSS TOTAL","% SALES","COMISSION","TOTAL\nCOMISSION"};
-		String[] headerIngresos = {"EFECTIVO","TC BANAMEX","TC BANORTE","TC SANTANDER","TC AMEX","OTROS"};
+		String[] headerIngresos = {"EFECTIVO","TC BANAMEX","TC BANORTE","TC SANTANDER","TC AMEX",
+				prefs.getString("tipo1", "OTHER"),prefs.getString("tipo2", "OTHER"),prefs.getString("tipo3", "OTHER")};
 		
-		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other = 0.0;
+		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other1 = 0.0,other2=0.0,other3=0.0;
 		if(!editEfectivo.getText().toString().equals("")){
 			efectivo = Double.parseDouble(editEfectivo.getText().toString());
 		}
@@ -431,31 +454,72 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 			amex = Double.parseDouble(editAmex.getText().toString());
 		}
 		if(!editOtro1.getText().toString().equals("")){
-			other = Double.parseDouble(editOtro1.getText().toString());
+			other1 = Double.parseDouble(editOtro1.getText().toString());
+		}
+		if(!editOtro2.getText().toString().equals("")){
+			other2 = Double.parseDouble(editOtro2.getText().toString());
+		}
+		if(!editOtro3.getText().toString().equals("")){
+			other3 = Double.parseDouble(editOtro3.getText().toString());
 		}
 		
-		double[] ingresos = {efectivo,banamex,banorte,santander,amex,other};
+		double[] ingresos = {efectivo,banamex,banorte,santander,amex,other1,other2,other3};
 		Document docPdf = pdf.createPDFHorizontal("sales_stand.pdf");
 		
 		pdf.addImage(25,540,docPdf);
 		pdf.createHeadings(415, 535, 14, "SALES REPORT (IN "+prefs.getString("moneda", "")+")");
-		pdf.createHeadings(docPdf.leftMargin(), 515, 8, "DATE");
-		pdf.createHeadings(docPdf.leftMargin(), 505, 8, "EVENT");
-		pdf.createHeadings(docPdf.leftMargin(), 495, 8, "VENUE");
 		
-		pdf.tableStandVentas(docPdf, products, headers, totalVentas, 480);
-		int pos = 450 - (38*products.size());
+		pdf.tableStandVentas(docPdf, products, headers, totalVentas, 490);
+		int pos = 455 - (38*products.size());
 		int x = 650;
 		
 		pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","VENDOR COMMISION"}, new double[]{totalVentas,comision}, x, (pos));
 		
-		pdf.tableNum(docPdf, new String[]{"TOTAL A DEPOSITAR"}, new double[]{(totalVentas - comision)}, x, (pos-55));
+		pdf.tableNum(docPdf, new String[]{"TOTAL A DEPOSITAR"}, new double[]{(totalVentas - comision)}, x, (pos-60));
 		
-		double depositado = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos - 105));
+		double dep = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos - 105));
 		
-		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{depositado - (totalVentas - comision)}, x, (pos-240));
+		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{dep - (totalVentas - comision)}, x, (pos-270));
 		
 		docPdf.close();
+	}
+
+	@Override
+	public void afterTextChanged(Editable arg0) {
+		depositado = 0.0;
+		if(!editEfectivo.getText().toString().equals("")){
+			depositado += Double.parseDouble(editEfectivo.getText().toString());
+		}
+		if(!editBanamex.getText().toString().equals("")){
+			depositado += Double.parseDouble(editBanamex.getText().toString());
+		}
+		if(!editBanorte.getText().toString().equals("")){
+			depositado += Double.parseDouble(editBanorte.getText().toString());
+		}
+		if(!editSantander.getText().toString().equals("")){
+			depositado += Double.parseDouble(editSantander.getText().toString());
+		}
+		if(!editAmex.getText().toString().equals("")){
+			depositado += Double.parseDouble(editAmex.getText().toString());
+		}
+		if(!editOtro1.getText().toString().equals("")){
+			depositado += Double.parseDouble(editOtro1.getText().toString());
+		}
+		if(!editOtro2.getText().toString().equals("")){
+			depositado += Double.parseDouble(editOtro2.getText().toString());
+		}
+		if(!editOtro3.getText().toString().equals("")){
+			depositado += Double.parseDouble(editOtro3.getText().toString());
+		}
+		setCantidades();
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,int arg3) {
+	}
+
+	@Override
+	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 	}
 	
 }

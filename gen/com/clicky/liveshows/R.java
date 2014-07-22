@@ -156,7 +156,7 @@ public final class R {
         public static final int action_print=0x7f0c00b9;
         public static final int action_settings=0x7f0c00b7;
         public static final int agenciaVenue=0x7f0c001b;
-        public static final int article_fragment=0x7f0c003b;
+        public static final int article_fragment=0x7f0c003a;
         public static final int btnAceptar=0x7f0c0055;
         public static final int btnAceptarA=0x7f0c0051;
         public static final int btnAceptarDA=0x7f0c0053;
@@ -180,7 +180,7 @@ public final class R {
         public static final int btnOtroTalla=0x7f0c0087;
         public static final int btnOtroTipo=0x7f0c007b;
         public static final int btnProdnuevo=0x7f0c009e;
-        public static final int btnStand=0x7f0c0036;
+        public static final int btnStand=0x7f0c0035;
         public static final int btnTaxes=0x7f0c0094;
         public static final int btnTaxesLess=0x7f0c0095;
         public static final int btn_aceptar=0x7f0c006c;
@@ -221,10 +221,10 @@ public final class R {
         public static final int editViatico=0x7f0c0008;
         public static final int enviarInterno=0x7f0c001a;
         public static final int enviarVenue=0x7f0c001e;
-        public static final int headlines_fragment=0x7f0c003a;
+        public static final int headlines_fragment=0x7f0c0039;
         public static final int imageView1=0x7f0c001f;
         public static final int imageView2=0x7f0c0024;
-        public static final int img=0x7f0c0039;
+        public static final int img=0x7f0c0038;
         public static final int imgFoto=0x7f0c00af;
         public static final int imgProdD=0x7f0c0056;
         public static final int ingreso_1=0x7f0c0046;
@@ -238,8 +238,8 @@ public final class R {
         public static final int linearTalla=0x7f0c0081;
         public static final int listAdicionales=0x7f0c0068;
         public static final int listAgregaP=0x7f0c0005;
-        public static final int listArticulos=0x7f0c0038;
-        public static final int listCierre=0x7f0c003c;
+        public static final int listArticulos=0x7f0c0037;
+        public static final int listCierre=0x7f0c003b;
         public static final int listComisiones=0x7f0c0069;
         public static final int listCortesias=0x7f0c0065;
         public static final int listGastos=0x7f0c000e;
@@ -294,7 +294,7 @@ public final class R {
         public static final int textView5=0x7f0c0002;
         public static final int textView6=0x7f0c0004;
         public static final int textView7=0x7f0c0003;
-        public static final int textView8=0x7f0c0037;
+        public static final int textView8=0x7f0c0036;
         public static final int txtAdicionalL=0x7f0c00ad;
         public static final int txtArtista=0x7f0c0062;
         public static final int txtArtistaP=0x7f0c0032;
@@ -303,12 +303,13 @@ public final class R {
         public static final int txtCantidadProducto=0x7f0c00a5;
         public static final int txtCantidadS=0x7f0c00b3;
         public static final int txtComision=0x7f0c009b;
-        public static final int txtComisiones=0x7f0c003e;
+        public static final int txtComisiones=0x7f0c003d;
         public static final int txtCortesias=0x7f0c0064;
         public static final int txtDivisas=0x7f0c0034;
         public static final int txtDrop=0x7f0c00b5;
         public static final int txtDropTitle=0x7f0c00b4;
         public static final int txtEncargado=0x7f0c009a;
+        public static final int txtFalta=0x7f0c003e;
         public static final int txtFechaP=0x7f0c0033;
         public static final int txtNoAdicionales=0x7f0c0067;
         public static final int txtNombre=0x7f0c0058;
@@ -328,10 +329,9 @@ public final class R {
         public static final int txtTallaRopa=0x7f0c00a3;
         public static final int txtTallaS=0x7f0c00b0;
         public static final int txtTallas=0x7f0c0099;
-        public static final int txtTarjetaCom=0x7f0c0035;
         public static final int txtTipo=0x7f0c0059;
         public static final int txtTitleDialog=0x7f0c004d;
-        public static final int txtTotal=0x7f0c003d;
+        public static final int txtTotal=0x7f0c003c;
         public static final int txtTotalL=0x7f0c00ae;
         public static final int txtView2=0x7f0c006a;
         public static final int vacio=0x7f0c009f;
@@ -377,13 +377,13 @@ public final class R {
         public static final int action_new=0x7f080004;
         public static final int action_print=0x7f080005;
         public static final int action_settings=0x7f080003;
-        public static final int add_date=0x7f080082;
+        public static final int add_date=0x7f080083;
         public static final int adicionales=0x7f08002c;
         public static final int album_name=0x7f080034;
-        public static final int alert_cierre=0x7f08006d;
+        public static final int alert_cierre=0x7f08006e;
         public static final int alert_delete=0x7f080035;
-        public static final int alert_next_date=0x7f080081;
-        public static final int alert_no_dates=0x7f080080;
+        public static final int alert_next_date=0x7f080082;
+        public static final int alert_no_dates=0x7f080081;
         public static final int amex=0x7f080067;
         public static final int app_name=0x7f080000;
         /**  ActivityProductos 
@@ -402,40 +402,40 @@ public final class R {
         public static final int cierre=0x7f080053;
         public static final int cierre_dia=0x7f080054;
         public static final int ck_talla=0x7f080020;
-        public static final int close_event=0x7f080083;
+        public static final int close_event=0x7f080084;
         /**  Imagenes 
          */
         public static final int cnt=0x7f080016;
         public static final int comision=0x7f080021;
         public static final int continuar=0x7f080010;
         public static final int cortesias=0x7f08006a;
-        public static final int d_adicionales=0x7f08008c;
-        public static final int d_artista=0x7f080089;
-        public static final int d_cantidad=0x7f080088;
-        public static final int d_com_agregada=0x7f0800a2;
-        public static final int d_com_err=0x7f0800a6;
-        public static final int d_com_nov=0x7f0800a4;
-        public static final int d_cortesias=0x7f08008a;
-        public static final int d_eliminado=0x7f0800a9;
-        public static final int d_no_adi=0x7f08008d;
-        public static final int d_no_cor=0x7f08008b;
+        public static final int d_adicionales=0x7f08008d;
+        public static final int d_artista=0x7f08008a;
+        public static final int d_cantidad=0x7f080089;
+        public static final int d_com_agregada=0x7f0800a3;
+        public static final int d_com_err=0x7f0800a7;
+        public static final int d_com_nov=0x7f0800a5;
+        public static final int d_cortesias=0x7f08008b;
+        public static final int d_eliminado=0x7f0800aa;
+        public static final int d_no_adi=0x7f08008e;
+        public static final int d_no_cor=0x7f08008c;
         /**  Detalles PRod 
          */
-        public static final int d_nombre=0x7f080084;
-        public static final int d_precio=0x7f080087;
-        public static final int d_talla=0x7f080086;
-        public static final int d_talla_agregada=0x7f0800a7;
-        public static final int d_talla_can=0x7f0800a8;
-        public static final int d_tax_agregada=0x7f0800a3;
-        public static final int d_tax_nov=0x7f0800a5;
-        public static final int d_tipo=0x7f080085;
+        public static final int d_nombre=0x7f080085;
+        public static final int d_precio=0x7f080088;
+        public static final int d_talla=0x7f080087;
+        public static final int d_talla_agregada=0x7f0800a8;
+        public static final int d_talla_can=0x7f0800a9;
+        public static final int d_tax_agregada=0x7f0800a4;
+        public static final int d_tax_nov=0x7f0800a6;
+        public static final int d_tipo=0x7f080086;
         public static final int developed=0x7f080002;
         public static final int din=0x7f080026;
         /**  Cierre Stand 
          */
         public static final int efectivo=0x7f080063;
         public static final int encargado=0x7f080055;
-        public static final int enviar_mail=0x7f08007f;
+        public static final int enviar_mail=0x7f080080;
         public static final int err_cantidad=0x7f08004a;
         public static final int err_com=0x7f080046;
         public static final int err_com_noval=0x7f080047;
@@ -451,34 +451,35 @@ public final class R {
         public static final int evento_fecha=0x7f08000f;
         public static final int evento_local=0x7f08000c;
         public static final int evento_tipo_moneda=0x7f080014;
-        public static final int factura=0x7f080071;
+        public static final int factura=0x7f080072;
         public static final int hello_world=0x7f080006;
-        public static final int hint_agencia=0x7f080075;
-        public static final int hint_agencia_venue=0x7f080076;
+        public static final int hint_agencia=0x7f080076;
+        public static final int hint_agencia_venue=0x7f080077;
         public static final int hint_artista=0x7f080015;
-        public static final int hint_cantidad=0x7f080074;
+        public static final int hint_cantidad=0x7f080075;
         public static final int hint_comision=0x7f080028;
-        public static final int hint_concepto=0x7f080073;
-        public static final int hint_contacto=0x7f080077;
+        public static final int hint_concepto=0x7f080074;
+        public static final int hint_contacto=0x7f080078;
         public static final int hint_date=0x7f080012;
         public static final int hint_evento=0x7f080013;
         public static final int hint_local=0x7f08000d;
-        public static final int hint_mail=0x7f080078;
+        public static final int hint_mail=0x7f080079;
         public static final int hint_taxes=0x7f080027;
         public static final int hint_tipo=0x7f080029;
         public static final int im_nombre=0x7f08001d;
         public static final int im_por=0x7f08001e;
         public static final int impuestos=0x7f08001c;
-        public static final int interno=0x7f08007d;
+        public static final int interno=0x7f08007e;
         public static final int lbl_comision=0x7f08006c;
-        public static final int lbl_sueldos=0x7f08006f;
+        public static final int lbl_falta=0x7f08006d;
+        public static final int lbl_sueldos=0x7f080070;
         public static final int lbl_total=0x7f08006b;
-        public static final int long_change=0x7f08009e;
+        public static final int long_change=0x7f08009f;
         public static final int m_actualizar=0x7f08004c;
-        public static final int m_art_agregado=0x7f0800af;
+        public static final int m_art_agregado=0x7f0800b0;
         public static final int m_comision=0x7f080050;
         public static final int m_cortesia=0x7f080051;
-        public static final int m_date_agregado=0x7f0800b0;
+        public static final int m_date_agregado=0x7f0800b1;
         public static final int m_detalles=0x7f08004d;
         /**  Menu Contextual 
          */
@@ -487,43 +488,43 @@ public final class R {
         public static final int menos=0x7f080023;
         public static final int name=0x7f080007;
         public static final int name_product=0x7f080019;
-        public static final int no_correo=0x7f08007c;
+        public static final int no_correo=0x7f08007d;
         public static final int no_products=0x7f080062;
         public static final int no_stand=0x7f080061;
         public static final int nombre_emp=0x7f08005a;
-        public static final int nota=0x7f080070;
+        public static final int nota=0x7f080071;
         public static final int otro=0x7f080011;
-        public static final int p_anadido=0x7f0800aa;
-        public static final int p_anadido_ad=0x7f0800ab;
-        public static final int p_anadido_cor=0x7f0800ac;
-        public static final int p_comision_g=0x7f080095;
-        public static final int p_comisiones=0x7f080092;
-        public static final int p_cort_dos=0x7f080098;
-        public static final int p_cort_uno=0x7f080097;
-        public static final int p_divisa_g=0x7f080094;
+        public static final int p_anadido=0x7f0800ab;
+        public static final int p_anadido_ad=0x7f0800ac;
+        public static final int p_anadido_cor=0x7f0800ad;
+        public static final int p_comision_g=0x7f080096;
+        public static final int p_comisiones=0x7f080093;
+        public static final int p_cort_dos=0x7f080099;
+        public static final int p_cort_uno=0x7f080098;
+        public static final int p_divisa_g=0x7f080095;
         /**  Preferencias 
          */
-        public static final int p_divisas=0x7f08008f;
-        public static final int p_dolar=0x7f080090;
-        public static final int p_eliminado=0x7f0800ad;
-        public static final int p_euro=0x7f080091;
-        public static final int p_ing_dos=0x7f08009a;
-        public static final int p_ing_tres=0x7f08009b;
-        public static final int p_ing_uno=0x7f080099;
-        public static final int p_ingreso=0x7f080096;
-        public static final int p_op_guar=0x7f08009c;
-        public static final int p_op_guar_d=0x7f08009d;
-        public static final int p_tarjeta=0x7f080093;
+        public static final int p_divisas=0x7f080090;
+        public static final int p_dolar=0x7f080091;
+        public static final int p_eliminado=0x7f0800ae;
+        public static final int p_euro=0x7f080092;
+        public static final int p_ing_dos=0x7f08009b;
+        public static final int p_ing_tres=0x7f08009c;
+        public static final int p_ing_uno=0x7f08009a;
+        public static final int p_ingreso=0x7f080097;
+        public static final int p_op_guar=0x7f08009d;
+        public static final int p_op_guar_d=0x7f08009e;
+        public static final int p_tarjeta=0x7f080094;
         public static final int pago_otro=0x7f080068;
         public static final int por=0x7f080025;
         public static final int precio=0x7f08002b;
         public static final int preciod=0x7f080024;
         public static final int prod_no=0x7f080069;
-        public static final int producto=0x7f08009f;
+        public static final int producto=0x7f0800a0;
         public static final int r_bruto=0x7f08005c;
         public static final int r_neto=0x7f08005b;
-        public static final int reportes=0x7f080072;
-        public static final int s_ananido=0x7f0800ae;
+        public static final int reportes=0x7f080073;
+        public static final int s_ananido=0x7f0800af;
         public static final int s_cantidad=0x7f080057;
         public static final int s_cantidad_stand=0x7f080058;
         public static final int s_comision=0x7f080059;
@@ -536,8 +537,8 @@ public final class R {
         public static final int sin_cantidad_valida=0x7f080042;
         public static final int sin_capacidad=0x7f080039;
         public static final int sin_comisiones=0x7f08003d;
-        public static final int sin_concepto=0x7f080079;
-        public static final int sin_correo=0x7f08007b;
+        public static final int sin_concepto=0x7f08007a;
+        public static final int sin_correo=0x7f08007c;
         public static final int sin_evento=0x7f080037;
         public static final int sin_fecha=0x7f08003a;
         public static final int sin_impuestos=0x7f08003c;
@@ -546,7 +547,7 @@ public final class R {
         public static final int sin_precio=0x7f08003f;
         public static final int sin_precio_valido=0x7f080043;
         public static final int sin_tipo=0x7f080041;
-        public static final int sin_viatico=0x7f08007a;
+        public static final int sin_viatico=0x7f08007b;
         public static final int stand=0x7f080030;
         public static final int t_adicionales=0x7f08002e;
         public static final int talla=0x7f08001b;
@@ -556,20 +557,20 @@ public final class R {
         public static final int title_activity_activity_cierre_dia=0x7f080060;
         public static final int title_activity_activity_cierre_stand=0x7f08005f;
         public static final int title_activity_activity_productos=0x7f08003b;
-        public static final int title_activity_preferencias=0x7f08008e;
+        public static final int title_activity_preferencias=0x7f08008f;
         public static final int title_activity_stand=0x7f08004e;
         public static final int title_menu=0x7f08004f;
         public static final int total=0x7f08002d;
-        public static final int update_exitoso=0x7f0800a0;
-        public static final int update_noexitoso=0x7f0800a1;
+        public static final int update_exitoso=0x7f0800a1;
+        public static final int update_noexitoso=0x7f0800a2;
         /**  Stands 
          */
         public static final int vacio=0x7f080052;
-        public static final int venue=0x7f08007e;
+        public static final int venue=0x7f08007f;
         public static final int version=0x7f080001;
         /**  Cierre dia 
          */
-        public static final int viaticos=0x7f08006e;
+        public static final int viaticos=0x7f08006f;
     }
     public static final class style {
         /** 

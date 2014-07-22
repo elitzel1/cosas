@@ -6,6 +6,7 @@ import java.util.List;
 public class Product {
 	
 	int id;
+	int idStand;
 	String nombre;
 	String tipo;
 	String artista;
@@ -69,6 +70,12 @@ public class Product {
 		this.path_imagen=path_img;
 	}
 	
+	public void setIdStand(int idStand){
+		this.idStand = idStand;
+	}
+	public int getIdStand(){
+		return this.idStand;
+	}
 	public List<Taxes> getTaxes() {
 		return taxes;
 	}

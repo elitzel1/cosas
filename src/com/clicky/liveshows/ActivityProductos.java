@@ -278,26 +278,13 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String div = prefs.getString("moneda", "");
 		float divisa = Float.parseFloat(prefs.getString("divisa", "0"));
-		int comision = Integer.parseInt(prefs.getString("comision_tarjeta", "0"));
 
 		TextView txtDivisa = (TextView)findViewById(R.id.txtDivisas);
-		TextView txtTarCom = (TextView)findViewById(R.id.txtTarjetaCom);
 
-		if(comision<=0){
-
-			txtTarCom.setText(R.string.textcom);
+		if(divisa <= 0){
+			txtDivisa.setText(R.string.textdivisa);
 		}else{
-			txtTarCom.setText("Comisión Tarjeta: "+comision);
-		}
-
-		if(div.contentEquals("Peso")){
-			txtDivisa.setText(div);
-		}else{
-			if(divisa <= 0){
-				txtDivisa.setText(R.string.textdivisa);
-			}else{
-				txtDivisa.setText(div+" = "+divisa+" USD");
-			}
+			txtDivisa.setText(div+" = "+divisa+" USD");
 		}
 
 	}

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
@@ -106,8 +107,10 @@ public class PDF{
 		
 		DecimalFormat dinero = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		dinero.applyPattern("$#,###.00");
+		dinero.setRoundingMode(RoundingMode.DOWN);
 		DecimalFormat porcentaje = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		porcentaje.applyPattern("##.00%");
+		porcentaje.setRoundingMode(RoundingMode.DOWN);
 		for(int i = 0; i < listProd.size(); i++){
 			Product prod = listProd.get(i);
 			double precio = Double.parseDouble(prod.getPrecio());
@@ -206,8 +209,10 @@ public class PDF{
 		
 		DecimalFormat dinero = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		dinero.applyPattern("$#,###.00");
+		dinero.setRoundingMode(RoundingMode.DOWN);
 		DecimalFormat porcentaje = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		porcentaje.applyPattern("##.00%");
+		porcentaje.setRoundingMode(RoundingMode.DOWN);
 		
 		for(int i = 0; i < listProd.size(); i++){
 			Product prod = listProd.get(i);
@@ -332,6 +337,7 @@ public class PDF{
 		double amount = 0;
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,###.00");
+		df.setRoundingMode(RoundingMode.DOWN);
 		for(Product prod : listProd){
 			Comisiones vendedor = prod.getComisiones().get(0);
 			PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(prod.getCantidadStand())));
@@ -390,6 +396,7 @@ public class PDF{
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,###.00");
+		df.setRoundingMode(RoundingMode.DOWN);
 		
 		PdfPCell cell = new PdfPCell(new Phrase(title,font));
 		cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -440,6 +447,7 @@ public class PDF{
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,###.00");
+		df.setRoundingMode(RoundingMode.DOWN);
 		
 		for(int i = 0; i < title.length; i++){
 			PdfPCell cell = new PdfPCell(new Phrase(title[i],font));

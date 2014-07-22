@@ -126,6 +126,7 @@
     <string name="cortesias">Cortesias</string>
     <string name="lbl_total">Total</string>
     <string name="lbl_comision">Comision</string>
+    <string name="lbl_falta">Por Depositar</string>
     <string name="alert_cierre">Do you want to send this stand\'s sales report?</string>
 
     <!-- Cierre dia -->

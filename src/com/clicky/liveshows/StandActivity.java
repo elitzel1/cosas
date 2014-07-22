@@ -395,7 +395,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		dbHelper.open();
 		int total=p.getCantidadStand()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
-		if((total)>0){
+		if((total) >= 0){
 
 			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),(int)stand.getId())>=0){
 				int cantidad = total;

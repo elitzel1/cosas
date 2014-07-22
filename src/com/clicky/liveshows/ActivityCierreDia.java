@@ -2,6 +2,7 @@ package com.clicky.liveshows;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -1205,6 +1206,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		Double priceUs = Double.parseDouble(prefs.getString("divisa", "0"));
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,###.00");
+		df.setRoundingMode(RoundingMode.DOWN);
 		
 		Document docPdf = pdf.createPDFHorizontal("sales_report.pdf");
 		
