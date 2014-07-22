@@ -87,7 +87,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	
 	private LinearLayout layoutViaticos,layoutSueldos,layoutReportes;
 	private EditText editCantidad,editCantSueldos;
-	private Spinner spinnerGasto,spinnerSueldos,spinVenue;
+	private Spinner spinnerGasto,spinnerSueldos;
 	private RadioGroup radioComprobante,radioComprobanteSueldos;
 
 	private static String mailValidation = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+
@@ -110,6 +110,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		totales = new ArrayList<Double>();
 		
 		layoutViaticos = (LinearLayout)findViewById(R.id.listGastos);
+		layoutSueldos = (LinearLayout)findViewById(R.id.listSueldos);
 		layoutReportes = (LinearLayout)findViewById(R.id.layoutReportes);
 		spinnerGasto = (Spinner)findViewById(R.id.spinnerGasto);
 		spinnerSueldos = (Spinner)findViewById(R.id.spinnerSueldo);
@@ -117,8 +118,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		editCantSueldos = (EditText)findViewById(R.id.editSueldo);
 		radioComprobante = (RadioGroup)findViewById(R.id.comprobante);
 		radioComprobanteSueldos = (RadioGroup)findViewById(R.id.comprobanteSueldo);
-		
-		spinVenue = (Spinner)findViewById(R.id.spinVenue);
 		
 		setupActionBar();
 		setXML();
@@ -178,24 +177,9 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
 		fecha = df.format(dates.get(0));
 
+		((EditText)findViewById(R.id.agenciaVenue)).setText(local);
 		setArtistas();
 		
-		spinVenue.setAdapter(new AdapterSpinnerAgencias(this,R.layout.item_spinner_drop, agencias));
-		spinVenue.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int pos, long arg3) {
-				if(pos != 0){
-					posVenue = pos;
-					((EditText)findViewById(R.id.contactoVenue)).setText(agencias.get(pos).getContacto());
-					((EditText)findViewById(R.id.mailVenue)).setText(agencias.get(pos).getMail());
-				}
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-		});
 	}
 	
 	@Override
@@ -388,12 +372,20 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		
 		LinearLayout linear = new LinearLayout(this);
 		LinearLayout.LayoutParams params2 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.5f);
+		LinearLayout.LayoutParams params3 =  new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT,0.7f);
 		linear.setOrientation(LinearLayout.HORIZONTAL);
 		
 		final Spinner spin = new Spinner(this);
 		spin.setAdapter(new AdapterSpinnerAgencias(this,R.layout.item_spinner_drop, agencias));
 		spin.setLayoutParams(params2);
 		linear.addView(spin);
+		
+		final EditText agencia = new EditText(this);
+		agencia.setTextColor(getResources().getColor(R.color.azul));
+		agencia.setLayoutParams(params2);
+		agencia.setHint(R.string.hint_agencia_venue);
+		agencia.setSingleLine();
+		linear.addView(agencia);
 		
 		final EditText contacto = new EditText(this);
 		contacto.setTextColor(getResources().getColor(R.color.azul));
@@ -404,7 +396,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		
 		final EditText mail = new EditText(this);
 		mail.setTextColor(getResources().getColor(R.color.azul));
-		mail.setLayoutParams(params2);
+		mail.setLayoutParams(params3);
 		mail.setHint(R.string.hint_mail);
 		mail.setSingleLine();
 		linear.addView(mail);
@@ -420,6 +412,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int pos, long arg3) {
 				if(pos != 0){
+					agencia.setText(agencias.get(pos).getNombre());
 					contacto.setText(agencias.get(pos).getContacto());
 					mail.setText(agencias.get(pos).getMail());
 				}
@@ -432,7 +425,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			
 			@Override
 			public void onClick(View v) {
-				getPDFReport(2, agencias.get(spin.getSelectedItemPosition()).getNombre(), agencias.get(spin.getSelectedItemPosition()).getContacto(),artista);
+				getPDFReport(2, agencia.getText().toString(), contacto.getText().toString(),artista);
 				if(validaCorreo(mail.getText().toString())){
 					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.pdf";
 					Intent email = new Intent(Intent.ACTION_SEND);
@@ -563,7 +556,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		Cursor cursorStand = dbHelper.fetchAllStand();
 		if(cursorStand.moveToFirst()){
 			do{
-				dbHelper.updateStandCierre(cursorStand.getLong(0), 0, 0, 0, 0, 0, 0);
+				dbHelper.updateStandCierre(cursorStand.getLong(0), 0, 0, 0, 0, 0, 0, 0, 0);
 			}while(cursorStand.moveToNext());
 		}
 		dbHelper.deleteDia();

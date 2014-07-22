@@ -56,7 +56,7 @@
                     android:layout_height="150dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/cnt"
-                    android:src="@drawable/teeshirt" />
+                    android:src="@drawable/accesslanyard" />
 
                 <ImageView
                     android:id="@+id/btnCamera"
@@ -256,51 +256,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:background="@color/azul_textos" />
-
-        <LinearLayout
-            android:id="@+id/LinearLayout1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <Spinner
-                android:id="@+id/spinnerComisionesP"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.1"
-                android:ems="10"
-                android:hint="@string/im_por"
-                android:inputType="number" >
-            </Spinner>
-
-            <EditText
-                android:id="@+id/editComisiones"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.4"
-                android:inputType="number" >
-      
-            </EditText>
-
-            <ImageView
-                android:id="@+id/btnComision"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:contentDescription="@string/cnt"
-                android:src="@drawable/mas" />
-
-            <ImageView
-                android:id="@+id/btnComLess"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:contentDescription="@string/cnt"
-                android:src="@drawable/menos"
-                android:visibility="invisible" />
-        </LinearLayout>
-
-        <LinearLayout
+		<LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -350,6 +306,49 @@
                     android:text="@string/r_bruto"
                     android:textColor="@color/azul_textos" />
             </RadioGroup>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/LinearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Spinner
+                android:id="@+id/spinnerComisionesP"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.1"
+                android:ems="10"
+                android:hint="@string/im_por"
+                android:inputType="number" >
+            </Spinner>
+
+            <EditText
+                android:id="@+id/editComisiones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:inputType="number" >
+      
+            </EditText>
+
+            <ImageView
+                android:id="@+id/btnComision"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:contentDescription="@string/cnt"
+                android:src="@drawable/mas" />
+
+            <ImageView
+                android:id="@+id/btnComLess"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:contentDescription="@string/cnt"
+                android:src="@drawable/menos"
+                android:visibility="invisible" />
         </LinearLayout>
 
         <LinearLayout

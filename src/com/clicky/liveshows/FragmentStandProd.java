@@ -157,6 +157,7 @@ public class FragmentStandProd extends Fragment {
 				Bundle b = new Bundle();
 				b.putInt("id_stand",(int)s.getId());
 				b.putInt("fecha", idFecha);
+				b.putString("nombre", s.getName());
 				i.putExtra("extra", b);
 				startActivity(i);
 				getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);

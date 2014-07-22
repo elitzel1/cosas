@@ -226,7 +226,7 @@ public class DialogAddProduct extends DialogFragment {
 				if(!com.contentEquals("Elija comision")){
 					if(editComisiones.getEditableText()!=null)
 						if(!editComisiones.getEditableText().toString().equals("")){
-							if(Integer.parseInt(editComisiones.getEditableText().toString())>0){
+							if(Integer.parseInt(editComisiones.getEditableText().toString()) >= 0){
 								int selected = radioGroup.getCheckedRadioButtonId();
 								RadioButton r = (RadioButton)view.findViewById(selected);
 								int selected2 = radioGroup2.getCheckedRadioButtonId();
@@ -268,7 +268,7 @@ public class DialogAddProduct extends DialogFragment {
 				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
 				if(!amount.contentEquals("")){
-					if(Integer.parseInt(amount)>0){
+					if(Integer.parseInt(amount) >= 0){
 						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
 						countT++;
 						addView("Tax", amount , countT, mLinearT);

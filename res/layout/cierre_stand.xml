@@ -204,6 +204,7 @@
                 android:inputType="numberDecimal" />
             
             <TextView
+                android:id="@+id/ingreso_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -211,7 +212,45 @@
                 android:textColor="@color/azul_textos" />
 
             <EditText
-                android:id="@+id/editOtro"
+                android:id="@+id/editOtro1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+            
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/ingreso_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pago_otro"
+                android:textColor="@color/azul_textos" />
+
+            <EditText
+                android:id="@+id/editOtro2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ems="10"
+                android:inputType="numberDecimal" />
+            
+            <TextView
+                android:id="@+id/ingreso_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/pago_otro"
+                android:textColor="@color/azul_textos" />
+
+            <EditText
+                android:id="@+id/editOtro3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"

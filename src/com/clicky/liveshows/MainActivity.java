@@ -53,11 +53,11 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 	private LinearLayout mLinear;
 	private LinearLayout mLinearDate;
 
-	private String[] moneda = {"Elija el tipo de moneda","MEXICAN PESOS","QUETZALES","DOLLARS","LEMPIRAS","CORDOBAS","COLONES",
-			"DOMINICAN PESOS", "COLOMBIAN PESOS","BOLIVIAN PESOS","BOLIVARS","REALES","SOLES","CHILEAN PESOS","URUGUAYAN PESOS",
-			"GUARANIES","ARGENTINE PESOS"};
-	private String[] divisa = {"","12.96","7.766","1","20.99","26.015","543.8","43.6","1844","6.91","6.91","2.21","2.79",
-			"548.89","22.98","4326.18","8.14"};
+	private String[] moneda = {"Elija el tipo de moneda",
+			"ARGENTINE PESOS","BOLIVARS","BOLIVIAN PESOS","CHILEAN PESOS","COLOMBIAN PESOS","COLONES","CORDOBAS","DOLLARS",
+			"DOMINICAN PESOS","GUARANIES","LEMPIRAS","MEXICAN PESOS","QUETZALES","REALES","SOLES","URUGUAYAN PESOS"};
+	private String[] divisa = {"","8.14","6.91","6.91","548.89","1844","543.8","26.015","1","43.6","4326.18","20.99",
+			"12.96","7.766","2.21","2.79","22.98"};
 	private DBAdapter dbHelper;
 	private Spinner spinnerTipoMoneda;
 	@Override
@@ -285,7 +285,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 	@Override
 	public void onFinishDatePickerDialog(int year, int month, int day) {
-		// TODO Auto-generated method stub
 		fechas.add(day+"/"+month+"/"+year);
 		countD++;
 		addView(""+day+"/"+month+"/"+year, countD, mLinearDate);
@@ -297,8 +296,6 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 	}
 
 	public void guardarDatos(View v){
-		EditText editNombre = (EditText)findViewById(R.id.editNombre);
-
 		boolean bandera[] = new boolean[5];
 
 		for(int i=0;i<bandera.length;i++){
@@ -307,12 +304,7 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 		Evento evento = new Evento();
 
-		if(editNombre.getEditableText()!=null){
-			if(!editNombre.getEditableText().toString().contentEquals("")){
-				evento.setNombre(editNombre.getEditableText().toString());
-			}else { makeToast(R.string.sin_evento); return;}
-		}else { makeToast(R.string.sin_evento); return;}
-
+		evento.setNombre("LiveShows");
 
 		if(artistas.size()<=0){
 			makeToast(R.string.sin_artista);

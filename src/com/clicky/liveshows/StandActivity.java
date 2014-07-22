@@ -137,29 +137,21 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				List<Comisiones> comisiones = new ArrayList<Comisiones>();
 				do{
 					Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
-					int prodStandId = c.getInt(0);
 					int cantidad = c.getInt(1);
 					int idProd = c.getInt(3);
+					int comVendedorId = c.getInt(4);
 					p.setCantidadStand(cantidad);
 					p.setId(idProd);
-					Cursor cursorStandImp = dbHelper.fetchProductImpuestoProd(prodStandId);
-					if(cursorStandImp.moveToFirst()){
-						do{
-							Cursor cursorSI = dbHelper.fetchImpuestos(cursorStandImp.getLong(1));
-							if(cursorSI.moveToFirst()){
-								int idTaxes = cursorSI.getInt(0);
-								String nombreI = cursorSI.getString(1);
-								String porcentaje = cursorSI.getString(2);
-								String tipoImpuesto = cursorSI.getString(3);
-								String iva = cursorSI.getString(4);
-								String tipoPeso = cursorSI.getString(5);
-								if(tipoImpuesto.contentEquals("comision_stand")){
-									Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
-									comi.setId(idTaxes);
-									comisiones.add(comi);
-								}
-							}
-						}while(cursorStandImp.moveToNext());
+					Cursor cursorImp = dbHelper.fetchImpuestos(comVendedorId);
+					if(cursorImp.moveToFirst()){
+						int idTaxes = cursorImp.getInt(0);
+						String nombreI = cursorImp.getString(1);
+						String porcentaje = cursorImp.getString(2);
+						String iva = cursorImp.getString(4);
+						String tipoPeso = cursorImp.getString(5);
+						Comisiones comi = new Comisiones(nombreI, Integer.parseInt(porcentaje), iva, tipoPeso);
+						comi.setId(idTaxes);
+						comisiones.add(comi);
 					}
 					Cursor cursor = dbHelper.fetchProducto(idProd);
 					if(cursor.moveToFirst()){
@@ -363,7 +355,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		
 		Product p = product;
 		dbHelper.open();
-		if((p.getCantidad()-Integer.parseInt(adicional))>0){
+		if((p.getCantidad()-Integer.parseInt(adicional)) >= 0){
 			if(dbHelper.updateProducto(p.getId(), p.getCantidad()-Integer.parseInt(adicional))){
 				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
 					((FragmentStandProd)getFragmentManager().

@@ -61,7 +61,9 @@ public class DBAdapter {
 	static final String colCantidadBanorte = "cantidad_banorte";
 	static final String colCantidadSantander = "cantidad_santander";
 	static final String colCantidadAmex = "cantidad_amex";
-	static final String colCantidadOtro = "cantidad_otro";
+	static final String colCantidadOtro1 = "cantidad_otro_uno";
+	static final String colCantidadOtro2 = "cantidad_otro_dos";
+	static final String colCantidadOtro3 = "cantidad_otro_tres";
 
 	//TABLA STAND PRODUCTO
 	static final String TABLE_STAND_PROD="TStand_Prod";
@@ -234,8 +236,9 @@ public class DBAdapter {
 		return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
 	}
 
-	public boolean updateStandCierre(long rowId,double efectivo,double banamex,double banorte, double santander, double amex,double otro){
-		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro);
+	public boolean updateStandCierre(long rowId,double efectivo,double banamex,double banorte, double santander, double amex,
+			double otro1,double otro2,double otro3){
+		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro1,otro2,otro3);
 		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
 	}
 	//Borra la tarea
@@ -356,14 +359,16 @@ public class DBAdapter {
 
 	public Cursor fetchAllStand(){
 		return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand,
-				colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,colCantidadSantander,colCantidadAmex,colCantidadOtro
+				colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,colCantidadSantander,colCantidadAmex,
+				colCantidadOtro1,colCantidadOtro2,colCantidadOtro3
 		}, null, null, null,
 		null, null);
 	}
 	
 	public Cursor fetchStandCierre(){
 		return database.query(TABLE_STAND, new String[] { colIdStand,colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,
-				colCantidadSantander,colCantidadAmex,colCantidadOtro}, null, null, null,null, null);
+				colCantidadSantander,colCantidadAmex,colCantidadOtro1,colCantidadOtro2,colCantidadOtro3}, 
+				null, null, null,null, null);
 	}
 
 	public Cursor fetchAllCortesias(){
@@ -663,14 +668,16 @@ public class DBAdapter {
 
 
 	private ContentValues createContentValuesUpdateStandCierre(double efectivo,double banamex,double banorte,double santander,
-			double amex,double otro){
+			double amex,double otro1,double otro2,double otro3){
 		ContentValues values = new ContentValues();
 		values.put(colCantidadEfectivo, efectivo);
 		values.put(colCantidadBanamex, banamex);
 		values.put(colCantidadBanorte, banorte);
 		values.put(colCantidadSantander, santander);
 		values.put(colCantidadAmex, amex);
-		values.put(colCantidadOtro, otro);
+		values.put(colCantidadOtro1, otro1);
+		values.put(colCantidadOtro2, otro2);
+		values.put(colCantidadOtro3, otro3);
 		return values;
 	}
 

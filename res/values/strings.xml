@@ -14,18 +14,17 @@
     <string name="cancel">No</string>
 
     <!-- Evento -->
-    <string name="evento_nombre">Name: </string>
-    <string name="evento_artista">Artist: </string>
-    <string name="evento_local">Local: </string>
-    <string name="hint_local">Elije un local</string>
-    <string name="evento_capacidad">Capacidad</string>
+    <string name="evento_artista">Event: </string>
+    <string name="evento_local">Venue: </string>
+    <string name="hint_local">Select a venue</string>
+    <string name="evento_capacidad">Capacity</string>
     <string name="evento_fecha">Date</string>
     <string name="continuar">Continue</string>
     <string name="otro">Other</string>
     <string name="hint_date">dd/mm/yy</string>
-    <string name="hint_evento">Nombre del evento</string>
+    <string name="hint_evento">Event name</string>
     <string name="evento_tipo_moneda">Tipo de moneda</string>
-    <string name="hint_artista">Nombre del artista</string>
+    <string name="hint_artista">Artist Name</string>
 
     <!-- Imagenes -->
     <string name="cnt">Content</string>
@@ -40,7 +39,7 @@
     <string name="im_nombre">Name:</string>
     <string name="im_por">%</string>
     <string name="artista_dialogo_prod">ARTIST</string>
-    <string name="ck_talla">Por talla</string>
+    <string name="ck_talla">By Size</string>
     <string name="comision">COMMISSIONS</string>
     <string name="mas">+</string>
     <string name="menos">-</string>
@@ -49,7 +48,7 @@
     <string name="din">$</string>
     <string name="hint_taxes">Nombre del impuesto</string>
     <string name="hint_comision">Elija comision</string>
-    <string name="hint_tipo">Tipo de producto</string>
+    <string name="hint_tipo">Product Type</string>
 
     <!-- ActivityProductos -->
     <string name="articulos">Articulos</string>
@@ -99,7 +98,7 @@
 
     <!-- Stands -->
     <string name="vacio">No hay Stands</string>
-    <string name="cierre">Cierre</string>
+    <string name="cierre">Corte Stand</string>
     <string name="cierre_dia">Cierre del día</string>
     <string name="encargado">Encargado</string>
     <string name="s_producto">Producto</string>
@@ -111,7 +110,7 @@
     <string name="r_bruto">Before taxes</string>
     <string name="a_prod">Agregar Producto</string>
     <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
-    <string name="title_activity_activity_cierre_stand">Cierre Stand</string>
+    <string name="title_activity_activity_cierre_stand">Corte</string>
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
     <string name="no_stand">Please select a stand</string>
     <string name="no_products">This stand has no products</string>
@@ -138,6 +137,7 @@
     <string name="hint_concepto">Concept</string>
     <string name="hint_cantidad">Amount</string>
     <string name="hint_agencia">Selecciona una agencia</string>
+    <string name="hint_agencia_venue">Agencia</string>
     <string name="hint_contacto">Contacto</string>
     <string name="hint_mail">Mail</string>
     <string name="sin_concepto">No hay concepto</string>
@@ -176,7 +176,7 @@
 		<item>OTROS</item>
     </string-array>
     <string-array name="sueldos">
-        <item>VENDEDORES</item>
+        <item>SUPERVISORES</item>
         <item>BONO GERENCIAL</item>
 		<item>SUELDO CHOFER</item>
 		<item>MONTAJE/DESMONTAJE</item>
@@ -205,8 +205,12 @@
 	<string name="p_tarjeta">Tarjeta de crédito</string>
 	<string name="p_divisa_g">Divisa guardada</string>
 	<string name="p_comision_g">Comisión guardada</string>
-	<string name="p_opc_uno">Opción uno</string>
-	<string name="p_opc_dos">Opción dos</string>
+	<string name="p_ingreso">Ingresos</string>
+	<string name="p_cort_uno">Cortesía uno</string>
+	<string name="p_cort_dos">Cortesía dos</string>
+	<string name="p_ing_uno">Ingreso uno</string>
+	<string name="p_ing_dos">Ingreso dos</string>
+	<string name="p_ing_tres">Ingreso tres</string>
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	

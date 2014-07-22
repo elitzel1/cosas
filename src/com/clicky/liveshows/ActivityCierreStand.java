@@ -1,5 +1,6 @@
 package com.clicky.liveshows;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +50,9 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 	int id,idFecha;
 	int[] comisiones;
 	double totalVentas,comision;
+	String nombre;
 	TextView txtTotal,txtComision;
-	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro;
+	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro1,editOtro2,editOtro3;
 
 	@SuppressLint("UseSparseArrays")
 	@Override
@@ -58,12 +60,15 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.cierre_stand);
 		// Show the Up button in the action bar.
-		setupActionBar();
 		pdf = new PDF(this);
-		
 		Bundle b= getIntent().getBundleExtra("extra");
 		id = b.getInt("id_stand");
 		idFecha = b.getInt("fecha");
+		nombre = b.getString("nombre");
+		
+		setupActionBar();
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		txtTotal=(TextView)findViewById(R.id.txtTotal);
 		txtComision = (TextView)findViewById(R.id.txtComisiones);
@@ -72,7 +77,13 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		editBanorte = (EditText)findViewById(R.id.editBanorte);
 		editSantander = (EditText)findViewById(R.id.editSantander);
 		editAmex = (EditText)findViewById(R.id.editAmex);
-		editOtro = (EditText)findViewById(R.id.editOtro);
+		editOtro1 = (EditText)findViewById(R.id.editOtro1);
+		editOtro2 = (EditText)findViewById(R.id.editOtro2);
+		editOtro3 = (EditText)findViewById(R.id.editOtro3);
+		
+		((TextView)findViewById(R.id.ingreso_1)).setText(prefs.getString("tipo1", "OTHER"));
+		((TextView)findViewById(R.id.ingreso_2)).setText(prefs.getString("tipo2", "OTHER"));
+		((TextView)findViewById(R.id.ingreso_3)).setText(prefs.getString("tipo3", "OTHER"));
 		
 		products = new ArrayList<Product>();
 		ListView list=(ListView)findViewById(R.id.listCierre);
@@ -226,6 +237,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
+		getActionBar().setTitle("Corte "+nombre);
 	}
 
 	@Override
@@ -334,7 +346,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 			}
 		}
-		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other = 0.0;
+		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other1 = 0.0,other2 = 0.0,other3 = 0.0;
 		if(!editEfectivo.getText().toString().equals("")){
 			efectivo = Double.parseDouble(editEfectivo.getText().toString());
 		}
@@ -350,10 +362,16 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		if(!editAmex.getText().toString().equals("")){
 			amex = Double.parseDouble(editAmex.getText().toString());
 		}
-		if(!editOtro.getText().toString().equals("")){
-			other = Double.parseDouble(editOtro.getText().toString());
+		if(!editOtro1.getText().toString().equals("")){
+			other1 = Double.parseDouble(editOtro1.getText().toString());
 		}
-		dbHelper.updateStandCierre(id, efectivo, banamex, banorte, santander, amex , other);
+		if(!editOtro2.getText().toString().equals("")){
+			other2 = Double.parseDouble(editOtro2.getText().toString());
+		}
+		if(!editOtro3.getText().toString().equals("")){
+			other3 = Double.parseDouble(editOtro3.getText().toString());
+		}
+		dbHelper.updateStandCierre(id, efectivo, banamex, banorte, santander, amex , other1,other2,other3);
 		dbHelper.close();
 	}
 	
@@ -365,12 +383,11 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				getReport();
-				String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_stand.pdf";
-				Intent email = new Intent(Intent.ACTION_SEND);
-				email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
-				email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+reporte));
-				email.setType("message/rfc822");
-				startActivity(Intent.createChooser(email, "Choose an Email client :"));
+				File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand.pdf");
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				startActivity(intent);
 				cierreStand();
 			}
 		});
@@ -413,8 +430,8 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		if(!editAmex.getText().toString().equals("")){
 			amex = Double.parseDouble(editAmex.getText().toString());
 		}
-		if(!editOtro.getText().toString().equals("")){
-			other = Double.parseDouble(editOtro.getText().toString());
+		if(!editOtro1.getText().toString().equals("")){
+			other = Double.parseDouble(editOtro1.getText().toString());
 		}
 		
 		double[] ingresos = {efectivo,banamex,banorte,santander,amex,other};
@@ -436,7 +453,7 @@ public class ActivityCierreStand extends Activity implements OnItemClickListener
 		
 		double depositado = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos - 105));
 		
-		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{depositado - (totalVentas - comision)}, x, (pos-225));
+		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{depositado - (totalVentas - comision)}, x, (pos-240));
 		
 		docPdf.close();
 	}
