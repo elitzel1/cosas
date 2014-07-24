@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
@@ -106,11 +105,10 @@ public class PDF{
 		table.setHeaderRows(1);
 		
 		DecimalFormat dinero = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		dinero.applyPattern("$#,###.00");
-		dinero.setRoundingMode(RoundingMode.DOWN);
+		dinero.applyPattern("$#,##0.00");
 		DecimalFormat porcentaje = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		porcentaje.applyPattern("##.00%");
-		porcentaje.setRoundingMode(RoundingMode.DOWN);
+		porcentaje.applyPattern("#0.00%");
+		
 		for(int i = 0; i < listProd.size(); i++){
 			Product prod = listProd.get(i);
 			double precio = Double.parseDouble(prod.getPrecio());
@@ -188,7 +186,7 @@ public class PDF{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
 		
-		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 1f, 0.7f, 0.65f, 1.1f, 0.6f, 0.6f, 1.1f, 0.75f, 0.8f, 0.9f, 1.0f, 1.0f};
+		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 0.75f, 0.8f, 0.7f, 1.2f, 0.65f, 0.65f, 1.1f, 0.75f, 0.8f, 0.9f, 1.0f, 1.0f};
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
 		table.setTotalWidth(940f);
@@ -208,17 +206,15 @@ public class PDF{
 		table.setHeaderRows(1);
 		
 		DecimalFormat dinero = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		dinero.applyPattern("$#,###.00");
-		dinero.setRoundingMode(RoundingMode.DOWN);
+		dinero.applyPattern("$#,##0.00");
 		DecimalFormat porcentaje = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		porcentaje.applyPattern("##.00%");
-		porcentaje.setRoundingMode(RoundingMode.DOWN);
+		porcentaje.applyPattern("#0.00%");
 		
 		for(int i = 0; i < listProd.size(); i++){
 			Product prod = listProd.get(i);
 			Comisiones vendedor = prod.getComisiones().get(0);
 			double precio = Double.parseDouble(prod.getPrecio());
-			PdfPCell cell = new PdfPCell(new Phrase(dinero.format(precio / priceUs),fontTexto));
+			PdfPCell cell = new PdfPCell(new Phrase(dinero.format(truncate(precio / priceUs)),fontTexto));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
@@ -271,12 +267,11 @@ public class PDF{
 			
 			int finalInventory = prod.getCantidadStand() - prod.getProdNo();
 			
-			cell.setPhrase(new Phrase(String.valueOf(finalInventory),fontTexto));
+			cell.setPhrase(new Phrase(String.valueOf(prod.getProdNo()),fontTexto));
 			table.addCell(cell);
 			
-			int vendidos = finalInventory - prod.getProdNo();
-			double gross = Double.parseDouble(prod.getPrecio())*vendidos;
-			cell.setPhrase(new Phrase(String.valueOf(vendidos),fontTexto));
+			double gross = Double.parseDouble(prod.getPrecio())*finalInventory;
+			cell.setPhrase(new Phrase(String.valueOf(finalInventory),fontTexto));
 			table.addCell(cell);
 			cell.setPhrase(new Phrase(dinero.format(gross),fontTexto));
 			table.addCell(cell);
@@ -297,12 +292,12 @@ public class PDF{
 				double totalStand = gross;
 				double tax = 0;
 				for(Taxes taxes : prod.getTaxes()){
-					tax += gross * (taxes.getAmount() * 0.01);
+					tax += truncate(gross * (taxes.getAmount() * 0.01));
 				}
 				if(vendedor.getTipo().equals("After taxes")){
 					totalStand -= tax;
 				}
-				double cant = totalStand * (vendedor.getCantidad() * 0.01);
+				double cant = truncate(totalStand * (vendedor.getCantidad() * 0.01));
 				cell.setPhrase(new Phrase(dinero.format(cant),fontTexto));
 				table.addCell(cell);
 			}
@@ -336,8 +331,8 @@ public class PDF{
 		 
 		double amount = 0;
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		df.applyPattern("$#,###.00");
-		df.setRoundingMode(RoundingMode.DOWN);
+		df.applyPattern("$#,##0.00");
+		
 		for(Product prod : listProd){
 			Comisiones vendedor = prod.getComisiones().get(0);
 			PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(prod.getCantidadStand())));
@@ -367,12 +362,12 @@ public class PDF{
 				double total = prod.getCantidadStand() * Double.parseDouble(prod.getPrecio());
 				double tax = 0;
 				for(Taxes taxes : prod.getTaxes()){
-					tax += total * (taxes.getAmount() * 0.01);
+					tax += truncate(total * (taxes.getAmount() * 0.01));
 				}
 				if(vendedor.getTipo().equals("After taxes")){
 					total -= tax;
 				}
-				double cant = total * (vendedor.getCantidad() * 0.01);
+				double cant = truncate(total * (vendedor.getCantidad() * 0.01));
 				amount += cant;
 				cell.setPhrase(new Phrase(df.format(cant)));
 				table.addCell(cell);
@@ -395,8 +390,7 @@ public class PDF{
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		df.applyPattern("$#,###.00");
-		df.setRoundingMode(RoundingMode.DOWN);
+		df.applyPattern("$#,##0.00");
 		
 		PdfPCell cell = new PdfPCell(new Phrase(title,font));
 		cell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -446,8 +440,7 @@ public class PDF{
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
-		df.applyPattern("$#,###.00");
-		df.setRoundingMode(RoundingMode.DOWN);
+		df.applyPattern("$#,##0.00");
 		
 		for(int i = 0; i < title.length; i++){
 			PdfPCell cell = new PdfPCell(new Phrase(title[i],font));
@@ -551,6 +544,13 @@ public class PDF{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private double truncate(double num){
+		num *= 100;
+		int aux = (int)num;
+		double res = (double)aux / 100;
+		return res;
 	}
 
 }

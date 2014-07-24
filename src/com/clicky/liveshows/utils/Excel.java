@@ -13,6 +13,7 @@ import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
+import jxl.format.UnderlineStyle;
 import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
@@ -69,6 +70,7 @@ public class Excel {
 		//create a new WritableWorkbook using the java.io.File and
 		//WorkbookSettings from above
 		wb = Workbook.createWorkbook(wbfile,wbSettings); 
+		wb.setColourRGB(Colour.BLUE, 52, 122, 240);
 	    }catch(IOException ex){
 	    	Log.e("EXCEL",ex.getStackTrace().toString());
 	    	Log.e("EXCEL", ex.getMessage());
@@ -117,6 +119,8 @@ public class Excel {
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break;
 	    	case 1:
@@ -128,10 +132,12 @@ public class Excel {
 		        break;
 	        case 2:
 		    	//give header cells size 10 Arial bolded 	
-		    	headerFont = new WritableFont(WritableFont.ARIAL, 8, WritableFont.NO_BOLD);
+		    	headerFont = new WritableFont(WritableFont.ARIAL, 8, WritableFont.BOLD,false, UnderlineStyle.NO_UNDERLINE, Colour.WHITE);
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	headerFormat.setWrap(true);
 		    	headerFormat.setAlignment(Alignment.CENTRE);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+		    	headerFormat.setBackground(Colour.BLUE);
 		        newCell.setCellFormat(headerFormat);
 		        break;  
 	        case 3:
@@ -140,6 +146,7 @@ public class Excel {
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
 		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break;
@@ -149,29 +156,29 @@ public class Excel {
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
-		    	headerFormat.setAlignment(Alignment.RIGHT);
 		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break;
 	        case 5:
 		    	//give header cells size 10 Arial bolded 	
-	        	NumberFormat currencyFormat = new NumberFormat(NumberFormat.CURRENCY_DOLLAR + " ###,###.00", NumberFormat.COMPLEX_FORMAT);
+	        	NumberFormat currencyFormat = new NumberFormat(NumberFormat.CURRENCY_DOLLAR + " ###,##0.00", NumberFormat.COMPLEX_FORMAT);
 		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
 		    	headerFormat = new WritableCellFormat(currencyFormat);
 		    	//center align the cells' contents
 		    	headerFormat.setFont(headerFont);
 		    	headerFormat.setWrap(true);
 		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
-		    	headerFormat.setAlignment(Alignment.RIGHT);
+		    	headerFormat.setAlignment(Alignment.CENTRE);
 		        newCell.setCellFormat(headerFormat);
 		        break;
 	        case 6:
 		    	//give header cells size 10 Arial bolded 	
-		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD);
+	        	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.BOLD,false, UnderlineStyle.NO_UNDERLINE, Colour.WHITE);
 		    	headerFormat = new WritableCellFormat(headerFont);
 		    	//center align the cells' contents
 		    	headerFormat.setWrap(true);
-		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
+		    	headerFormat.setBackground(Colour.BLUE);
+		    	headerFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 		        newCell.setCellFormat(headerFormat);
 		        break; 
 	        case 7:
@@ -212,7 +219,7 @@ public class Excel {
 		        break;
 	        case 11:
 		    	//give header cells size 10 Arial bolded 	
-	        	NumberFormat currencyFormatYellow = new NumberFormat(NumberFormat.CURRENCY_DOLLAR + " ###,###.00", NumberFormat.COMPLEX_FORMAT);
+	        	NumberFormat currencyFormatYellow = new NumberFormat(NumberFormat.CURRENCY_DOLLAR + " ###,##0.00", NumberFormat.COMPLEX_FORMAT);
 		    	headerFont = new WritableFont(WritableFont.ARIAL, 10, WritableFont.NO_BOLD);
 		    	headerFormat = new WritableCellFormat(currencyFormatYellow);
 		    	//center align the cells' contents
@@ -254,6 +261,15 @@ public class Excel {
         }
 	}
 	
+	public void autoWidth(WritableSheet sheet){
+		for(int x=0;x<30;x++)
+		{
+		    CellView cell=sheet.getColumnView(x);
+		    cell.setAutosize(true);
+		    sheet.setColumnView(x, cell);
+		}
+	}
+	
 	public void sheetAutoFitColumns(WritableSheet sheet) {
 	    for (int i = 0; i < sheet.getColumns(); i++) {
 	        Cell[] cells = sheet.getColumn(i);
@@ -268,7 +284,11 @@ public class Excel {
 	                String str = cells[j].getContents();
 	                if (str == null || str.isEmpty())
 	                    continue;
-	                longestStrLen = str.trim().length();
+	                
+	                if(str.contains("("))
+	                	continue;
+	                else
+	                	longestStrLen = str.trim().length();
 	            }
 	        }
 
@@ -286,6 +306,10 @@ public class Excel {
 	    }
 	}
 	
+	public void min(WritableSheet sheet){
+		for(int i = 0; i < 30; i++)
+			sheet.setColumnView(i, 3);
+	}
 	public void sheetAutoFitRows(WritableSheet sheet) {
 	    for (int i = 0; i < sheet.getRows(); i++) {
 	    	sheet.getRowView(i).setAutosize(true);

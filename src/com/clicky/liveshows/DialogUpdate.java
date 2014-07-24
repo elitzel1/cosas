@@ -216,16 +216,29 @@ public class DialogUpdate extends DialogFragment {
 				if(!com.contentEquals("Elija comision")){
 					if(editComisiones.getEditableText()!=null){
 						if(!editComisiones.getEditableText().toString().equals("")){
-							if(Integer.parseInt(editComisiones.getEditableText().toString())>0){
+							if(Integer.parseInt(editComisiones.getEditableText().toString()) >= 0){
 								int selected = radioGroup.getCheckedRadioButtonId();
 								RadioButton r = (RadioButton)view.findViewById(selected);
 								int selected2 = radioGroup2.getCheckedRadioButtonId();
 								RadioButton r2 = (RadioButton)view.findViewById(selected2);
-								list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
-								countC++;
-								addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
-								editComisiones.setText("");
-								listener.makeToastDialog(R.string.d_com_agregada);
+								
+								if(r2.getText().toString().equals("%")){
+									if(Integer.parseInt(editComisiones.getEditableText().toString()) > 100){
+										listener.makeToastDialog(R.string.err_com_noval);
+									}else{
+										list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
+										countC++;
+										addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
+										editComisiones.setText("");
+										listener.makeToastDialog(R.string.d_com_agregada);
+									}
+								}else{
+									list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
+									countC++;
+									addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
+									editComisiones.setText("");
+									listener.makeToastDialog(R.string.d_com_agregada);
+								}
 							}else{
 								listener.makeToastDialog(R.string.d_com_nov);}
 						}else{
@@ -249,7 +262,7 @@ public class DialogUpdate extends DialogFragment {
 				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
 				if(!amount.contentEquals("")){
-					if(Integer.parseInt(amount)>0){
+					if(Integer.parseInt(amount) >= 0 && Integer.parseInt(amount) <= 100){
 						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
 						countT++;
 						addView("Tax", amount , countT, mLinearT);

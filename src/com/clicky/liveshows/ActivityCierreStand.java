@@ -1,7 +1,6 @@
 package com.clicky.liveshows;
 
 import java.io.File;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -127,8 +126,8 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 				int cantidad = c.getInt(1);
 				int idProd = c.getInt(3);
 				p.setCantidadStand(cantidad);
-				p.setIdStand(idProd);
 				p.setId(c.getInt(0));
+				p.setStandId(idProd);
 				List<Comisiones> listCom = new ArrayList<Comisiones>();
 				List<Taxes> listTax = new ArrayList<Taxes>();
 				List<Cortesias> listCor = new ArrayList<Cortesias>();
@@ -239,12 +238,11 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	
 	private void setCantidades(){
 		DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
-		formatter.applyPattern("$#,###.00");
-		formatter.setRoundingMode(RoundingMode.DOWN);
+		formatter.applyPattern("#,##0.00");
 		
-		txtTotal.setText(formatter.format(totalVentas));
-		txtComision.setText(formatter.format(comision));
-		txtFalta.setText(formatter.format(totalVentas-comision-depositado));
+		txtTotal.setText("$"+formatter.format(totalVentas));
+		txtComision.setText("$"+formatter.format(comision));
+		txtFalta.setText("$"+formatter.format(totalVentas-comision-depositado));
 	}
 
 	/**
@@ -304,49 +302,38 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		// TODO Auto-generated method stub
 		Product p = products.get(position);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
-		dbHelper.open();
 		int total=p.getCantidadStand()-cortesia.getAmount();
 		if((total) >= 0){
-			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getIdStand(),id)>=0){
+			dbHelper.open();
+			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getStandId(),id)>=0){
 				int cantidad = total;
 				p.addCortesia(cortesia);
 				p.setCantidadStand(cantidad);
 				comisiones[position] += cortesia.getAmount();
-				dbHelper.updateProducto(p.getIdStand(), cantidad);
-				dbHelper.updateStandProducto(p.getIdStand(),id, cantidad);
+				dbHelper.updateStandProducto(p.getId(),id, cantidad);
 				adapter.notifyDataSetChanged();
 			}
+			dbHelper.close();
+			Toast.makeText(this, R.string.p_anadido_cor, Toast.LENGTH_SHORT).show();
 		}else{
-
+			Toast.makeText(this, R.string.err_cort_noval, Toast.LENGTH_SHORT).show();
 		}
-		dbHelper.close();
 	}
 
 	private double setComision(double total,List<Comisiones> comisiones,List<Taxes> taxes, int cantidad){
 		double comision = 0.0;
-		Comisiones vendedor =comisiones.get(0);
+		Comisiones vendedor = comisiones.get(0);
 		if(vendedor.getTipo().equals("After taxes")){
 			double iva = 0.0;
 			for(int i = 0; i < taxes.size(); i++){
 				Taxes tax = taxes.get(i);
-				double aux = total * ((tax.getAmount()) * 0.01);
+				double aux = truncate(total * ((tax.getAmount()) * 0.01));
 				iva += aux;
-			}
-			for(int i = 1; i < comisiones.size(); i++){
-				Comisiones com = comisiones.get(i);
-				if(com.getTipo().equals("Before taxes")){
-					if(com.getIva().equals("%")){
-						double aux = total * (com.getCantidad() * 0.01);
-						iva += aux;
-					}else{
-						iva += com.getCantidad();
-					}
-				}
 			}
 			total -= iva;
 		}
 		if(vendedor.getIva().equals("%")){
-			comision = total * (vendedor.getCantidad() * 0.01);
+			comision = truncate(total * (vendedor.getCantidad() * 0.01));
 		}else{
 			comision = vendedor.getCantidad()*cantidad;
 		}
@@ -358,6 +345,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		for(int i = 0; i < products.size(); i++){
 			Product prod = products.get(i);
 			long venta = dbHelper.createVentaProducto(id,prod.getId() , (prod.getCantidadStand() - prod.getProdNo()));
+			dbHelper.updateStandProducto(prod.getId(), id, prod.getProdNo());
 			if(venta == -1){
 				Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
 			}
@@ -392,8 +380,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	}
 	
 	private void validaCierre(){
-		double fin = totalVentas-comision-depositado;
-		if(fin == 0){
+		if((totalVentas-comision)==depositado){
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.alert_cierre);
 			builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
@@ -418,14 +405,50 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 			});
 			builder.create().show();
 		}else{
-			Toast.makeText(this, "La cantidad depositada es erronea", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "The amount deposited is incorrect", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
 	private void cierreStand(){
 		cierreProds();
+		double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other1 = 0.0,other2 = 0.0,other3 = 0.0;
+		if(!editEfectivo.getText().toString().equals("")){
+			efectivo = Double.parseDouble(editEfectivo.getText().toString());
+		}
+		if(!editBanamex.getText().toString().equals("")){
+			banamex = Double.parseDouble(editBanamex.getText().toString());
+		}
+		if(!editBanorte.getText().toString().equals("")){
+			banorte = Double.parseDouble(editBanorte.getText().toString());
+		}
+		if(!editSantander.getText().toString().equals("")){
+			santander = Double.parseDouble(editSantander.getText().toString());
+		}
+		if(!editAmex.getText().toString().equals("")){
+			amex = Double.parseDouble(editAmex.getText().toString());
+		}
+		if(!editOtro1.getText().toString().equals("")){
+			other1 = Double.parseDouble(editOtro1.getText().toString());
+		}
+		if(!editOtro2.getText().toString().equals("")){
+			other2 = Double.parseDouble(editOtro2.getText().toString());
+		}
+		if(!editOtro3.getText().toString().equals("")){
+			other3 = Double.parseDouble(editOtro3.getText().toString());
+		}
+		Intent i = new Intent();
+		Bundle b = new Bundle();
+		b.putDouble("efectivo", efectivo);
+		b.putDouble("banamex", banamex);
+		b.putDouble("banorte", banorte);
+		b.putDouble("santander", santander);
+		b.putDouble("amex", amex);
+		b.putDouble("other1", other1);
+		b.putDouble("other2", other2);
+		b.putDouble("other3", other3);
+		i.putExtras(b);
+		setResult(RESULT_OK,i);
 		finish();
-		setResult(RESULT_OK);
 		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 	}
 	
@@ -520,6 +543,13 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 
 	@Override
 	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+	}
+	
+	private double truncate(double num){
+		num *= 100;
+		int aux = (int)num;
+		double res = (double)aux / 100;
+		return res;
 	}
 	
 }

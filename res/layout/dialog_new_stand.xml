@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:ems="10"
-                android:hint="@string/stand" />
+                android:inputType="text" />
         </TableRow>
 
         <TableRow
@@ -82,7 +82,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/nombre_emp"
+                android:text="@string/encargado"
                 android:textColor="@color/azul_textos"
                 android:textStyle="bold" />
 

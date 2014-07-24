@@ -228,7 +228,7 @@ public class DBAdapter {
 
 	public boolean updateStandProducto(long rowId,long rowIdStand, int cantidadStand){
 		ContentValues updateValues= createContentValuesUpdateCantidadStand(cantidadStand);
-		return database.update(TABLE_STAND_PROD, updateValues, colProductoIdSP + "=" + rowId +" AND "+ colStandIdSP + "=" + rowIdStand, null)>0;
+		return database.update(TABLE_STAND_PROD, updateValues, colIdStandProd + "=" + rowId +" AND "+ colStandIdSP + "=" + rowIdStand, null)>0;
 	}
 
 	public boolean updateCortesia(long rowId,int cantidadTotal,int cantidad){
@@ -511,12 +511,6 @@ public class DBAdapter {
 	//		Cursor mCursor = database.query(true, TABLE_PRODCUT, new String[] {colCortesia}, colIdProduct + "=" + rowId,null, null, null, null, null);
 	//		return mCursor;
 	//	}
-
-	public Cursor fetchVentas(long rowId) throws SQLException{
-		Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,
-				colCantidadVP}, colStandFK+" = "+rowId,null, null, null, null, null);
-		return mCursor;
-	}
 	
 	public Cursor fetchVentasProd(long rowId) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_SALES_PRODUCT, new String[] { colIdSales,  colStandFK,  colStandProdFK,

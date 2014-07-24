@@ -281,11 +281,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 		TextView txtDivisa = (TextView)findViewById(R.id.txtDivisas);
 
-		if(divisa <= 0){
-			txtDivisa.setText(R.string.textdivisa);
-		}else{
-			txtDivisa.setText(div+" = "+divisa+" USD");
-		}
+		txtDivisa.setText(div+" = "+divisa+" USD");
 
 	}
 

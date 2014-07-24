@@ -2,9 +2,12 @@ package com.clicky.liveshows;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -13,6 +16,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import com.clicky.liveshows.adapters.AdapterStandProduct;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
+import com.clicky.liveshows.utils.Cortesias;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Stand;
 import com.clicky.liveshows.utils.Taxes;
@@ -47,6 +51,7 @@ public class FragmentStandProd extends Fragment {
 	TextView txtNombre;
 	TextView txtEncargado;
 	TextView txtComision;
+	TextView txtCierreCom,txtCierreTotal;
 	ListView list;
 	Button btnCierre;
 	DBAdapter db;
@@ -100,6 +105,8 @@ public class FragmentStandProd extends Fragment {
 		closed = (LinearLayout)v.findViewById(R.id.closed);
 		txtEncargado = (TextView)v.findViewById(R.id.txtEncargado);
 		txtComision = (TextView)v.findViewById(R.id.txtComision);
+		txtCierreTotal = (TextView)v.findViewById(R.id.depositado);
+		txtCierreCom = (TextView)v.findViewById(R.id.comision);
 		list=(ListView)v.findViewById(R.id.listStandProd);
 		btnCierre = (Button)v.findViewById(R.id.btnCierreStand);
 		
@@ -149,21 +156,7 @@ public class FragmentStandProd extends Fragment {
 		});
 
 		btnCierre = (Button)getView().findViewById(R.id.btnCierreStand);
-		btnCierre.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent i = new Intent(getActivity(),ActivityCierreStand.class);
-				Bundle b = new Bundle();
-				b.putInt("id_stand",(int)s.getId());
-				b.putInt("fecha", idFecha);
-				b.putString("nombre", s.getName());
-				i.putExtra("extra", b);
-				startActivityForResult(i,STAND);
-				getActivity().overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
-			}
-		});
 
 	}
 
@@ -173,11 +166,6 @@ public class FragmentStandProd extends Fragment {
 	        if (resultCode == Activity.RESULT_OK) {
 	        	setStand(s,idFecha);
 	        }
-	    }else if (requestCode == STAND){
-	    	if (resultCode == Activity.RESULT_OK) {
-	    		((StandActivity)getActivity()).onGetData();
-	    		setStand(s,idFecha);
-	    	}
 	    }
 	}
 	
@@ -185,10 +173,6 @@ public class FragmentStandProd extends Fragment {
 		this.idFecha = idFecha;
 		this.s=s;
 		empty.setVisibility(View.GONE);
-		if(s.isOpened())
-			closed.setVisibility(View.GONE);
-		else
-			closed.setVisibility(View.VISIBLE);
 		Comisiones com = s.getComision();
 		txtEncargado.setText(s.getEncargado());
 		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getTipo());//CORREGIR AQUI
@@ -210,11 +194,14 @@ public class FragmentStandProd extends Fragment {
 		if(c.moveToFirst()){
 			do{
 				List<Comisiones> comisiones = new ArrayList<Comisiones>();
+				List<Cortesias> listCor = new ArrayList<Cortesias>();
+				
 				Product p = new Product();  //Se obtiene la cantidad de prod en el stand, nombre,tipo, talla y precio
 				int cantidad = c.getInt(1);
 				int idProd = c.getInt(3);
 				p.setCantidadStand(cantidad);
 				p.setId(idProd);
+				p.setStandId(c.getInt(0));
 				int comVendedorId = c.getInt(4);
 				Cursor cursorImp = db.fetchImpuestos(comVendedorId);
 				if(cursorImp.moveToFirst()){
@@ -229,6 +216,15 @@ public class FragmentStandProd extends Fragment {
 				}
 				Cursor cursor = db.fetchProducto(idProd);
 				if(cursor.moveToFirst()){
+					Cursor cursorCr = db.fetchCortesias(cursor.getLong(0), s.getId());
+					if(cursorCr.moveToFirst()){
+						do{
+							Cortesias cort = new Cortesias();
+							cort.setTipo(cursorCr.getString(1));
+							cort.setAmount(cursorCr.getInt(2));
+							listCor.add(cort);
+						}while(cursorCr.moveToNext());
+					}
 					String nombre = cursor.getString(1);
 					int idArtista = cursor.getInt(9);
 					String artista = artistas.get(idArtista);
@@ -280,10 +276,17 @@ public class FragmentStandProd extends Fragment {
 					p.setTipo(tipo);
 					p.setTalla(talla);
 					p.setPrecio(precio);
+					p.setCortesias(listCor);
 					p.setCantidad(cantidadTotal);
 					p.setComisiones(comisiones);
 					p.setTaxes(list_tax);
 					p = verifyImage(p);
+					if(!s.isOpened()){
+						Cursor ventas = db.fetchVentasProd(c.getInt(0));
+						if(ventas.moveToFirst()){
+							p.setProdNo(ventas.getInt(3));
+						}
+					}
 					idProducts.add(idProd);
 				}
 				items.add(p);
@@ -294,13 +297,43 @@ public class FragmentStandProd extends Fragment {
 			items.clear();
 			adapter.notifyDataSetChanged();
 		}
-		if(items.isEmpty()){
-			btnCierre.setVisibility(View.INVISIBLE);
-		}else{
-			btnCierre.setVisibility(View.VISIBLE);
-		}
 		c.close();
-		//}
+		if(s.isOpened()){
+			closed.setVisibility(View.GONE);
+			if(items.isEmpty()){
+				btnCierre.setVisibility(View.INVISIBLE);
+			}else{
+				btnCierre.setVisibility(View.VISIBLE);
+			}
+		}else{
+			DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+			formatter.applyPattern("#,##0.00");
+			formatter.setRoundingMode(RoundingMode.DOWN);
+			
+			double comision = 0,totalVentas = 0;
+			closed.setVisibility(View.VISIBLE);
+			for(Product prod : items){
+				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
+				totalVentas += total;
+				Comisiones vendedor = prod.getComisiones().get(0);
+				if(vendedor.getTipo().equals("After taxes")){
+					double iva = 0.0;
+					for(Taxes tax : prod.getTaxes()){
+						double aux = total * ((tax.getAmount()) * 0.01);
+						iva += aux;
+					}
+					total -= iva;
+				}
+				if(vendedor.getIva().equals("%")){
+					comision += total * (vendedor.getCantidad() * 0.01);
+				}else{
+					comision += vendedor.getCantidad() * prod.getProdNo();
+				}
+			}
+			txtCierreTotal.setText("Deposited:  $"+ formatter.format((totalVentas - comision)));
+			txtCierreCom.setText(  "Commission: $"+ formatter.format(comision));
+			
+		}
 		db.close();
 	}
 

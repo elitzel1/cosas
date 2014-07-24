@@ -4,7 +4,7 @@
     <string name="app_name">MerchSys</string>
     <string name="version">Version 0.8</string>
     <string name="developed">Developed by</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Preferences</string>
     <string name="action_new">Add Product</string>
     <string name="action_print">Print</string>
     <string name="hello_world">Hello world!</string>
@@ -17,13 +17,13 @@
     <string name="evento_artista">Event: </string>
     <string name="evento_local">Venue: </string>
     <string name="hint_local">Select a venue</string>
-    <string name="evento_capacidad">Capacity</string>
-    <string name="evento_fecha">Date</string>
+    <string name="evento_capacidad">Capacity:</string>
+    <string name="evento_fecha">Date:</string>
     <string name="continuar">Continue</string>
     <string name="otro">Other</string>
     <string name="hint_date">dd/mm/yy</string>
     <string name="hint_evento">Event name</string>
-    <string name="evento_tipo_moneda">Tipo de moneda</string>
+    <string name="evento_tipo_moneda">Currency:</string>
     <string name="hint_artista">Artist Name</string>
 
     <!-- Imagenes -->
@@ -46,70 +46,65 @@
     <string name="preciod">Price</string>
     <string name="por">%</string>
     <string name="din">$</string>
-    <string name="hint_taxes">Nombre del impuesto</string>
-    <string name="hint_comision">Elija comision</string>
+    <string name="hint_comision">Choose commission</string>
     <string name="hint_tipo">Product Type</string>
 
     <!-- ActivityProductos -->
-    <string name="articulos">Articulos</string>
-    <string name="precio">Precio</string>
-    <string name="adicionales">Adicionales</string>
+    <string name="articulos">Merchandise</string>
+    <string name="precio">Price</string>
+    <string name="adicionales">Addings</string>
     <string name="total">Total</string>
-    <string name="t_adicionales">No se pueden agregar más adicionales</string>
-    <string name="error">error</string>
+    <string name="t_adicionales">No more addings allowed</string>
+    <string name="error">Error</string>
     <string name="stand">Stands</string>
     <string name="cantidad_disponible">Amount Available</string>
-    <string name="textdivisa">Aún no ingresa tipo de cambio</string>
-    <string name="textcom">Aún no ingresa comisión de Tarjeta</string>
     <string name="album_name">MerchSys</string>
     <string name="alert_delete">Are you sure you want to delete </string>
 
     <!-- Errores -->
-    <string name="sin_artista">Escriba el nombre de un artista</string>
+    <string name="sin_artista">Write the name of the event</string>
     <string name="sin_evento">Datos incompletos, falta nombre del evento</string>
-    <string name="sin_lugar">Datos incompletos, falta nombre de lugar</string>
-    <string name="sin_capacidad">Datos incompletos, falta capacidad</string>
-    <string name="sin_fecha">Datos incompletos, falta fecha</string>
-    <string name="title_activity_activity_productos">ActivityProductos</string>
-    <string name="sin_impuestos">Faltan los impuestos del producto</string>
-    <string name="sin_comisiones">Faltan las comisiones del producto</string>
-    <string name="sin_nombre_producto">Falta el nombre del producto</string>
-    <string name="sin_precio">Falta el precio del producto</string>
-    <string name="sin_cantidad">Falta la cantidad del producto</string>
-    <string name="sin_tipo">Falta tipo del producto</string>
-    <string name="sin_cantidad_valida">Cantidad no valida</string>
-    <string name="sin_precio_valido">Precio no valido</string>
-    <string name="err_divisas">Error al guardar la divisa</string>
-    <string name="err_divisa_noval">Divisa no valida</string>
-    <string name="err_com">Error al guardar la comisión de la tarjeta</string>
-    <string name="err_com_noval">Comisión no valida</string>
-    <string name="err_op_uno">Error al guardar la opción 1 de cortesia</string>
-    <string name="err_op_dos">Error al guardar la opción 2 de cortesia</string>
+    <string name="sin_lugar">Incomplete information, missing venue</string>
+    <string name="sin_capacidad">Incomplete information, missing capacity</string>
+    <string name="sin_fecha">Incomplete information, missing date</string>
+    <string name="title_activity_activity_productos">Merchandise</string>
+    <string name="sin_impuestos">Missing product\'s tax</string>
+    <string name="sin_comisiones">Missing product\'s commissions</string>
+    <string name="sin_nombre_producto">Missing product\'s name</string>
+    <string name="sin_precio">Missing price</string>
+    <string name="sin_cantidad">Missing amount</string>
+    <string name="sin_tipo">Missing product type</string>
+    <string name="sin_cantidad_valida">Amount not valid</string>
+    <string name="sin_precio_valido">Price not valid</string>
+    <string name="err_cort_noval">Complimentary amount not valid</string>
+    <string name="err_com_noval">Commission not valid</string>
     <string name="err_cantidad">The amount of products is incorrect</string>
+    <string name="sin_stand">Missing stand name</string>
+    <string name="sin_encargado">Missing stand manager\'s name</string>
+    <string name="sin_stand_comision">Missing manager\'s commission</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
     <string name="m_actualizar">Update</string>
     <string name="m_detalles">Details</string>
     <string name="title_activity_stand">StandActivity</string>
-    <string name="title_menu">Elija opción</string>
-    <string name="m_comision">Cambiar comision</string>
-    <string name="m_cortesia">Agregar Cortesia</string>
+    <string name="title_menu">Choose an option</string>
+    <string name="m_comision">Change commission</string>
+    <string name="m_cortesia">Add Complimentary</string>
 
     <!-- Stands -->
-    <string name="vacio">No hay Stands</string>
-    <string name="cierre">Corte Stand</string>
-    <string name="cierre_dia">Cierre del día</string>
-    <string name="encargado">Encargado</string>
-    <string name="s_producto">Producto</string>
-    <string name="s_cantidad">Cantidad</string>
+    <string name="vacio">There are no Stands</string>
+    <string name="cierre">Close Stand</string>
+    <string name="cierre_dia">Close Day</string>
+    <string name="encargado">Manager</string>
+    <string name="s_producto">Product</string>
+    <string name="s_cantidad">Amount</string>
     <string name="s_cantidad_stand">Cantidad Stand</string>
-    <string name="s_comision">Comision</string>
-    <string name="nombre_emp">Encargado</string>
+    <string name="s_comision">Commission</string>
     <string name="r_neto">After taxes</string>
     <string name="r_bruto">Before taxes</string>
-    <string name="a_prod">Agregar Producto</string>
-    <string name="title_activity_activity_agregar_productos">Add Product to a Stand</string>
+    <string name="a_prod">Add Product</string>
+    <string name="title_activity_activity_agregar_productos">Adding Products to a Stand</string>
     <string name="title_activity_activity_cierre_stand">Corte</string>
     <string name="title_activity_activity_cierre_dia">Cierre Día</string>
     <string name="no_stand">Please select a stand</string>
@@ -121,12 +116,12 @@
     <string name="banorte">TC Banorte:</string>
     <string name="santander">TC Santander:</string>
     <string name="amex">TC AmEx:</string>
-    <string name="pago_otro">Otros:</string>
-    <string name="prod_no">Productos no vendidos</string>
-    <string name="cortesias">Cortesias</string>
+    <string name="pago_otro">Other:</string>
+    <string name="prod_no">Merchandise not sold</string>
+    <string name="cortesias">Complimentaries</string>
     <string name="lbl_total">Total</string>
-    <string name="lbl_comision">Comision</string>
-    <string name="lbl_falta">Por Depositar</string>
+    <string name="lbl_comision">Commission</string>
+    <string name="lbl_falta">Deposit</string>
     <string name="alert_cierre">Do you want to send this stand\'s sales report?</string>
 
     <!-- Cierre dia -->
@@ -134,16 +129,16 @@
     <string name="lbl_sueldos">Sueldos/Bonos/Comisiones</string>
     <string name="nota">Nota</string>
     <string name="factura">Factura</string>
-    <string name="reportes">Reportes</string>
+    <string name="reportes">Reports</string>
     <string name="hint_concepto">Concept</string>
     <string name="hint_cantidad">Amount</string>
-    <string name="hint_agencia">Selecciona una agencia</string>
-    <string name="hint_agencia_venue">Agencia</string>
-    <string name="hint_contacto">Contacto</string>
+    <string name="hint_agencia">Select an agency</string>
+    <string name="hint_agencia_venue">Agency</string>
+    <string name="hint_contacto">Contact</string>
     <string name="hint_mail">Mail</string>
-    <string name="sin_concepto">No hay concepto</string>
-    <string name="sin_viatico">No hay cantidad</string>
-    <string name="sin_correo">No hay Correo</string>
+    <string name="sin_concepto">There is no concept</string>
+    <string name="sin_viatico">There is no amount</string>
+    <string name="sin_correo">There is no mail</string>
     <string name="no_correo">Invalid mail</string>
     <string name="interno">Interno</string>
     <string name="venue">Venue</string>
@@ -186,26 +181,21 @@
     
     
     <!-- Detalles PRod -->
-    <string name="d_nombre">NOMBRE: </string>
-    <string name="d_tipo">TIPO: </string>
-    <string name="d_talla">TALLA: </string>
-    <string name="d_precio">PRECIO: </string>
-    <string name="d_cantidad">CANTIDAD: </string>
-    <string name="d_artista">ARTISTA: </string>
-    <string name="d_cortesias">CORTESIAS </string>
-    <string name="d_no_cor">No hay cortesias</string>
-    <string name="d_adicionales">ADICIONALES </string>
-    <string name="d_no_adi">No hay adicionales</string>
-    <string name="title_activity_preferencias">Preferencias</string>
+    <string name="d_nombre">NAME: </string>
+    <string name="d_tipo">TYPE: </string>
+    <string name="d_talla">SIZE: </string>
+    <string name="d_precio">PRICE: </string>
+    <string name="d_cantidad">AMOUNT: </string>
+    <string name="d_artista">ARTIST: </string>
+    <string name="d_cortesias">COMPLIMENTARIES</string>
+    <string name="d_no_cor">No complimentaries</string>
+    <string name="d_adicionales">ADDING </string>
+    <string name="d_no_adi">No addings</string>
+    <string name="title_activity_preferencias">Preferences</string>
     
     <!-- Preferencias -->
-	<string name="p_divisas">DIVISAS</string>
-	<string name="p_dolar">Dolar</string>
-	<string name="p_euro">Euro</string>
-	<string name="p_comisiones">COMISIONES</string>
-	<string name="p_tarjeta">Tarjeta de crédito</string>
-	<string name="p_divisa_g">Divisa guardada</string>
-	<string name="p_comision_g">Comisión guardada</string>
+	<string name="p_divisas">CURRENCY</string>
+	<string name="p_comisiones">COMMISSIONS</string>
 	<string name="p_ingreso">Ingresos</string>
 	<string name="p_cort_uno">Cortesía uno</string>
 	<string name="p_cort_dos">Cortesía dos</string>
@@ -215,24 +205,24 @@
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	
-	<string name="long_change">Cambiar comisión</string>
-	<string name="producto">Producto</string>
+	<string name="long_change">Change commission</string>
+	<string name="producto">Product</string>
 	
-	<string name="update_exitoso">Actualización Exitosa</string>
-	<string name="update_noexitoso">Actualización No Exitosa</string>
-	<string name="d_com_agregada">Comisión Agregada</string>
+	<string name="update_exitoso">Product Updated</string>
+	<string name="update_noexitoso">Unsuccessful update</string>
+	<string name="d_com_agregada">Commission added</string>
 	<string name="d_tax_agregada">Tax added</string>
-	<string name="d_com_nov">Comision no válida</string>
-	<string name="d_tax_nov">Tax no válido</string>
+	<string name="d_com_nov">Commission not valid</string>
+	<string name="d_tax_nov">Tax not valid</string>
 	<string name="d_com_err">Error</string>
-	<string name="d_talla_agregada">Talla Agregada</string>
-	<string name="d_talla_can">Cantidad no válida</string>
-	<string name="d_eliminado">Eliminado</string>
-	<string name="p_anadido">Producto añadido</string>
-	<string name="p_anadido_ad">Adicional añadido</string>
-	<string name="p_anadido_cor">Cortesia añadida</string>
-	<string name="p_eliminado">Producto eliminado</string>
-	<string name="s_ananido">Stand añadido</string>
-	<string name="m_art_agregado">Artista agregado</string>
+	<string name="d_talla_agregada">New size added</string>
+	<string name="d_talla_can">Amount not valid</string>
+	<string name="d_eliminado">Deleted</string>
+	<string name="p_anadido">Product added</string>
+	<string name="p_anadido_ad">Additional amount added</string>
+	<string name="p_anadido_cor">Complimentary added</string>
+	<string name="p_eliminado">Product deleted</string>
+	<string name="s_ananido">Stand added</string>
+	<string name="m_art_agregado">Artist added</string>
 	<string name="m_date_agregado">Date added</string>
 </resources>

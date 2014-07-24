@@ -41,7 +41,7 @@ public class DialogAddProduct extends DialogFragment {
 	private String[]tallas ={"SIN TALLA","UNITALLA","2-4","6-8","10-12",   
 			"14-16","18-20","XS","S","M","L","XL","XXL",   
 			"XXXL","XS JR","S JR","M JR","L JR","XL JR"};
-	private String[]comison = {"Elija comision","AGENCY","VENUE","PROMOTOR","OTHER"};
+	private String[]comison = {"Select commission","AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
 	private EditText editCantidad;
 	private EditText editPrecio;
@@ -177,7 +177,6 @@ public class DialogAddProduct extends DialogFragment {
 		btnOtraTalla.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(enableOtraTalla==false){
 					spinnerTallas.setVisibility(View.VISIBLE);
 					view.findViewById(R.id.editTalla).setVisibility(View.GONE);
@@ -231,25 +230,40 @@ public class DialogAddProduct extends DialogFragment {
 								RadioButton r = (RadioButton)view.findViewById(selected);
 								int selected2 = radioGroup2.getCheckedRadioButtonId();
 								RadioButton r2 = (RadioButton)view.findViewById(selected2);
-								list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
-								countC++;
-								addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
-								editComisiones.setText("");
-								listener.makeToastDialog(R.string.d_com_agregada);
-								if(visibleComision==false){
-									view.findViewById(R.id.btnComLess).setVisibility(View.VISIBLE);
-									visibleComision=true;
+								
+								if(r2.getText().toString().equals("%")){
+									if(Integer.parseInt(editComisiones.getEditableText().toString()) > 100){
+										listener.makeToastDialog(R.string.err_com_noval);
+									}else{
+										list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
+										countC++;
+										addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
+										editComisiones.setText("");
+										listener.makeToastDialog(R.string.d_com_agregada);
+										if(visibleComision==false){
+											view.findViewById(R.id.btnComLess).setVisibility(View.VISIBLE);
+											visibleComision=true;
+										}
+									}
+								}else{
+									list_comisiones.add(new Comisiones(com,Integer.parseInt(editComisiones.getEditableText().toString()),r2.getText().toString(),r.getText().toString()));
+									countC++;
+									addView(com,editComisiones.getEditableText().toString(),r.getText().toString(),r2.getText().toString(), countC, mLinearC);
+									editComisiones.setText("");
+									listener.makeToastDialog(R.string.d_com_agregada);
+									if(visibleComision==false){
+										view.findViewById(R.id.btnComLess).setVisibility(View.VISIBLE);
+										visibleComision=true;
+									}
 								}
 							}else{
 								listener.makeToastDialog(R.string.d_com_nov);
 							}
 						}else{
-
-							listener.makeToastDialog(R.string.d_com_err);
+							listener.makeToastDialog(R.string.err_com_noval);
 						}
 
 				}else{
-
 					listener.makeToastDialog(R.string.d_com_err);
 				}
 			}
@@ -268,7 +282,7 @@ public class DialogAddProduct extends DialogFragment {
 				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
 				if(!amount.contentEquals("")){
-					if(Integer.parseInt(amount) >= 0){
+					if(Integer.parseInt(amount) >= 0 && Integer.parseInt(amount) <= 100){
 						list_taxes.add(new Taxes("Tax",Integer.parseInt(amount)));
 						countT++;
 						addView("Tax", amount , countT, mLinearT);

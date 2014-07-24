@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DialogUpdateComision extends DialogFragment {
 	OnChangeComision listener;
@@ -89,17 +90,31 @@ public class DialogUpdateComision extends DialogFragment {
 				// TODO Auto-generated method stub
 				String comisionCant;
 			
-				if(editComision.getEditableText()!=null){
-					if(!editComision.getEditableText().toString().contentEquals("")){
-						comisionCant = editComision.getEditableText().toString();
-					}else{ Log.e("DIA", "Falta comision"); return;}
-				}else{ Log.e("DIA", "Falta comision nulo"); return;}
-			
 				int selectedId = radioGroup.getCheckedRadioButtonId();
 				radioTipo = (RadioButton) view.findViewById(selectedId);
 				
 				int selectedP=radioPorcentaje.getCheckedRadioButtonId();
 				radioP=(RadioButton)view.findViewById(selectedP);
+				
+				if(editComision.getEditableText()!=null){
+					if(!editComision.getEditableText().toString().contentEquals("")){
+						if(radioP.getText().toString().equals("%")){
+							if(Double.parseDouble(editComision.getEditableText().toString()) > 100){
+								showToast(R.string.err_com_noval);
+								return;
+							}else
+								comisionCant = editComision.getEditableText().toString();
+						}else
+							comisionCant = editComision.getEditableText().toString();
+					}else{ 
+						showToast(R.string.sin_stand_comision); 
+						return;
+					}
+				}else{ 
+					showToast(R.string.sin_stand_comision); 
+					return;
+				}
+			
 				Comisiones com = new Comisiones("Vendedor", Integer.parseInt(comisionCant), radioP.getText().toString(), radioTipo.getText().toString());
 				com.setId(comision.getId());
 			listener.setNewComision(com);
@@ -117,4 +132,9 @@ public class DialogUpdateComision extends DialogFragment {
 		});
 		return dialog.create();
 	}
+	
+	private void showToast(int texto){
+		Toast.makeText(getActivity(), texto, Toast.LENGTH_SHORT).show();
+	}
+	
 }

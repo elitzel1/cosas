@@ -94,6 +94,7 @@
 	            android:background="@drawable/fondo_boton"
 	            android:text="@string/cierre"
 	            android:textColor="@color/blanco"
+	            android:onClick="toCierre"
 	            android:textSize="12sp" />
 	
 	        <Button
@@ -134,6 +135,7 @@
         android:layout_height="match_parent"
         android:paddingTop="24dp"
         android:visibility="gone"
+        android:background="?android:attr/windowBackground"
         android:orientation="vertical" >
 	    
         <ImageView
@@ -142,6 +144,24 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/closed"
             android:contentDescription="@string/im_nombre" />
+        
+        <TextView
+            android:id="@+id/depositado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/azul_textos"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <TextView
+            android:id="@+id/comision"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/azul_textos"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
         
     </LinearLayout>
     

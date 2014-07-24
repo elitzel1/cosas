@@ -44,6 +44,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	Stand stand;
 	int idFecha;
 	protected final int CIERRE = 0;
+	protected final int STAND = 1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -245,14 +246,14 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 			makeToast(R.string.d_com_err);
 		}else{
 			makeToast(R.string.s_ananido);
-			newStand(id, nombre, encargado, com,0,0,0,0,0,0);
+			newStand(id, nombre, encargado, com,0,0,0,0,0,0,0,0);
 		}
 		dbHelper.close();
 	}
 	
 
-	public void newStand(long id, String nombre, String encargado, Comisiones com, double efectivo, double banamex, double banorte, double santander, double amex, double other){
-		Stand stand = new Stand(id,nombre, encargado, com, efectivo, banamex, banorte, santander, amex, other);
+	public void newStand(long id, String nombre, String encargado, Comisiones com, double efectivo, double banamex, double banorte, double santander, double amex, double other1, double other2,double other3){
+		Stand stand = new Stand(id,nombre, encargado, com, efectivo, banamex, banorte, santander, amex, other1,other2,other3);
 		frag.setStand(stand);
 		//onStandSeleccionado(stand);
 	}
@@ -275,12 +276,26 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	public void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == CIERRE) {
 	        if (resultCode == Activity.RESULT_OK) {
-	        	Intent  i = new Intent(this,MainActivity.class);
+	        	Intent  i = new Intent(this,SplashActivity.class);
 	    		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	    		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 	    		startActivity(i);
 	        	finish();
 	        }
+	    }else if (requestCode == STAND){
+	    	if (resultCode == Activity.RESULT_OK) {
+	    		Bundle extras = data.getExtras();
+	    		stand.setIngresos(extras.getDouble("efectivo"), extras.getDouble("banamex"), extras.getDouble("banorte"), 
+	    				extras.getDouble("santander"), extras.getDouble("amex"), extras.getDouble("oher1"), 
+	    				extras.getDouble("other2"), extras.getDouble("other3"));
+	    		boolean hayDetalle = 
+						(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+				if(hayDetalle) {
+					((FragmentStandProd)getFragmentManager().
+						findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+				}
+	    	}
 	    }
 	}
 	
@@ -290,6 +305,17 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
 
+	public void toCierre(View view){
+		Intent i = new Intent(StandActivity.this,ActivityCierreStand.class);
+		Bundle b = new Bundle();
+		b.putInt("id_stand",(int)stand.getId());
+		b.putInt("fecha", idFecha);
+		b.putString("nombre", stand.getName());
+		i.putExtra("extra", b);
+		startActivityForResult(i,STAND);
+		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
+	}
+	
 	@Override
 	public void onGetData() {
 		// TODO Auto-generated method stub
@@ -308,11 +334,13 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				double banorte = cursor.getDouble(8);
 				double santander = cursor.getDouble(9);
 				double amex = cursor.getDouble(10);
-				double other = cursor.getDouble(11);
+				double other1 = cursor.getDouble(11);
+				double other2 = cursor.getDouble(12);
+				double other3 = cursor.getDouble(13);
 				Comisiones com = new Comisiones("Vendedor", comision, iva, tipo);
-				newStand(id, nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other);
+				newStand(id, nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3);
 				if(cursor.isFirst()){
-					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other);
+					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3);
 					onStandSeleccionado(first);
 				}
 		}while(cursor.moveToNext());
@@ -357,7 +385,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		dbHelper.open();
 		if((p.getCantidad()-Integer.parseInt(adicional)) >= 0){
 			if(dbHelper.updateProducto(p.getId(), p.getCantidad()-Integer.parseInt(adicional))){
-				if(dbHelper.updateStandProducto(p.getId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
+				if(dbHelper.updateStandProducto(p.getStandId(), stand.getId(), p.getCantidadStand()+Integer.parseInt(adicional))){
 					((FragmentStandProd)getFragmentManager().
 							findFragmentById(R.id.article_fragment)).setNewCantidad(p.getCantidadStand()+Integer.parseInt(adicional), position);
 					boolean hayDetalle = 
@@ -391,17 +419,14 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	public void setCortesia(Cortesias cortesia, int position) {
 		// TODO Auto-generated method stub
 		Product p = product;
-		p.addCortesia(cortesia);
-		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
-		dbHelper.open();
-		int total=p.getCantidadStand()-p.getCortesias().get(p.sizeCortesias()-1).getAmount();
+		int total=p.getCantidadStand()-cortesia.getAmount();
 		if((total) >= 0){
-
+			dbHelper.open();
 			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),(int)stand.getId())>=0){
+				p.addCortesia(cortesia);
 				int cantidad = total;
 				p.setCantidadStand(cantidad);
-				dbHelper.updateProducto(p.getId(), cantidad);
-				dbHelper.updateStandProducto(p.getId(),stand.getId(), cantidad);
+				dbHelper.updateStandProducto(p.getStandId(),stand.getId(), cantidad);
 				boolean hayDetalle = 
 						(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
 
@@ -411,10 +436,10 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				}
 				makeToast(R.string.p_anadido_cor);
 			}
+			dbHelper.close();
 		}else{
-			makeToast(R.string.err_cantidad);
+			makeToast(R.string.err_cort_noval);
 		}
-		dbHelper.close();
 	}
 	
 	@Override

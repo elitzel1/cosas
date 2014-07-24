@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class DialogStand extends DialogFragment {
 
@@ -65,26 +66,50 @@ public class DialogStand extends DialogFragment {
 				if(editNombre.getEditableText()!=null){
 					if(!editNombre.getEditableText().toString().contentEquals("")){
 						nombre= editNombre.getEditableText().toString();
-					}else { Log.e("DIA", "Falta nombre"); return;}
-				}else { Log.e("DIA", "Falta nombre nulo"); return;}
+					}else{ 
+						showToast(R.string.sin_stand);
+						return;
+					}
+				}else { 
+					showToast(R.string.sin_stand);
+					return;}
 				
 				if(editEncargado.getEditableText()!=null){
 					if(!editEncargado.getEditableText().toString().contentEquals("")){
 						encargado=editEncargado.getEditableText().toString();
-					}else  { Log.e("DIA", "Falta encargado"); return;}
-				}else  { Log.e("DIA", "Falta encargado nulo"); return;}
+					}else{ 
+						showToast(R.string.sin_encargado);
+						return;
+					}
+				}else{ 
+					showToast(R.string.sin_encargado);
+					return;
+				}
 				
-				if(editComision.getEditableText()!=null){
-					if(!editComision.getEditableText().toString().contentEquals("")){
-						comision = editComision.getEditableText().toString();
-					}else{ Log.e("DIA", "Falta comision"); return;}
-				}else{ Log.e("DIA", "Falta comision nulo"); return;}
-			
 				int selectedId = radioGroup.getCheckedRadioButtonId();
 				radioTipo = (RadioButton) view.findViewById(selectedId);
 				
 				int selectedP=radioPorcentaje.getCheckedRadioButtonId();
 				radioP=(RadioButton)view.findViewById(selectedP);
+				if(editComision.getEditableText()!=null){
+					if(!editComision.getEditableText().toString().contentEquals("")){
+						if(radioP.getText().toString().equals("%")){
+							if(Double.parseDouble(editComision.getEditableText().toString()) > 100){
+								showToast(R.string.err_com_noval);
+								return;
+							}else
+								comision = editComision.getEditableText().toString();
+						}else
+							comision = editComision.getEditableText().toString();
+					}else{ 
+						showToast(R.string.sin_stand_comision);
+						return;
+					}
+				}else{ 
+					showToast(R.string.sin_stand_comision); 
+					return;
+				}
+			
 				Comisiones com = new Comisiones("Vendedor", Integer.parseInt(comision), radioP.getText().toString(), radioTipo.getText().toString());
 			listener.setStand(nombre, encargado, com);
 			dismiss();	
@@ -102,4 +127,7 @@ public class DialogStand extends DialogFragment {
 		return dialog.create();
 	}
 
+	private void showToast(int texto){
+		Toast.makeText(getActivity(), texto, Toast.LENGTH_SHORT).show();
+	}
 }
