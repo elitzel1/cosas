@@ -523,7 +523,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				Product prod = new Product();
 				prod.setId(cursorProd.getInt(0));
 				
-				int cant = cursorProd.getInt(5);
+				int cant = cursorProd.getInt(4);
 				int asignados = 0;
 				
 				Cursor cursorStandProd = dbHelper.fetchStandProductDetail(prod.getId(),idfecha);
