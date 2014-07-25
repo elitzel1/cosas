@@ -829,19 +829,43 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		else
 			products.get(position).setId_imagen(p.getId_imagen());
 		
-		Log.i("UPDATE",""+p.getId()+" "+p.getTipo()+" "+p.getNombre()+" "+id_artists[band]);
-		
+		Cursor cursorCom = dbHelper.fetchProductImpuestoProd(p.getId());
+		if(cursorCom.moveToFirst()){
+			do{
+				Cursor c = dbHelper.fetchImpuestos(cursorCom.getLong(1));
+				if(c.moveToFirst()){
+					dbHelper.deleteComision(c.getLong(0));
+				}
+			}while(cursorCom.moveToNext());
+		}
+		dbHelper.deleteTaxesProd(p.getId());
 		if(dbHelper.updateProducto((long)p.getId(), p.getNombre(), p.getTipo(), p.getPath_imagen(), p.getCantidad(),  p.getTotalCantidad(), p.getPrecio(), id_artists[band])){
-			for(Taxes t: p.getTaxes()){
-				if(dbHelper.updateComisiones((long)t.getId(), t.getName(), t.getAmount(), "taxes")){
-					Log.i("UPDATE", "Exitoso taxes");
+			for(Taxes tax : p.getTaxes()){
+				long idRowT = dbHelper.createImpuesto(tax.getName(),"taxes",tax.getAmount());
+				if(idRowT!=-1){
+					if(dbHelper.createImpuestoProducto(p.getId(), (int)idRowT)==-1){
+
+					}else{
+
+					}
+				}else{
+
 				}
 			}
-			for(Comisiones c:p.getComisiones()){
-				if(dbHelper.updateComisiones((long)c.getId(), c.getName(), "comision", c.getCantidad(), c.getIva(), c.getTipo())){
-					Log.i("UPDATE", "Exitoso comision");
+
+			for(Comisiones com : p.getComisiones()){
+				long idRowT = dbHelper.createImpuesto(com.getName(), "comision", com.getCantidad(), com.getIva(), com.getTipo());
+				if(idRowT!=-1){
+					if(dbHelper.createImpuestoProducto(p.getId(), (int)idRowT)==-1){
+
+					}else{
+
+					}
+				}else{
+
 				}
 			}
+			adapter.notifyDataSetChanged();
 			makeToast(R.string.update_exitoso);
 		}else{
 			makeToast(R.string.update_noexitoso);

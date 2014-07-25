@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">MerchSys</string>
-    <string name="version">Version 0.8</string>
+    <string name="version">Version 0.9</string>
     <string name="developed">Developed by</string>
     <string name="action_settings">Preferences</string>
     <string name="action_new">Add Product</string>
@@ -105,8 +105,8 @@
     <string name="r_bruto">Before taxes</string>
     <string name="a_prod">Add Product</string>
     <string name="title_activity_activity_agregar_productos">Adding Products to a Stand</string>
-    <string name="title_activity_activity_cierre_stand">Corte</string>
-    <string name="title_activity_activity_cierre_dia">Cierre Día</string>
+    <string name="title_activity_activity_cierre_stand">Closing Stand</string>
+    <string name="title_activity_activity_cierre_dia">Close Day</string>
     <string name="no_stand">Please select a stand</string>
     <string name="no_products">This stand has no products</string>
 

@@ -263,6 +263,13 @@ public class DBAdapter {
 		return band>0;
 	}
 	
+	public boolean deleteComision(long rowId){
+		return database.delete(TABLE_TAXES, colIdTaxes + " = "+rowId, null)>0;
+	}
+	public boolean deleteComisiones(long rowId){
+		return database.delete(TABLE_TAXES, colIdFecha + "="+rowId, null)>0;
+	}
+	
 	public boolean deleteInfoProdStand(long rowId){
 		int band = 0;
 		band += deleteTaxesProd(rowId);
@@ -275,7 +282,7 @@ public class DBAdapter {
 		return database.delete(TABLE_SALES_PRODUCT, colStandProdFK+" ="+rowId, null);
 	}
 	
-	private int deleteTaxesProd(long rowId){
+	public int deleteTaxesProd(long rowId){
 		return database.delete(TABLE_TAXES_PRODUCT, colIdProductCK+" ="+rowId, null);
 	}
 	
