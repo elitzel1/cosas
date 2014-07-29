@@ -10,5 +10,17 @@
         android:showAsAction="always"
         android:title="@string/action_new"
         android:icon="@drawable/ic_action_new"/>
+    
+    <item
+        android:id="@+id/action_print"
+        android:showAsAction="always"
+        android:title="@string/action_print"
+        android:icon="@drawable/imprimi"/>
+    
+    <item
+        android:id="@+id/action_artist"
+        android:showAsAction="always"
+        android:title="@string/action_artist"
+        android:icon="@drawable/ic_menu_invite"/>
 
 </menu>

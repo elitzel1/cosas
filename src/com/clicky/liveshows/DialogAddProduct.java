@@ -41,7 +41,7 @@ public class DialogAddProduct extends DialogFragment {
 	private String[]tallas ={"SIN TALLA","UNITALLA","2-4","6-8","10-12",   
 			"14-16","18-20","XS","S","M","L","XL","XXL",   
 			"XXXL","XS JR","S JR","M JR","L JR","XL JR"};
-	private String[]comison = {"Select commission","AGENCY","VENUE","PROMOTOR","OTHER"};
+	private String[]comison = {"AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
 	private EditText editCantidad;
 	private EditText editPrecio;
@@ -159,10 +159,12 @@ public class DialogAddProduct extends DialogFragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(enableTipos==false){
+					setImage(iCurrentSelection);
 					spinnerTipos.setVisibility(View.VISIBLE);
 					view.findViewById(R.id.editTipo).setVisibility(View.GONE);
 					enableTipos=true;
 				}else{
+					img.setImageResource(R.drawable.splash_icon);
 					spinnerTipos.setVisibility(View.INVISIBLE);
 					editTipo = (EditText)view.findViewById(R.id.editTipo);
 					editTipo.setVisibility(View.VISIBLE);
@@ -460,19 +462,18 @@ public class DialogAddProduct extends DialogFragment {
 				if(!enableTallas){
 					if(editCantidad.getEditableText()!=null){
 						if(!editCantidad.getEditableText().toString().contentEquals(""))
-							if(Integer.parseInt(editCantidad.getEditableText().toString())>0){
+							//if(Integer.parseInt(editCantidad.getEditableText().toString())>0){
 								cantidad=editCantidad.getEditableText().toString();
-							}else{
-								listener.makeToastDialog(R.string.sin_cantidad_valida);
-								return;
-							}
-						else
-						{
+							//}else{
+							//	listener.makeToastDialog(R.string.sin_cantidad_valida);
+							//	return;
+							//}
+						else{
 							listener.makeToastDialog(R.string.sin_cantidad);
 							return;
 						}
 					}
-					else {
+					else{
 						listener.makeToastDialog(R.string.sin_cantidad);
 						return;}}
 				

@@ -56,6 +56,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -75,6 +76,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	private ArrayList<Gastos> gastos;
 	private ArrayList<Gastos> sueldos;
 	private ArrayList<Double> totales;
+	private String[]txtGastos,txtSueldos;
 	private HashMap<Integer, String> artistas;
 	List<Product> products;
 	private int[]art;
@@ -119,6 +121,24 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		editCantSueldos = (EditText)findViewById(R.id.editSueldo);
 		radioComprobante = (RadioGroup)findViewById(R.id.comprobante);
 		radioComprobanteSueldos = (RadioGroup)findViewById(R.id.comprobanteSueldo);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		txtGastos = new String[]{"LONAS","GASOLINA PARA CARRETERA","ESTACIONAMIENTO","HOTELES","VUELOS","CAMIONES","PROPINAS",
+				"BAÑOS PUBLICOS","TELEFONIA","COMIDAS","REPARACIONES","MUDANZAS","TRANSPORTACION","CASETAS","RENTA DE CARPAS",
+				"RENTA DE TABLONES Y MANTELERIA","RENTA DE VALLAS","MULTAS","PERMISOS Y TRAMITES",
+				prefs.getString("gasto1", "OTHER"),prefs.getString("gasto2", "OTHER"),prefs.getString("gasto3", "OTHER")};
+		
+		txtSueldos = new String[]{"SUPERVISORES","BONO GERENCIAL","SUELDO CHOFER","MONTAJE/DESMONTAJE",
+				prefs.getString("sueldo1", "OTHER"),prefs.getString("sueldo2", "OTHER"),prefs.getString("sueldo3", "OTHER")};
+		
+		ArrayAdapter<String> gatosAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,txtGastos);
+		gatosAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		
+		ArrayAdapter<String> sueldosAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,txtSueldos);
+		sueldosAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		
+		spinnerGasto.setAdapter(gatosAdapter);
+		spinnerSueldos.setAdapter(sueldosAdapter);
 		
 		setupActionBar();
 		setXML();
@@ -305,11 +325,13 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				getReport(0, "","","");
 			}
 		}else if(v == (Button)findViewById(R.id.enviarVenue)){
+			String agencia = ((EditText)findViewById(R.id.agenciaVenue)).getText().toString();
+			String contacto = ((EditText)findViewById(R.id.contactoVenue)).getText().toString();
 			mail = ((EditText)findViewById(R.id.mailVenue)).getText().toString();
 			acepta = validaCorreo(mail);
 			if(acepta){
 				tipo = 1;
-				getPDFReport(1, agencias.get(posVenue).getNombre(), agencias.get(posVenue).getContacto(),"");
+				getPDFReport(1,agencia , contacto,"");
 			}	
 		}
 		if(acepta){
@@ -968,7 +990,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(22, 15, "GROSS TOTAL\nUS$DLLS", 2, hoja1);
 			
 			Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
-			double tax = 0, gross = 0, venueFee = 0, royaltyFee = 0,promotorFee = 0,  otherFee = 0;
+			double subTotal = 0, gross = 0, venueFee = 0, royaltyFee = 0,promotorFee = 0,  otherFee = 0;
 			
 			excel.writeCell(18, 13, "RATE EXCHANGE US$1 =", 2, hoja1);
 			excel.writeCell(19, 13, ""+priceUs, 11, hoja1);
@@ -1019,7 +1041,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				
 				int finalInventory = prod.getTotalCantidad()-(prod.getProdNo()+cmd+cmv+cmo+cmo1+cmo2);
 				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
-				double subTotal = total;
+				double conTax = total;
 				totales.add(total);
 				gross += total;
 				excel.writeCell(18, (16+i), ""+finalInventory, 3, hoja1);
@@ -1028,13 +1050,14 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(22, (16+i), ""+truncate((total/priceUs)), 11, hoja1);
 				
 				for(Taxes tx : prod.getTaxes()){
-					tax += truncate(total * (tx.getAmount()* 0.01));
-					subTotal -= truncate(total * (tx.getAmount()* 0.01));
+					double aux = 1 + (tx.getAmount()* 0.01);
+					subTotal += truncate(total / aux);
+					conTax += truncate(total / aux);
 				}
 				for(Comisiones com : prod.getComisiones()){
 					double cant = 0, aux = 0;
 					if(com.getTipo().equals("After taxes")){
-						cant = subTotal;
+						cant = conTax;
 					}else if(com.getTipo().equals("Before Taxes")){
 						cant = total;
 					}
@@ -1063,12 +1086,12 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(18, 20+products.size(), "GROSS NET", 6, hoja1);
 			
 			excel.writeCell(19, 18+products.size(), ""+gross, 5, hoja1);
-			excel.writeCell(19, 19+products.size(), ""+tax, 5, hoja1);
-			excel.writeCell(19, 20+products.size(), ""+(gross-tax), 5, hoja1);
+			excel.writeCell(19, 19+products.size(), ""+(gross-subTotal), 5, hoja1);
+			excel.writeCell(19, 20+products.size(), ""+subTotal, 5, hoja1);
 			
 			excel.writeCell(22, 18+products.size(), ""+truncate((gross/priceUs)), 11, hoja1);
-			excel.writeCell(22, 19+products.size(), ""+truncate((tax/priceUs)), 11, hoja1);
-			excel.writeCell(22, 20+products.size(), ""+truncate(((gross-tax)/priceUs)), 11, hoja1);
+			excel.writeCell(22, 19+products.size(), ""+truncate(((gross-subTotal)/priceUs)), 11, hoja1);
+			excel.writeCell(22, 20+products.size(), ""+truncate((subTotal/priceUs)), 11, hoja1);
 			
 			if(tipo == 1){
 				excel.writeCell(18, 22+products.size(), "VENUE FEE", 6, hoja1);
@@ -1202,33 +1225,35 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		
 		Document docPdf = pdf.createPDFHorizontal("sales_report.pdf");
 		
-		pdf.addImage(25,540,docPdf);
-		pdf.createHeadings(415, 535, 14, "SALES REPORT (IN "+prefs.getString("moneda", "")+")");
+		int pag = 1;
+		pdf.createHeadings(998, 10, 8, ""+pag);
+		pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+		pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
 		
-		pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE","AGENCY","CONTACT"}, 
+		String texto = "SALES REPORT (IN "+prefs.getString("moneda", "")+")";
+		pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
+		
+		float aux1 = pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE","AGENCY","CONTACT"}, 
 				new String[]{fecha,evento,local,agency,contact}, docPdf.leftMargin(), 515);
 		
-		pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
+		float aux2 = pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
 				new String[]{""+capacidad,df.format(totalVenta/capacidad),df.format(totalVenta),df.format(priceUs)+" "+prefs.getString("moneda", "")}, 620, 515);
 		
-		pdf.tableVentas(docPdf, products, headers, totalVenta, 410);
-		int pos = 390 - (38*products.size());
-		int x = 650;
-		
-		double taxes = 0, venueFee = 0, royaltyFee = 0;
+		double subTotal = 0, venueFee = 0, royaltyFee = 0;
 		for(Product prod : products){
 			double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
-			double subTotal = total;
+			double conTax = total;
 			
 			for(Taxes tax : prod.getTaxes()){
-				taxes += truncate(total * (tax.getAmount()* 0.01)); 
-				subTotal -= truncate(total * (tax.getAmount()* 0.01));
+				double aux = 1 + (tax.getAmount()* 0.01);
+				conTax += truncate(total / aux);
+				subTotal += truncate(total / aux);
 			}
 			
 			for(Comisiones com : prod.getComisiones()){
 				double cant = 0, aux = 0;
 				if(com.getTipo().equals("After taxes")){
-					cant = subTotal;
+					cant = conTax;
 				}else if(com.getTipo().equals("Before Taxes")){
 					cant = total;
 				}
@@ -1244,13 +1269,68 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				}
 			}
 		}
-		pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","TAX","GROSS NET"}, new double[]{totalVenta,taxes,(totalVenta-taxes)}, x, (pos));
+		
+		float posInit = 0;
+		if(aux1 > aux2)
+			posInit = 505 - aux1;
+		else 
+			posInit = 505 - aux2;
+		
+		double[] dob = pdf.tableVentas(docPdf, products, headers, totalVenta,0, posInit);
+		int mas = (int)dob[0];
+		if(mas != 0){
+			posInit = 500;
+			int posAct = 0;
+			do{
+				posAct += (int)dob[1];
+				docPdf.newPage();
+				pag++;
+				pdf.createHeadings(998, 10, 8, ""+pag);
+				pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+				pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+				dob = pdf.tableVentas(docPdf, products.subList(posAct, products.size()), headers, totalVenta,posAct, 500);
+				mas = (int)dob[0];
+			}while(mas != 0);
+		}
+		
+		float pos = (float) (posInit - dob[1] - 10);
+		int x = 650;
+		
+		if(pos - 73 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(998, 10, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
+		pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","TAX","GROSS NET"}, new double[]{totalVenta,(totalVenta-subTotal),subTotal}, x, (pos));
+		
+		pos -= 58;
+		if(pos - 41 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(998, 10, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
+		
+		String line1 = "Gerente";
+		String line2 = "";
 		
 		if(tipo == 1){
-			pdf.tableNum(docPdf, new String[]{"VENUE FEE"}, new double[]{venueFee}, x, (pos-55));
+			line2 = "Venue";
+			pdf.tableNum(docPdf, new String[]{"VENUE FEE"}, new double[]{venueFee}, x, (pos));
 		}else if(tipo == 2){
-			pdf.tableNum(docPdf, new String[]{"ROYALTY FEE"}, new double[]{royaltyFee}, x, (pos-55));
+			line2 = "Agency";
+			pdf.tableNum(docPdf, new String[]{"ROYALTY FEE"}, new double[]{royaltyFee}, x, (pos));
 		}
+		
+		pdf.addLine(50, 90);
+		pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
+		pdf.addLine(320, 90);
+		pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
 		
 		docPdf.close();
 	}

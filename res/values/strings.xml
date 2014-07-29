@@ -2,11 +2,12 @@
 <resources>
 
     <string name="app_name">MerchSys</string>
-    <string name="version">Version 0.9</string>
+    <string name="version">Version 1.0</string>
     <string name="developed">Developed by</string>
     <string name="action_settings">Preferences</string>
     <string name="action_new">Add Product</string>
     <string name="action_print">Print</string>
+    <string name="action_artist">Add Artist</string>
     <string name="hello_world">Hello world!</string>
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
@@ -103,7 +104,7 @@
     <string name="s_comision">Commission</string>
     <string name="r_neto">After taxes</string>
     <string name="r_bruto">Before taxes</string>
-    <string name="a_prod">Add Product</string>
+    <string name="a_prod">Add Products</string>
     <string name="title_activity_activity_agregar_productos">Adding Products to a Stand</string>
     <string name="title_activity_activity_cierre_stand">Closing Stand</string>
     <string name="title_activity_activity_cierre_dia">Close Day</string>
@@ -149,37 +150,6 @@
     <string name="add_date">Add New Date</string>
     <string name="close_event">Close event</string>
     
-    <string-array name="gastos">
-        <item>LONAS	</item>
-		<item>GASOLINA PARA CARRETERA</item>
-		<item>ESTACIONAMIENTO</item>
-		<item>HOTELES</item>
-		<item>VUELOS</item>
-		<item>CAMIONES</item>
-		<item>PROPINAS</item>
-		<item>BAÑOS PUBLICOS</item>
-		<item>TELEFONIA</item>
-		<item>COMIDAS</item>
-		<item>REPARACIONES</item>
-		<item>MUDANZAS</item>
-		<item>TRANSPORTACION</item>
-		<item>CASETAS</item>
-		<item>RENTA DE CARPAS</item>
-		<item>RENTA DE TABLONES Y MANTELERIA</item>
-		<item>RENTA DE VALLAS</item>
-		<item>MULTAS</item>
-		<item>PERMISOS Y TRAMITES</item>
-		<item>OTROS</item>
-    </string-array>
-    <string-array name="sueldos">
-        <item>SUPERVISORES</item>
-        <item>BONO GERENCIAL</item>
-		<item>SUELDO CHOFER</item>
-		<item>MONTAJE/DESMONTAJE</item>
-		<item>OTRO</item>
-    </string-array>
-    
-    
     <!-- Detalles PRod -->
     <string name="d_nombre">NAME: </string>
     <string name="d_tipo">TYPE: </string>
@@ -202,6 +172,12 @@
 	<string name="p_ing_uno">Ingreso uno</string>
 	<string name="p_ing_dos">Ingreso dos</string>
 	<string name="p_ing_tres">Ingreso tres</string>
+	<string name="p_gasto_uno">Gasto uno</string>
+	<string name="p_gasto_dos">Gasto dos</string>
+	<string name="p_gasto_tres">Gasto tres</string>
+	<string name="p_sueldo_uno">Sueldo uno</string>
+	<string name="p_sueldo_dos">Sueldo dos</string>
+	<string name="p_sueldo_tres">Sueldo tres</string>
 	<string name="p_op_guar">Opción uno guardada</string>
 	<string name="p_op_guar_d">Opción dos guardada</string>
 	
@@ -218,11 +194,15 @@
 	<string name="d_talla_agregada">New size added</string>
 	<string name="d_talla_can">Amount not valid</string>
 	<string name="d_eliminado">Deleted</string>
+	<string name="add_artista">New Artist</string>
+	<string name="a_anadido">Artist added</string>
 	<string name="p_anadido">Product added</string>
 	<string name="p_anadido_ad">Additional amount added</string>
 	<string name="p_anadido_cor">Complimentary added</string>
 	<string name="p_eliminado">Product deleted</string>
 	<string name="s_ananido">Stand added</string>
+	<string name="s_eliminado">Stand deleted</string>
+	<string name="s_updated">Stand Updated</string>
 	<string name="m_art_agregado">Artist added</string>
 	<string name="m_date_agregado">Date added</string>
 </resources>

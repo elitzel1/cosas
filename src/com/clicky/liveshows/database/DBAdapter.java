@@ -225,6 +225,11 @@ public class DBAdapter {
 		ContentValues updateValues = createContentValuesUpdateCantidad(cantidad);
 		return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
 	}
+	
+	public boolean updateStand(long rowId, String nombre, String encargado, int comision, String iva,String tipo){
+		ContentValues updateValues = createContentValuesStand(nombre, encargado, comision,tipo, iva);
+		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
+	}
 
 	public boolean updateStandProducto(long rowId,long rowIdStand, int cantidadStand){
 		ContentValues updateValues= createContentValuesUpdateCantidadStand(cantidadStand);
@@ -255,8 +260,8 @@ public class DBAdapter {
 	}
 
 	public boolean deleteProduct(long rowId){
-		int band =database.delete(TABLE_PRODCUT, colIdProduct + "="+rowId, null);
-		database.delete(TABLE_ADICIONAL, colProductoIdA+" ="+rowId, null);
+		int band =database.delete(TABLE_PRODCUT, colIdProduct + " = "+rowId, null);
+		database.delete(TABLE_ADICIONAL, colProductoIdA+" = "+rowId, null);
 		deleteCortesias(rowId);
 		deleteTaxesProd(rowId);
 		deleteProductStand(rowId);
@@ -267,7 +272,7 @@ public class DBAdapter {
 		return database.delete(TABLE_TAXES, colIdTaxes + " = "+rowId, null)>0;
 	}
 	public boolean deleteComisiones(long rowId){
-		return database.delete(TABLE_TAXES, colIdFecha + "="+rowId, null)>0;
+		return database.delete(TABLE_TAXES, colIdFecha + " = "+rowId, null)>0;
 	}
 	
 	public boolean deleteInfoProdStand(long rowId){
@@ -278,20 +283,24 @@ public class DBAdapter {
 		return band > 0;
 	}
 	
+	public boolean deleteStand(long rowId){
+		return database.delete(TABLE_STAND, colIdStand+" = "+rowId, null) > 0;
+	}
+	
 	private int deleteVentas(long rowId){
-		return database.delete(TABLE_SALES_PRODUCT, colStandProdFK+" ="+rowId, null);
+		return database.delete(TABLE_SALES_PRODUCT, colStandProdFK+" = "+rowId, null);
 	}
 	
 	public int deleteTaxesProd(long rowId){
-		return database.delete(TABLE_TAXES_PRODUCT, colIdProductCK+" ="+rowId, null);
+		return database.delete(TABLE_TAXES_PRODUCT, colIdProductCK+" = "+rowId, null);
 	}
 	
 	private int deleteProductStand(long rowId){
-		return database.delete(TABLE_STAND_PROD, colProductoIdSP+" ="+rowId, null);
+		return database.delete(TABLE_STAND_PROD, colProductoIdSP+" = "+rowId, null);
 	}
 	
 	private int deleteCortesias(long rowId){
-		return database.delete(TABLE_ADICIONAL, colProductoCortesia+" ="+rowId, null);
+		return database.delete(TABLE_ADICIONAL, colProductoCortesia+" = "+rowId, null);
 	}
 
 	public boolean deleteProductStand(long rowId,long rowIdP, int cantidad){
@@ -466,7 +475,14 @@ public class DBAdapter {
 				colNombreA, colProductoIdA}, colProductoIdA + "=" + rowId,null, null, null, null, null);
 		return mCursor;
 	}
-
+	
+	public Cursor fetchStandProduct(long rowId) throws SQLException{
+		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
+				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId,
+				null, null, null, null, null);
+		return mCursor;
+	}
+	
 	public Cursor fetchStandProduct(long rowId,long idFecha) throws SQLException{
 		Cursor mCursor = database.query(true, TABLE_STAND_PROD, new String[] { colIdStandProd,colCantidadSP,
 				colFechaIdSP, colProductoIdSP, colImpuestoProdId}, colStandIdSP + "=" + rowId+" AND "+colFechaIdSP+" = "+idFecha,

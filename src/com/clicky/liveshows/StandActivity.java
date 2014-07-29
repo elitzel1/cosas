@@ -8,6 +8,7 @@ import java.util.List;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogStand.OnStandNuevo;
 import com.clicky.liveshows.DialogUpdateComision.OnChangeComision;
+import com.clicky.liveshows.DialogUpdateStand.OnStandUpdate;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
 import com.clicky.liveshows.FragmentStandProd.OnNewCortesia;
 import com.clicky.liveshows.FragmentStands.onFragmentCreate;
@@ -37,7 +38,7 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 @SuppressLint("UseSparseArrays")
-public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener{
+public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener,OnStandUpdate{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
 	Product product;
@@ -214,15 +215,52 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					prodList.add(p);
 				}while(c.moveToNext());
 				
-				String[] headers = {"Cantidad","Producto","Artista","Talla","Precio","Comisión","Total"};
-				pdf.addImage(25,770,docPdf);
-				pdf.createHeadings(400, 720, 24, "Stand: "+stand.getName());
-				double totalVendedor = pdf.tableProducts(docPdf, prodList, headers,680);
-				pdf.tableNum(docPdf, new String[]{"TOTAL"}, new double[]{totalVendedor}, 150, (680 - (40*prodList.size())));
-				pdf.addLine(50, 120);
-				pdf.createHeadings(115, 100, 14, "Gerente");
-				pdf.addLine(320, 120);
-				pdf.createHeadings(380, 100, 14, stand.getEncargado());
+				String[] headers = {"Amount","Product","Artist","Size","Price","Commission","Total\nCommission"};
+				
+				int pag = 1;
+				pdf.createHeadings(580, 10, 8, ""+pag);
+				pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
+				pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
+				String texto = "Stand: "+stand.getName();
+				pdf.createHeadings((520-(texto.length() * 9)), 730, 24, texto);
+				double[] dob = pdf.tableProducts(docPdf, prodList, headers,710);
+				int posInit = 710;
+				int mas = (int)dob[0];
+				double totalVendedor = dob[1];
+				
+				if(mas != 0){
+					posInit = 730;
+					int posAct = 0;
+					do{
+						posAct += (int)dob[2];
+						docPdf.newPage();
+						pag++;
+						pdf.createHeadings(580, 10, 8, ""+pag);
+						pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
+						pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
+						dob = pdf.tableProducts(docPdf, prodList.subList(posAct, prodList.size()), headers, 730);
+						totalVendedor += dob[1];
+						mas = (int)dob[0];
+					}while(mas != 0);
+				}
+				
+				float pos = (float) (posInit - dob[2] - 10);
+				if(pos - 41 < 0){
+					docPdf.newPage();
+					pag++;
+					pdf.createHeadings(580, 10, 8, ""+pag);
+					pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
+					pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
+					pos = 730;
+				}
+				pdf.tableNum(docPdf, new String[]{"TOTAL COMMISSION"}, new double[]{totalVendedor}, 150, pos);
+				
+				String line1 = "Gerente";
+				String line2 = stand.getEncargado();
+				pdf.addLine(50, 90);
+				pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
+				pdf.addLine(320, 90);
+				pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
 				docPdf.close();
 				File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/stand.pdf");
 				Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -311,6 +349,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		b.putInt("id_stand",(int)stand.getId());
 		b.putInt("fecha", idFecha);
 		b.putString("nombre", stand.getName());
+		b.putString("encargado", stand.getEncargado());
 		i.putExtra("extra", b);
 		startActivityForResult(i,STAND);
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
@@ -456,6 +495,21 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				((FragmentStandProd)getFragmentManager().
 					findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
 			}
+		}else{
+			makeToast(R.string.update_noexitoso);
+		}
+		
+		dbHelper.close();
+		
+	}
+
+	@Override
+	public void updateStand(long idStand, String nombre, String encargado, Comisiones com) {
+		dbHelper.open();
+		
+		if(dbHelper.updateStand(idStand, nombre, encargado, com.getCantidad(), com.getTipo(), com.getIva())){
+			makeToast(R.string.s_updated);
+			frag.reloadData();
 		}else{
 			makeToast(R.string.update_noexitoso);
 		}

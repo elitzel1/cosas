@@ -37,7 +37,6 @@
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="0.4"
-		        android:entries="@array/gastos"
 		        android:inputType="text" />
 	        
 	        <EditText
@@ -120,7 +119,6 @@
 		        android:layout_width="0dp"
 		        android:layout_height="wrap_content"
 		        android:layout_weight="0.4"
-		        android:entries="@array/sueldos"
 		        android:inputType="text" />
 	        
 	        <EditText

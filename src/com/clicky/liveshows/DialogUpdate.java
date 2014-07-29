@@ -34,9 +34,9 @@ public class DialogUpdate extends DialogFragment {
 
 	private String []tipos;
 	private int idImages[]; 
-	private String[]comison = {"Elija comision","AGENCY","VENUE","PROMOTOR","OTHER"};
+	private String[]comison = {"AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
-	private EditText editCantidad;
+	//private EditText editCantidad;
 	private EditText editPrecio;
 	private Spinner spinnerTipos;
 	private Spinner spinnerArtistas;
@@ -86,7 +86,7 @@ public class DialogUpdate extends DialogFragment {
 		view = inflater.inflate(R.layout.dialog_update_prod,null);
 		img = (ImageView)view.findViewById(R.id.imgProdD);
 		editNombre = (EditText)view.findViewById(R.id.editNombreProd);
-		editCantidad = (EditText)view.findViewById(R.id.editCantidadProd);
+		//editCantidad = (EditText)view.findViewById(R.id.editCantidadProd);
 		editPrecio = (EditText)view.findViewById(R.id.editPrecio);
 		spinnerTipos = (Spinner)view.findViewById(R.id.spinnerTipo);
 		spinnerArtistas = (Spinner)view.findViewById(R.id.spinnerArtista);
@@ -111,7 +111,7 @@ public class DialogUpdate extends DialogFragment {
 
 		/***Datos actuales del producto****/
 		editNombre.setText(product.getNombre());
-		editCantidad.setText(""+product.getTotalCantidad());
+		//editCantidad.setText(""+product.getTotalCantidad());
 		editPrecio.setText(""+product.getPrecio());
 
 		if(!product.getTalla().contentEquals("")){
@@ -167,10 +167,12 @@ public class DialogUpdate extends DialogFragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(enableTipos==false){
+					setImage(iCurrentSelection);
 					spinnerTipos.setVisibility(View.VISIBLE);
 					view.findViewById(R.id.editTipo).setVisibility(View.GONE);
 					enableTipos=true;
 				}else{
+					img.setImageResource(R.drawable.ic_launcher);
 					spinnerTipos.setVisibility(View.INVISIBLE);
 					editTipo.setVisibility(View.VISIBLE);
 					enableTipos=false;
@@ -330,7 +332,7 @@ public class DialogUpdate extends DialogFragment {
 			@Override
 			public void onClick(View v) {
 				String nombre=null;
-				String cantidad=null;
+				//String cantidad=null;
 				String precio = null;
 				String tipo = null;
 
@@ -394,30 +396,30 @@ public class DialogUpdate extends DialogFragment {
 					listener.makeToastDialog(R.string.sin_impuestos);
 					return;
 				}
-
-
-
+				
+				/*
 				if(editCantidad.getEditableText()!=null){
 					if(!editCantidad.getEditableText().toString().contentEquals("")){
-						if(Integer.parseInt(editCantidad.getEditableText().toString())>0){
+						if(Integer.parseInt(editCantidad.getEditableText().toString()) < product.getTotalCantidad()){
 							if(editCantidad.getEditableText().toString().contentEquals(""+product.getTotalCantidad())){
 								cantidad = ""+product.getTotalCantidad();
 							}else{
 								cantidad = editCantidad.getEditableText().toString();
 							}
-						}else{listener.makeToastDialog(R.string.sin_precio_valido);
+						}else{listener.makeToastDialog(R.string.sin_cantidad_valida);
 						return;}
 					}else{
-						listener.makeToastDialog(R.string.sin_precio);
+						listener.makeToastDialog(R.string.sin_cantidad);
 						return;
 					}
 				}else{
-					listener.makeToastDialog(R.string.sin_precio);
+					listener.makeToastDialog(R.string.sin_cantidad);
 					return;
 				}
+				*/
 
-				Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, "", Integer.parseInt(cantidad), list_comisiones, path);
-				p.setTotalCantidad(Integer.parseInt(cantidad));
+				Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, "", product.getCantidad(), list_comisiones, path);
+				p.setTotalCantidad(product.getTotalCantidad());
 				p.setId(product.getId());
 				p.setComisiones(list_comisiones);
 				p.setTaxes(list_taxes);

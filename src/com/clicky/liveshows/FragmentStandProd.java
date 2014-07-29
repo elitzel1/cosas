@@ -2,7 +2,6 @@ package com.clicky.liveshows;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +42,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("UseSparseArrays")
 public class FragmentStandProd extends Fragment {
@@ -126,8 +126,6 @@ public class FragmentStandProd extends Fragment {
 					long arg3) {
 
 				listener.onSetAdicional(items.get(position),position,s);
-				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -136,7 +134,6 @@ public class FragmentStandProd extends Fragment {
 			@Override
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
-				// TODO Auto-generated method stub
 				menu.add(0, CONTEXTMENU_CHANGECOMISION,1,R.string.long_change);
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
@@ -150,7 +147,6 @@ public class FragmentStandProd extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				dialogProd();
 			}
 		});
@@ -308,7 +304,6 @@ public class FragmentStandProd extends Fragment {
 		}else{
 			DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
 			formatter.applyPattern("#,##0.00");
-			formatter.setRoundingMode(RoundingMode.DOWN);
 			
 			double comision = 0,totalVentas = 0;
 			closed.setVisibility(View.VISIBLE);
@@ -319,10 +314,10 @@ public class FragmentStandProd extends Fragment {
 				if(vendedor.getTipo().equals("After taxes")){
 					double iva = 0.0;
 					for(Taxes tax : prod.getTaxes()){
-						double aux = total * ((tax.getAmount()) * 0.01);
-						iva += aux;
+						double aux = 1 + (tax.getAmount()* 0.01);
+						iva += truncate(total / aux);
 					}
-					total -= iva;
+					total = iva;
 				}
 				if(vendedor.getIva().equals("%")){
 					comision += total * (vendedor.getCantidad() * 0.01);
@@ -387,6 +382,7 @@ public class FragmentStandProd extends Fragment {
 				items.remove(menuInfo.position);
 				adapter.notifyDataSetChanged();
 				Log.i("DB", " eliminado");
+				Toast.makeText(getActivity(), R.string.p_eliminado, Toast.LENGTH_SHORT).show();
 			}
 			else
 				Log.e("BD", "Error al eliminiar ");
@@ -512,5 +508,12 @@ public class FragmentStandProd extends Fragment {
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct((Product)list.getAdapter().getItem(position));
 		dialog.show(getFragmentManager(), "Detalles");
+	}
+	
+	private double truncate(double num){
+		num *= 100;
+		int aux = (int)num;
+		double res = (double)aux / 100;
+		return res;
 	}
 }

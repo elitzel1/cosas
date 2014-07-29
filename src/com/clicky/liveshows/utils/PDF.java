@@ -32,6 +32,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class PDF{
 	
@@ -45,11 +46,11 @@ public class PDF{
 		initializeFonts();
 	}
 	
-	public void addImage(float x, float y, Document document){
+	public void addImage(Document document,float x, float y,String name){
 		//the company logo is stored in the assets which is read only
 		//get the logo and print on the document
 		try {
-			InputStream inputStream = context.getAssets().open("live_shows_logo.png");
+			InputStream inputStream = context.getAssets().open(name);
 			Bitmap bmp = BitmapFactory.decodeStream(inputStream);
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -58,10 +59,13 @@ public class PDF{
 			companyLogo.scalePercent(50);
 			document.add(companyLogo); 
 		} catch (IOException e) {
+			Log.e("IMG", e.toString());
 			e.printStackTrace();
 		} catch (BadElementException e) {
+			Log.e("IMG", e.toString());
 			e.printStackTrace();
 		} catch (DocumentException e) {
+			Log.e("IMG", e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -80,7 +84,7 @@ public class PDF{
 		cb.stroke();
 	}
 	
-	public void tableVentas(Document document, List<Product> listProd, String[] headers, double totalVenta, float y){
+	public double[] tableAlmacen(Document document, List<Product> listProd, String[] headers, double totalVenta,int cantInit, float y){
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
 		//list all the products sold to the customer
@@ -117,7 +121,119 @@ public class PDF{
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
 			
-			cell.setPhrase(new Phrase(String.valueOf((i+1)),fontTexto));
+			int num = cantInit + (i+1);
+			cell.setPhrase(new Phrase(String.valueOf(num),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(prod.getTipo(),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(prod.getNombre(),fontTexto));
+			table.addCell(cell);
+			if(!prod.getTalla().equals("") && prod.getTalla() != null){
+				cell.setPhrase(new Phrase(prod.getTalla(),fontTexto));
+			}else{
+				cell.setPhrase(new Phrase("N/A",fontTexto));
+			}
+			table.addCell(cell);
+			
+			int cmv = 0, cmo = 0, cmd = 0, cmo1 = 0, cmo2 = 0;
+			for(Cortesias cort : prod.getCortesias()){
+				if(cort.getTipo().equals("DAMAGE")){
+					cmd += cort.getAmount();
+				}else if(cort.getTipo().equals("COMPS VENUE")){
+					cmv += cort.getAmount();
+				}else if(cort.getTipo().equals("COMPS OFFICE PRODUCTION")){
+					cmo += cort.getAmount();
+				}else if(cort.getTipo().equals(prefs.getString("op1", "OTHER"))){
+					cmo1 += cort.getAmount();
+				}else if(cort.getTipo().equals(prefs.getString("op2", "OTHER"))){
+					cmo2 += cort.getAmount();
+				}
+			}
+			
+			int finalInventory = prod.getTotalCantidad()-(cmd+cmv+cmo+cmo1+cmo2);
+			
+			cell.setPhrase(new Phrase(String.valueOf(prod.getTotalCantidad()),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(dinero.format(Double.parseDouble(prod.getPrecio())),fontTexto));
+			table.addCell(cell);
+			
+			cell.setPhrase(new Phrase(String.valueOf(cmd),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(String.valueOf(cmv),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(String.valueOf(cmo),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(String.valueOf(cmo1),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(String.valueOf(cmo2),fontTexto));
+			table.addCell(cell);
+			
+			cell.setPhrase(new Phrase(String.valueOf(0),fontTexto));
+			table.addCell(cell);
+			
+			double gross = Double.parseDouble(prod.getPrecio())* finalInventory;
+			cell.setPhrase(new Phrase(String.valueOf(prod.getTotalCantidad()),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(dinero.format(gross),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(porcentaje.format(gross/totalVenta),fontTexto));
+			table.addCell(cell);
+			
+			cell.setPhrase(new Phrase(dinero.format(gross/priceUs),fontTexto));
+			table.addCell(cell);
+			
+			float size = table.getTotalHeight();
+			if(y-size <= 25){
+				table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+				return new double[]{1,(i+1)};
+			}
+			
+		}
+		
+		table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+		
+		return new double[]{0,table.getTotalHeight()};
+	}
+	
+	public double[] tableVentas(Document document, List<Product> listProd, String[] headers, double totalVenta,int cantInit, float y){
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
+		//list all the products sold to the customer
+		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 1f, 0.7f, 0.65f, 1.1f, 0.6f, 0.6f, 1.1f, 0.75f, 0.8f, 0.9f, 0.9f};
+		//create PDF table with the given widths
+		PdfPTable table = new PdfPTable(columnWidths);
+		// set table width a percentage of the page width
+		table.setTotalWidth(980f);
+		
+		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
+		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
+		font.setColor(BaseColor.WHITE);
+		BaseColor azul = WebColors.getRGBColor("#347af0");
+		
+		for(int i = 0; i < headers.length; i++){
+			PdfPCell cell = new PdfPCell(new Phrase(headers[i],font));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_BOTTOM);
+			cell.setBackgroundColor(azul);
+			table.addCell(cell);
+		}
+		table.setHeaderRows(1);
+		
+		DecimalFormat dinero = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
+		dinero.applyPattern("$#,##0.00");
+		DecimalFormat porcentaje = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
+		porcentaje.applyPattern("#0.00%");
+		
+		for(int i = 0; i < listProd.size(); i++){
+			Product prod = listProd.get(i);
+			double precio = Double.parseDouble(prod.getPrecio());
+			PdfPCell cell = new PdfPCell(new Phrase(dinero.format(precio / priceUs),fontTexto));
+			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			table.addCell(cell);
+			
+			int num = cantInit + (i+1);
+			cell.setPhrase(new Phrase(String.valueOf(num),fontTexto));
 			table.addCell(cell);
 			cell.setPhrase(new Phrase(prod.getTipo(),fontTexto));
 			table.addCell(cell);
@@ -177,12 +293,20 @@ public class PDF{
 			cell.setPhrase(new Phrase(dinero.format(gross/priceUs),fontTexto));
 			table.addCell(cell);
 			
+			float size = table.getTotalHeight();
+			if(y-size <= 25){
+				table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+				return new double[]{1,(i+1)};
+			}
+			
 		}
 		
 		table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+		
+		return new double[]{0,table.getTotalHeight()};
 	}
 	
-	public void tableStandVentas(Document document, List<Product> listProd, String[] headers, double total, float y){
+	public double[] tableStandVentas(Document document, List<Product> listProd, String[] headers, double total,int cantInit, float y){
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
 		
@@ -219,7 +343,8 @@ public class PDF{
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
 			
-			cell.setPhrase(new Phrase(String.valueOf(i),fontTexto));
+			int num = cantInit + (i+1);
+			cell.setPhrase(new Phrase(String.valueOf(num),fontTexto));
 			table.addCell(cell);
 			cell.setPhrase(new Phrase(prod.getTipo(),fontTexto));
 			table.addCell(cell);
@@ -292,23 +417,32 @@ public class PDF{
 				double totalStand = gross;
 				double tax = 0;
 				for(Taxes taxes : prod.getTaxes()){
-					tax += truncate(gross * (taxes.getAmount() * 0.01));
+					double aux = 1 + (taxes.getAmount()* 0.01);
+					tax += truncate(gross / aux);
 				}
 				if(vendedor.getTipo().equals("After taxes")){
-					totalStand -= tax;
+					totalStand = tax;
 				}
 				double cant = truncate(totalStand * (vendedor.getCantidad() * 0.01));
 				cell.setPhrase(new Phrase(dinero.format(cant),fontTexto));
 				table.addCell(cell);
+				
+				float size = table.getTotalHeight();
+				if(y-size <= 25){
+					table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+					return new double[]{1,(i+1)};
+				}
 			}
 			
 		}
 		
 		table.writeSelectedRows(0, -1, document.leftMargin(), y, docWriter.getDirectContent());
 		
+		return new double[]{0,table.getTotalHeight()};
+		
 	}
 	
-	public double tableProducts(Document document, List<Product> listProd,String[] headers ,float y){
+	public double[] tableProducts(Document document, List<Product> listProd,String[] headers ,float y){
 		//list all the products sold to the customer
 		//float[] columnWidths = {1f, 1f, 1f, 1f, 1f};
 		//create PDF table with the given widths
@@ -333,7 +467,8 @@ public class PDF{
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,##0.00");
 		
-		for(Product prod : listProd){
+		for(int i = 0; i < listProd.size(); i++){
+			Product prod = listProd.get(i);
 			Comisiones vendedor = prod.getComisiones().get(0);
 			PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(prod.getCantidadStand())));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -362,21 +497,28 @@ public class PDF{
 				double total = prod.getCantidadStand() * Double.parseDouble(prod.getPrecio());
 				double tax = 0;
 				for(Taxes taxes : prod.getTaxes()){
-					tax += truncate(total * (taxes.getAmount() * 0.01));
+					double aux = 1 + (taxes.getAmount()* 0.01);
+					tax += truncate(total / aux);
 				}
 				if(vendedor.getTipo().equals("After taxes")){
-					total -= tax;
+					total = tax;
 				}
 				double cant = truncate(total * (vendedor.getCantidad() * 0.01));
 				amount += cant;
 				cell.setPhrase(new Phrase(df.format(cant)));
 				table.addCell(cell);
 			}
+			
+			float size = table.getTotalHeight();
+			if(y-size <= 25){
+				table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+				return new double[]{1,amount,(i+1)};
+			}
 		}
 		//absolute location to print the PDF table from 
 		table.writeSelectedRows(0, -1, document.leftMargin(), y, docWriter.getDirectContent());
 		
-		return amount;
+		return new double[]{0,amount,table.getTotalHeight()};
 	}
 	
 	public double tableIngresos(Document document, String title, String fin, String[] nombres, double[] cants, float x, float y){
@@ -429,7 +571,7 @@ public class PDF{
 		return amount;
 	}
 	
-	public void tableNum(Document document, String[] title, double[] amount, float x, float y){
+	public float tableNum(Document document, String[] title, double[] amount, float x, float y){
 		float[] columnWidths = {0.8f, 1f};
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
@@ -457,9 +599,11 @@ public class PDF{
 		}
 		
 		table.writeSelectedRows(0, -1, document.leftMargin()+x, y, docWriter.getDirectContent());
+		
+		return table.getTotalHeight();
 	}
 	
-	public void tableDatos(Document document, String[] title, String[] datos, float x, float y){
+	public float tableDatos(Document document, String[] title, String[] datos, float x, float y){
 		float[] columnWidths = {0.7f, 1.2f};
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
@@ -485,6 +629,8 @@ public class PDF{
 		}
 		
 		table.writeSelectedRows(0, -1, document.leftMargin()+x, y, docWriter.getDirectContent());
+		
+		return table.getTotalHeight();
 	}
 	
 	public Document createPDF(String fileName){

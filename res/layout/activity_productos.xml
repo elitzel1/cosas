@@ -110,12 +110,37 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listArticulos"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:divider="@color/azul"
-        android:dividerHeight="1dp"
         android:layout_height="wrap_content" >
-    </ListView>
+
+	    <ListView
+	        android:id="@+id/listArticulos"
+	        android:layout_width="match_parent"
+	        android:divider="@color/azul"
+	        android:dividerHeight="1dp"
+	        android:layout_height="wrap_content" >
+	    </ListView>
+	    
+	    <ImageButton
+	        android:id="@+id/btnStandB"
+	        android:layout_width="56dp"
+	        android:layout_height="56dp"
+	        android:layout_above="@+id/empty"
+	        android:layout_marginRight="@dimen/activity_horizontal_margin"
+	        android:layout_alignParentRight="true"
+	        android:scaleType="fitXY"
+	        android:onClick="toStand"
+	        android:src="@drawable/stand_btn"
+	        android:background="@drawable/fondo_boton_stand"
+	        android:contentDescription="@string/im_nombre" />
+	    
+	    <View 
+	        android:id="@+id/empty"
+	        android:layout_width="wrap_content"
+	        android:layout_height="@dimen/activity_vertical_margin"
+	        android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

@@ -34,8 +34,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,7 +48,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	int id,idFecha;
 	int[] comisiones;
 	double totalVentas,comision,depositado;
-	String nombre;
+	String nombre,encargado;
 	TextView txtTotal,txtComision,txtFalta;
 	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro1,editOtro2,editOtro3;
 
@@ -65,6 +63,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		id = b.getInt("id_stand");
 		idFecha = b.getInt("fecha");
 		nombre = b.getString("nombre");
+		encargado = b.getString("encargado");
 		
 		setupActionBar();
 		
@@ -216,24 +215,20 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products,comisiones);
 		list.setAdapter(adapter);
 		
-		list.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				// TODO Auto-generated method stub
-				totalVentas = 0;
-				comision = 0;
-				
-				for(Product p : products){
-					if(p.getProdNo() >= 0){
-						totalVentas += (p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio()));
-						comision += setComision((p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio())),p.getComisiones(),p.getTaxes(),p.getCantidadStand()-p.getProdNo());
-						setCantidades();
-					}
-				}
-			}
-		});
+		calculaTotales();
+	}
+	
+	public void calculaTotales(){
+		totalVentas = 0;
+		comision = 0;
 		
+		for(Product p : products){
+			if(p.getProdNo() >= 0){
+				totalVentas += (p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio()));
+				comision += setComision((p.getCantidadStand()-p.getProdNo())*(Double.parseDouble(p.getPrecio())),p.getComisiones(),p.getTaxes(),p.getCantidadStand()-p.getProdNo());
+				setCantidades();
+			}
+		}
 	}
 	
 	private void setCantidades(){
@@ -312,6 +307,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 				comisiones[position] += cortesia.getAmount();
 				dbHelper.updateStandProducto(p.getId(),id, cantidad);
 				adapter.notifyDataSetChanged();
+				calculaTotales();
 			}
 			dbHelper.close();
 			Toast.makeText(this, R.string.p_anadido_cor, Toast.LENGTH_SHORT).show();
@@ -327,10 +323,10 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 			double iva = 0.0;
 			for(int i = 0; i < taxes.size(); i++){
 				Taxes tax = taxes.get(i);
-				double aux = truncate(total * ((tax.getAmount()) * 0.01));
-				iva += aux;
+				double aux = 1 + (tax.getAmount()* 0.01);
+				iva += truncate(total / aux);;
 			}
-			total -= iva;
+			total = iva;
 		}
 		if(vendedor.getIva().equals("%")){
 			comision = truncate(total * (vendedor.getCantidad() * 0.01));
@@ -489,20 +485,87 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		double[] ingresos = {efectivo,banamex,banorte,santander,amex,other1,other2,other3};
 		Document docPdf = pdf.createPDFHorizontal("sales_stand.pdf");
 		
-		pdf.addImage(25,540,docPdf);
-		pdf.createHeadings(415, 535, 14, "SALES REPORT (IN "+prefs.getString("moneda", "")+")");
+		int pag = 1;
+		pdf.createHeadings(983, 15, 8, ""+pag);
+		pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+		pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
 		
-		pdf.tableStandVentas(docPdf, products, headers, totalVentas, 490);
-		int pos = 455 - (38*products.size());
+		String texto = "SALES REPORT (IN "+prefs.getString("moneda", "")+")";
+		pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
+		
+		pdf.createHeadings(25, 500, 14, "Stand:   "+nombre);
+		pdf.createHeadings(25, 485, 14, "Manager: "+encargado);
+		
+		float posInit = 470;
+		double[] dob = pdf.tableStandVentas(docPdf, products, headers, totalVentas,0, 470);
+		int mas = (int)dob[0];
+		if(mas != 0){
+			posInit = 500;
+			int posAct = 0;
+			do{
+				posAct += (int)dob[1];
+				docPdf.newPage();
+				pag++;
+				pdf.createHeadings(983, 15, 8, ""+pag);
+				pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+				pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+				dob = pdf.tableStandVentas(docPdf, products.subList(posAct, products.size()), headers, totalVentas,posAct, 500);
+				mas = (int)dob[0];
+			}while(mas != 0);
+		}
+		
+		float pos = (float) (posInit - dob[1] - 10);
 		int x = 650;
 		
+		if(pos - 65 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(983, 15, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
 		pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","VENDOR COMMISION"}, new double[]{totalVentas,comision}, x, (pos));
 		
-		pdf.tableNum(docPdf, new String[]{"TOTAL A DEPOSITAR"}, new double[]{(totalVentas - comision)}, x, (pos-60));
+		pos -= 50;
+		if(pos - 49 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(983, 15, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
+		pdf.tableNum(docPdf, new String[]{"TOTAL A DEPOSITAR"}, new double[]{(totalVentas - comision)}, x, (pos));
 		
-		double dep = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos - 105));
+		pos -= 34;
+		if(pos - 183 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(983, 15, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
+		double dep = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos));
 		
-		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{dep - (totalVentas - comision)}, x, (pos-270));
+		pos -= 168;
+		if(pos - 41 < 0){
+			docPdf.newPage();
+			pag++;
+			pdf.createHeadings(983, 15, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+			pos = 500;
+		}
+		pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{dep - (totalVentas - comision)}, x, (pos));
+		
+		String line1 = "Gerente";
+		String line2 = encargado;
+		pdf.addLine(50, 90);
+		pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
+		pdf.addLine(320, 90);
+		pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
 		
 		docPdf.close();
 	}

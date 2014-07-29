@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,6 +20,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener;
+import com.clicky.liveshows.DialogAddArtist.OnAddArtist;
 import com.clicky.liveshows.DialogAddProduct.OnDialogListener;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogUpdate.OnDialogUpdateListener;
@@ -28,8 +31,10 @@ import com.clicky.liveshows.utils.AlbumStorageDirFactory;
 import com.clicky.liveshows.utils.BaseAlbumDirFactory;
 import com.clicky.liveshows.utils.Comisiones;
 import com.clicky.liveshows.utils.Cortesias;
+import com.clicky.liveshows.utils.PDF;
 import com.clicky.liveshows.utils.Product;
 import com.clicky.liveshows.utils.Taxes;
+import com.itextpdf.text.Document;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,17 +64,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener,OnDialogUpdateListener {
+public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener,OnDialogUpdateListener,OnAddArtist {
 
 	private DBAdapter dbHelper;
 	private Cursor cursor;
 	private String[] artists;
 	private int[] id_artists;
+	private PDF pdf;
 	List<Product> products;
 	AdapterProduct adapter;
-	String nameEvento = null;
+	String nameEvento = null,venue,fechaEvento;
 	ArrayList<TipoProduct> tipos;
-	int idEvento,idFecha;
+	int idEvento,idFecha,capacidad;
 	HashMap<Integer, String> artistas;
 	DialogAddProduct dialog;
 	DialogUpdate dialog_update;
@@ -99,7 +105,8 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		products = new ArrayList<Product>();
 		tipos = new ArrayList<TipoProduct>();
 		setXML();
-
+		
+		pdf = new PDF(this);
 		list = (ListView)findViewById(R.id.listArticulos);
 		adapter = new AdapterProduct(this, R.layout.item_lista_producto, products);
 		list.setAdapter(adapter);
@@ -109,7 +116,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			@Override
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
-				// TODO Auto-generated method stub
 				//	menu.add(R.string.title_menu);
 				menu.add(0, CONTEXTMENU_UPDATEITEM,1,R.string.m_actualizar);
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
@@ -126,6 +132,8 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			do{
 				idEvento = cursor.getInt(0);
 				nameEvento = cursor.getString(1);
+				venue = cursor.getString(2);
+				capacidad = cursor.getInt(3);
 			}while(cursor.moveToNext());
 		}else{
 		}
@@ -274,6 +282,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		idFecha = hashDate.get(dates.get(0));
 		DateFormat df= DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
 		txtFecha.setText(df.format(dates.get(0)));
+		fechaEvento = df.format(dates.get(0));
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String div = prefs.getString("moneda", "");
@@ -302,6 +311,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		case R.id.action_settings:
 			openSettings();
 			return true;
+		case R.id.action_print:
+			printFile();
+			return true;
+		case R.id.action_artist:
+			addArtist();
+			return true;	
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -312,6 +327,128 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		startActivity(i);
 		overridePendingTransition(R.anim.start_enter_anim, R.anim.start_exit_anim);
 	}
+	
+	private void printFile(){
+		if(!products.isEmpty()){
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			String[] headers = {"PRICE SALE IN US","#","ITEM","STYLE","SIZE","TOTAL\nINVENTORY","PRICE SALE","DAMAGE","COMPS\nVENUE",
+					"COMPS\nOFFICE\nPRODUCTION",prefs.getString("op1", "OTHER"),prefs.getString("op2", "OTHER"),"FINAL\nINVENTORY",
+					"SALES PIECES","GROSS TOTAL","% SALES","GROSS TOTAL\nUS$DLLS"};
+			Double priceUs = Double.parseDouble(prefs.getString("divisa", "0"));
+			DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
+			df.applyPattern("$#,##0.00");
+				
+			double subTotal = 0, venueFee = 0, royaltyFee = 0,totalVenta = 0;
+			for(Product prod : products){
+				double total = Double.parseDouble(prod.getPrecio()) * prod.getTotalCantidad();
+				totalVenta += total;
+				double conTax = total;
+					
+				for(Taxes tax : prod.getTaxes()){
+					double aux = 1 + (tax.getAmount()* 0.01);
+					conTax += truncate(total / aux);
+					subTotal += truncate(total / aux);
+				}
+					
+				for(Comisiones com : prod.getComisiones()){
+					double cant = 0, aux = 0;
+					if(com.getTipo().equals("After taxes")){
+						cant = conTax;
+					}else if(com.getTipo().equals("Before Taxes")){
+						cant = total;
+					}
+					if(com.getIva().equals("%")){
+						aux = truncate(cant * (com.getCantidad() * 0.01));  
+					}else if(com.getIva().equals("$")){
+						aux = com.getCantidad() * prod.getProdNo();
+					}
+					if(com.getName().equals("VENUE")){
+						venueFee += aux;
+					}else if(com.getName().equals("AGENCY")){
+						royaltyFee += aux;
+					}
+				}
+			}
+				
+			Document docPdf = pdf.createPDFHorizontal("warehouse_report.pdf");
+			
+			int pag = 1;
+			pdf.createHeadings(998, 10, 8, ""+pag);
+			pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+			pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+				
+			String texto = "SALES REPORT (IN "+prefs.getString("moneda", "")+")";
+			pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
+				
+			float aux1 = pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE"}, 
+					new String[]{fechaEvento,artistas.get(1),venue}, docPdf.leftMargin(), 515);
+				
+			float aux2 = pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
+					new String[]{""+capacidad,df.format(totalVenta/capacidad),df.format(totalVenta),df.format(priceUs)+" "+prefs.getString("moneda", "")}, 620, 515);
+			
+			float posInit = 0;
+			if(aux1 > aux2)
+				posInit = 505 - aux1;
+			else 
+				posInit = 505 - aux2;
+				
+			double[] dob = pdf.tableAlmacen(docPdf, products, headers, totalVenta,0, posInit);
+			int mas = (int)dob[0];
+			if(mas != 0){
+				posInit = 500;
+				int posAct = 0;
+				do{
+					posAct += (int)dob[1];
+					docPdf.newPage();
+					pag++;
+					pdf.createHeadings(998, 10, 8, ""+pag);
+					pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+					pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+					dob = pdf.tableAlmacen(docPdf, products.subList(posAct, products.size()), headers, totalVenta,posAct, 500);
+					mas = (int)dob[0];
+				}while(mas != 0);
+			}
+			
+			float pos = (float) (posInit - dob[1] - 10);
+			int x = 650;
+			
+			if(pos - 73 < 0){
+				docPdf.newPage();
+				pag++;
+				pdf.createHeadings(998, 10, 8, ""+pag);
+				pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+				pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+				pos = 500;
+			}
+			pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","TAX","GROSS NET"}, new double[]{totalVenta,(totalVenta-subTotal),subTotal}, x, (pos));
+			
+			pos -= 58;
+			if(pos - 60 < 0){
+				docPdf.newPage();
+				pag++;
+				pdf.createHeadings(998, 10, 8, ""+pag);
+				pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+				pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+				pos = 500;
+			}
+			pdf.tableNum(docPdf, new String[]{"VENUE FEE","ROYALTY FEE"}, new double[]{venueFee,royaltyFee}, x, (pos));
+			
+			docPdf.close();
+			File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/warehouse_report.pdf");
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+			intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(intent);
+		}else{
+			Toast.makeText(this, R.string.no_products, Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	private void addArtist(){
+		DialogAddArtist dialog = new DialogAddArtist();
+		dialog.show(getFragmentManager(), "Add Artist");
+	}
+	
 	private void setupActionBar(){
 		getActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.azul)));
 	}
@@ -498,8 +635,13 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 
 	private void addProduct(Product p, List<Adicionales> adicionales){
+		/*
 		if(findViewById(R.id.btnStand).getVisibility()==View.GONE){
 			findViewById(R.id.btnStand).setVisibility(View.VISIBLE);
+		}
+		*/
+		if(findViewById(R.id.btnStandB).getVisibility()==View.GONE){
+			findViewById(R.id.btnStandB).setVisibility(View.VISIBLE);
 		}
 		Product item = p;
 		item.setId_imagen(R.drawable.ic_launcher);
@@ -524,7 +666,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.i("in onActivityResult", "Result code = " + resultCode);
 		if (resultCode == -1) {
@@ -533,7 +674,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				try{
 				dialog.setImage(mCurrentPhotoPath);
 				}catch (RuntimeException e) {
-					// TODO: handle exception
 					dialog_update.setImage(mCurrentPhotoPath);
 				}
 			}
@@ -542,7 +682,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		// TODO Auto-generated method stub
 		DialogAddAdcional dialogA = new DialogAddAdcional();
 
 		Bundle params = new Bundle();
@@ -554,7 +693,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	@Override
 	public void setAdicional(String adicional,int position) {
-		// TODO Auto-generated method stub
 		Product p = products.get(position);
 		if(p.getAdicional().size()<5){
 			String nombre ="Adicional"+(p.getAdicional().size()+1); 
@@ -708,7 +846,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
-		// TODO Auto-generated method stub
 		Product p = products.get(position);
 		p.addCortesia(cortesia);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
@@ -744,7 +881,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -812,7 +948,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 	@Override
 	public void articuloActualizado(Product p, int position) {
-		// TODO Auto-generated method stub
 		dbHelper.open();
 		int band = 0;
 		for(int i = 0;i<artistas.size();i++){
@@ -873,7 +1008,31 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 
 		dbHelper.close();
 
-
+	}
+	
+	@Override
+	public void setNewArtist(String artistName) {
+		dbHelper.open();
+		long newId = dbHelper.createArtista(artistName);
+		if(newId != -1){
+			int[] resultInt = Arrays.copyOf(id_artists, id_artists.length +1);
+			resultInt[id_artists.length] = (int) newId;
+			id_artists = resultInt;
+		    String[] resultString = Arrays.copyOf(artists, artists.length +1);
+		    resultString[artists.length] = artistName;
+		    artists = resultString;
+		    artistas.put((int) newId, artistName);
+			makeToast(R.string.a_anadido);
+		}else{
+			makeToast(R.string.error);
+		}
+	}
+	
+	private double truncate(double num){
+		num *= 100;
+		int aux = (int)num;
+		double res = (double)aux / 100;
+		return res;
 	}
 
 }

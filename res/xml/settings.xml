@@ -55,5 +55,51 @@
         
     </PreferenceCategory>
     
+    <PreferenceCategory
+        android:title="@string/viaticos">
+        
+        <EditTextPreference
+            android:key="gasto1"
+            android:title="@string/p_gasto_uno"
+            android:summary="Nombre para tipo de gasto extra"
+            android:defaultValue="OTHER"/>
+        
+        <EditTextPreference
+            android:key="gasto2"
+            android:title="@string/p_gasto_dos"
+            android:summary="Nombre para tipo de gasto extra"
+            android:defaultValue="OTHER"/>
+        
+        <EditTextPreference
+            android:key="gasto3"
+            android:title="@string/p_gasto_tres"
+            android:summary="Nombre para tipo de gasto extra"
+            android:defaultValue="OTHER"/>
+        
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/lbl_sueldos">
+        
+        <EditTextPreference
+            android:key="sueldo1"
+            android:title="@string/p_sueldo_uno"
+            android:summary="Nombre para tipo de sueldo extra"
+            android:defaultValue="OTHER"/>
+        
+        <EditTextPreference
+            android:key="sueldo2"
+            android:title="@string/p_sueldo_dos"
+            android:summary="Nombre para tipo de sueldo extra"
+            android:defaultValue="OTHER"/>
+        
+        <EditTextPreference
+            android:key="sueldo3"
+            android:title="@string/p_sueldo_tres"
+            android:summary="Nombre para tipo de sueldo extra"
+            android:defaultValue="OTHER"/>
+        
+    </PreferenceCategory>
+    
 
 </PreferenceScreen>

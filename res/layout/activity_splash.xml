@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
         android:textColor="@color/azul_fuerte"
         android:textStyle="bold"
         android:textAppearance="?android:attr/textAppearanceLarge" 
@@ -46,5 +46,13 @@
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/im_nombre"
         android:src="@drawable/logo_clicky" />
+    
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/im_nombre"
+        android:src="@drawable/logo_liveshows" />
 
 </RelativeLayout>

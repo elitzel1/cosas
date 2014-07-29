@@ -46,6 +46,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 
 			holder.txtArtista = (TextView)view.findViewById(R.id.txtNombreArtista);
 			holder.txtProduct = (TextView)view.findViewById(R.id.txtNombreProducto);
+			holder.txtTipo = (TextView)view.findViewById(R.id.txtTipo);
 			holder.txtSize = (TextView)view.findViewById(R.id.txtTallaRopa);
 			holder.txtCantidad = (TextView)view.findViewById(R.id.txtCantidadProducto);
 			holder.editCantidad = (EditText)view.findViewById(R.id.editNumeroProductos);
@@ -55,10 +56,14 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 
 		final Product item = items.get(position);
 		if(!item.getTalla().contentEquals("")){
+			holder.txtSize.setVisibility(View.VISIBLE);
 			holder.txtSize.setText(item.getTalla());
+		}else{
+			holder.txtSize.setVisibility(View.GONE);
 		}
 
 		holder.txtProduct.setText(item.getNombre());
+		holder.txtTipo.setText(item.getTipo());
 		holder.txtArtista.setText(item.getArtista());
 		holder.txtCantidad.setText(""+item.getCantidadStand());
 		holder.editCantidad.setId(position);
@@ -85,6 +90,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 						if(!Caption.getEditableText().toString().contentEquals("")){
 							if(Integer.parseInt(Caption.getEditableText().toString()) <= item.getCantidadStand()){
 								items.get(pos).setProdNo(Integer.parseInt(Caption.getEditableText().toString()));
+								((ActivityCierreStand)context).calculaTotales();
 							}else{
 								Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
 							}
@@ -99,8 +105,9 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		
 		if(position==items.size()){
 			if(!holder.editCantidad.getEditableText().toString().contentEquals("")){
-				if(Integer.parseInt(holder.editCantidad.getEditableText().toString())>0&&Integer.parseInt(holder.editCantidad.getEditableText().toString())<=item.getCantidadStand()){
+				if(Integer.parseInt(holder.editCantidad.getEditableText().toString())<=item.getCantidadStand()){
 					items.get(position).setProdNo(Integer.parseInt(holder.editCantidad.getEditableText().toString()));
+					((ActivityCierreStand)context).calculaTotales();
 				}else{
 					Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
 				}
@@ -114,6 +121,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 	}
 	static class ViewHolder{
 		TextView txtProduct;
+		TextView txtTipo;
 		TextView txtSize;
 		TextView txtArtista;
 		TextView txtCantidad;

@@ -285,9 +285,9 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 	@Override
 	public void onFinishDatePickerDialog(int year, int month, int day) {
-		fechas.add(day+"/"+month+"/"+year);
+		fechas.add(day+"/"+(month+1)+"/"+year);
 		countD++;
-		addView(""+day+"/"+month+"/"+year, countD, mLinearDate);
+		addView(""+day+"/"+(month+1)+"/"+year, countD, mLinearDate);
 		makeToast(R.string.m_date_agregado);
 		if(visibleDate==false){
 			findViewById(R.id.btnEliminarFecha).setVisibility(View.VISIBLE);

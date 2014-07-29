@@ -23,6 +23,12 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
+            android:id="@+id/txtTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/azul_live" />
+        
+        <TextView
             android:id="@+id/txtTallaRopa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

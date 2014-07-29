@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 
 public class SplashActivity extends Activity{
 	
-	private static int SPLASH_TIME_OUT = 800;
+	private static int SPLASH_TIME_OUT = 1800;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +21,6 @@ public class SplashActivity extends Activity{
 		
 		new Handler().postDelayed(new Runnable() {
 			 
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
- 
             @Override
             public void run() {
             	if(bandEvento == 1){
