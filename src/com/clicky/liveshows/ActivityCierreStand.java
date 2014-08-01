@@ -371,7 +371,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		if(!editOtro3.getText().toString().equals("")){
 			other3 = Double.parseDouble(editOtro3.getText().toString());
 		}
-		dbHelper.updateStandCierre(id, efectivo, banamex, banorte, santander, amex , other1,other2,other3);
+		dbHelper.updateStandCierre(id, efectivo, banamex, banorte, santander, amex , other1,other2,other3,comision);
 		dbHelper.close();
 	}
 	

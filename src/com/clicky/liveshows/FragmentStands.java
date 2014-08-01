@@ -36,16 +36,19 @@ public class FragmentStands extends Fragment {
 	AdapterStand a;
 	private onStandSelected listener;
 	private onFragmentCreate listenerC;
+	private onDeleteStand listenerD;
 	DBAdapter dbHelper;
+	int idFecha;
 
-	protected static final int CONTEXTMENU_DELETEITEM = 0;
-	protected static final int CONTEXTMENU_UPDATEITEM = 1;
+	protected static final int CONTEXTMENU_DELETESTAND = 4;
+	protected static final int CONTEXTMENU_UPDATEITEM = 5;
 	
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
 		try{
 			listener=(onStandSelected)activity;	
 			listenerC = (onFragmentCreate)activity;
+			listenerD = (onDeleteStand)activity;
 		}catch(ClassCastException e){}
 	}
 	
@@ -87,7 +90,7 @@ public class FragmentStands extends Fragment {
 					ContextMenuInfo menuInfo) {
 				//	menu.add(R.string.title_menu);
 				menu.add(0, CONTEXTMENU_UPDATEITEM,1,R.string.m_actualizar);
-				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
+				menu.add(0, CONTEXTMENU_DELETESTAND,0,R.string.m_eliminar);
 			}
 		});
 	}
@@ -97,7 +100,7 @@ public class FragmentStands extends Fragment {
 		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem.getMenuInfo();
 		/* Switch on the ID of the item, to get what the user selected. */
 		switch (aItem.getItemId()) {
-		case CONTEXTMENU_DELETEITEM:
+		case CONTEXTMENU_DELETESTAND:
 			deleteItem(menuInfo.position);
 			return true; /* true means: "we handled the event". */
 
@@ -120,8 +123,31 @@ public class FragmentStands extends Fragment {
 				dbHelper.open();
 				
 				ArrayList<Integer> idsStand = new ArrayList<Integer>();
+				List<Product> prodList = new ArrayList<Product>();
 				
-				Cursor cursorProds = dbHelper.fetchStandProduct(s.getId());
+				Cursor cursorProds = dbHelper.fetchStandProduct(s.getId(),idFecha);
+				if(cursorProds.moveToFirst()){
+					do{
+						Product prod = new Product();
+						int cantidadStand = cursorProds.getInt(1);
+						int idProd = cursorProds.getInt(3);
+						int comVendedorId = cursorProds.getInt(4);
+						
+						dbHelper.deleteComision(comVendedorId);
+						
+						prod.setCantidadStand(cantidadStand);
+						prod.setId(idProd);
+						
+						Cursor cursor = dbHelper.fetchProducto(idProd);
+						if(cursor.moveToFirst()){
+							int cantidad = cursor.getInt(4);
+							prod.setCantidad(cantidad);
+						}
+						prodList.add(prod);
+					}while(cursorProds.moveToNext());
+				}
+				
+				cursorProds = dbHelper.fetchStandProduct(s.getId());
 				if(cursorProds.moveToFirst()){
 					do{
 						int idProdStand = cursorProds.getInt(0);
@@ -130,7 +156,13 @@ public class FragmentStands extends Fragment {
 				}
 				
 				for(int i = 0; i < idsStand.size(); i++){
-					dbHelper.deleteInfoProdStand(idsStand.get(i));
+					dbHelper.deleteVentas(idsStand.get(i));
+				}
+				
+				if(!prodList.isEmpty()){
+					for(Product p : prodList){
+						dbHelper.deleteProductStand(s.getId(), p.getId(),p.getCantidad() + p.getCantidadStand());
+					}
 				}
 				
 				if(dbHelper.deleteStand(s.getId())){
@@ -145,6 +177,7 @@ public class FragmentStands extends Fragment {
 				}
 				/* Remove it from the list.*/
 				dbHelper.close();
+				listenerD.onStandDeleted(list.size());
 			}
 		});
 		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -184,9 +217,17 @@ public class FragmentStands extends Fragment {
 		public void onGetData();
 	}
 	
+	public interface onDeleteStand{
+		public void onStandDeleted(int size);
+	}
+	
 	public void reloadData(){
 		list.clear();
 		listenerC.onGetData();
+	}
+	
+	public void setFecha(int idFecha){
+		this.idFecha = idFecha;
 	}
 
 

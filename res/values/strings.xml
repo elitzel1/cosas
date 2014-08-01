@@ -3,6 +3,7 @@
 
     <string name="app_name">MerchSys</string>
     <string name="version">Version 1.0</string>
+    <string name="copyright">Live Shows Group SA de CV © 2012</string>
     <string name="developed">Developed by</string>
     <string name="action_settings">Preferences</string>
     <string name="action_new">Add Product</string>
@@ -205,4 +206,6 @@
 	<string name="s_updated">Stand Updated</string>
 	<string name="m_art_agregado">Artist added</string>
 	<string name="m_date_agregado">Date added</string>
+	<string name="btn_abrir">Reopen Stand</string>
+	
 </resources>

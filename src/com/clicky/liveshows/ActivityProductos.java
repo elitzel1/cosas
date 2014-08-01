@@ -342,7 +342,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			for(Product prod : products){
 				double total = Double.parseDouble(prod.getPrecio()) * prod.getTotalCantidad();
 				totalVenta += total;
-				double conTax = total;
+				double conTax = 0;
 					
 				for(Taxes tax : prod.getTaxes()){
 					double aux = 1 + (tax.getAmount()* 0.01);

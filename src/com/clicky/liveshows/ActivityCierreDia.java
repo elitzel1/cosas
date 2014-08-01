@@ -85,7 +85,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	int idEvento,idfecha,capacidad;
 	int posVenue=0;
 	String evento,fecha,local;
-	double efectivo = 0,banamex =0,banorte=0,santander=0,amex=0,otro1=0,otro2=0,otro3=0;
+	double efectivo = 0,banamex =0,banorte=0,santander=0,amex=0,otro1=0,otro2=0,otro3=0,comisionVendedor=0;
 	boolean more = false;
 	
 	private LinearLayout layoutViaticos,layoutSueldos,layoutReportes;
@@ -565,7 +565,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		Cursor cursorStand = dbHelper.fetchAllStand();
 		if(cursorStand.moveToFirst()){
 			do{
-				dbHelper.updateStandCierre(cursorStand.getLong(0), 0, 0, 0, 0, 0, 0, 0, 0);
+				dbHelper.updateAbrirStand(cursorStand.getLong(0));
 			}while(cursorStand.moveToNext());
 		}
 		dbHelper.deleteDia();
@@ -702,6 +702,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		totales.clear();
 		dbHelper.open();
 		totalVenta = 0;
+		efectivo = banamex = banorte = santander = amex = otro1 = otro2 = otro3 = comisionVendedor = 0;
 		if(artista.equals("")){
 			Cursor cursorProd = dbHelper.fetchAllProductos();
 			if(cursorProd.moveToFirst()){
@@ -818,6 +819,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 						otro1 += stands.getDouble(6);
 						otro2 += stands.getDouble(7);
 						otro3 += stands.getDouble(8);
+						comisionVendedor += stands.getDouble(9);
 
 					}while(stands.moveToNext());
 				}
@@ -1140,18 +1142,21 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(20, 31+products.size()+gastos.size(), "FACTURA", 2, hoja1);
 				excel.writeCell(21, 31+products.size()+gastos.size(), "NOTA", 2, hoja1);
 				
-				double totalSueldos = 0;
+				excel.writeCell(18, 32+products.size()+gastos.size(), "Comisión Vendedores", 4, hoja1);
+				excel.writeCell(19, 32+products.size()+gastos.size(), ""+comisionVendedor, 5, hoja1);
+				
+				double totalSueldos = comisionVendedor;
 				for(int i = 0; i < sueldos.size(); i++){
 					totalSueldos += sueldos.get(i).getCantidad();
-					excel.writeCell(18, (32+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 4, hoja1);
-					excel.writeCell(19, (32+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
+					excel.writeCell(18, (33+products.size()+gastos.size()+i), sueldos.get(i).getConcepto(), 4, hoja1);
+					excel.writeCell(19, (33+products.size()+gastos.size()+i), ""+sueldos.get(i).getCantidad(), 5, hoja1);
 					if(sueldos.get(i).getComprobante().equals("Factura"))
-						excel.writeCell(20, (32+products.size()+gastos.size()+i), "X", 3, hoja1);
+						excel.writeCell(20, (33+products.size()+gastos.size()+i), "X", 3, hoja1);
 					else if(sueldos.get(i).getComprobante().equals("Nota"))
-						excel.writeCell(21, (32+products.size()+gastos.size()+i), "X", 3, hoja1);
+						excel.writeCell(21, (33+products.size()+gastos.size()+i), "X", 3, hoja1);
 				}
-				excel.writeCell(18, 32+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 6, hoja1);
-				excel.writeCell(19, 32+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
+				excel.writeCell(18, 33+products.size()+gastos.size()+sueldos.size(), "SUBTOTAL", 6, hoja1);
+				excel.writeCell(19, 33+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
 				excel.writeCell(18, 35+products.size()+gastos.size()+sueldos.size(), "TOTAL GASTOS OPERATIVOS", 6, hoja1);
 				excel.writeCell(19, 35+products.size()+gastos.size()+sueldos.size(), ""+totalGastos, 5, hoja1);
@@ -1242,7 +1247,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		double subTotal = 0, venueFee = 0, royaltyFee = 0;
 		for(Product prod : products){
 			double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
-			double conTax = total;
+			double conTax = 0;
 			
 			for(Taxes tax : prod.getTaxes()){
 				double aux = 1 + (tax.getAmount()* 0.01);

@@ -10,6 +10,8 @@ public class Stand {
 	Comisiones comisiones;
 	List<Product> products;
 	double efectivo,banamex,banorte,santander,amex,other1,other2,other3;
+	double vendedorComision;
+	boolean abierto;
 	
 	public Stand(){}
 	
@@ -21,7 +23,7 @@ public class Stand {
 	}
 	
 	public Stand(long id, String name,String encargado,Comisiones comisiones, double efectivo, double banamex, double banorte, 
-			double santander, double amex, double other1, double other2, double other3){
+			double santander, double amex, double other1, double other2, double other3,double vendedorComision, boolean abierto){
 		this.id  = id;
 		this.name=name;
 		this.encargado=encargado;
@@ -34,6 +36,8 @@ public class Stand {
 		this.other1 = other1;
 		this.other2 = other2;
 		this.other3 = other3;
+		this.vendedorComision = vendedorComision;
+		this.abierto = abierto;
 	}
 	
 	public long getId() {
@@ -72,7 +76,7 @@ public class Stand {
 		this.comisiones = comision;
 	}
 	
-	public void setIngresos(double efectivo, double banamex, double banorte, double santander, double amex, double other1, double other2, double other3){
+	public void setIngresos(double efectivo, double banamex, double banorte, double santander, double amex, double other1, double other2, double other3, double vendedorComision){
 		this.efectivo = efectivo;
 		this.banamex = banamex;
 		this.banorte = banorte;
@@ -81,12 +85,16 @@ public class Stand {
 		this.other1 = other1;
 		this.other2 = other2;
 		this.other3 = other3;
+		this.vendedorComision = vendedorComision;
+		this.abierto = false;
 	}
+	
 	public boolean isOpened(){
-		if(this.efectivo == 0 && this.banamex == 0 && this.banorte == 0 && this.santander == 0 && this.amex == 0 && this.other1 == 0 && this.other2 == 0 && this.other3 == 0)
-			return true;
-		else
-			return false;
+		return abierto;
+	}
+	
+	public void setAbierto(boolean abierto){
+		this.abierto = abierto;
 	}
 	
 }

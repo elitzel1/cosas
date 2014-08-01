@@ -11,6 +11,8 @@ import com.clicky.liveshows.DialogUpdateComision.OnChangeComision;
 import com.clicky.liveshows.DialogUpdateStand.OnStandUpdate;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
 import com.clicky.liveshows.FragmentStandProd.OnNewCortesia;
+import com.clicky.liveshows.FragmentStandProd.OnStandAbierto;
+import com.clicky.liveshows.FragmentStands.onDeleteStand;
 import com.clicky.liveshows.FragmentStands.onFragmentCreate;
 import com.clicky.liveshows.FragmentStands.onStandSelected;
 import com.clicky.liveshows.database.DBAdapter;
@@ -38,7 +40,7 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 @SuppressLint("UseSparseArrays")
-public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener,OnStandUpdate{
+public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener,OnStandUpdate,onDeleteStand,OnStandAbierto{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
 	Product product;
@@ -56,6 +58,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		setupActionBar(getIntent().getStringExtra("evento"));
 		idFecha = getIntent().getIntExtra("fecha",-1);
 		frag= (FragmentStands)getFragmentManager().findFragmentById(R.id.headlines_fragment);
+		frag.setFecha(idFecha);
 		
 	}
 
@@ -215,7 +218,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					prodList.add(p);
 				}while(c.moveToNext());
 				
-				String[] headers = {"Amount","Product","Artist","Size","Price","Commission","Total\nCommission"};
+				String[] headers = {"Amount","Product","Artist","Size","Price","Commission","Total\nCommission","Total\nSale"};
 				
 				int pag = 1;
 				pdf.createHeadings(580, 10, 8, ""+pag);
@@ -284,14 +287,14 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 			makeToast(R.string.d_com_err);
 		}else{
 			makeToast(R.string.s_ananido);
-			newStand(id, nombre, encargado, com,0,0,0,0,0,0,0,0);
+			newStand(id, nombre, encargado, com,0,0,0,0,0,0,0,0,0,true);
 		}
 		dbHelper.close();
 	}
 	
 
-	public void newStand(long id, String nombre, String encargado, Comisiones com, double efectivo, double banamex, double banorte, double santander, double amex, double other1, double other2,double other3){
-		Stand stand = new Stand(id,nombre, encargado, com, efectivo, banamex, banorte, santander, amex, other1,other2,other3);
+	public void newStand(long id, String nombre, String encargado, Comisiones com, double efectivo, double banamex, double banorte, double santander, double amex, double other1, double other2,double other3,double vendedor,boolean abierto){
+		Stand stand = new Stand(id,nombre, encargado, com, efectivo, banamex, banorte, santander, amex, other1,other2,other3,vendedor,abierto);
 		frag.setStand(stand);
 		//onStandSeleccionado(stand);
 	}
@@ -325,7 +328,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	    		Bundle extras = data.getExtras();
 	    		stand.setIngresos(extras.getDouble("efectivo"), extras.getDouble("banamex"), extras.getDouble("banorte"), 
 	    				extras.getDouble("santander"), extras.getDouble("amex"), extras.getDouble("oher1"), 
-	    				extras.getDouble("other2"), extras.getDouble("other3"));
+	    				extras.getDouble("other2"), extras.getDouble("other3"), extras.getDouble("comision"));
 	    		boolean hayDetalle = 
 						(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
 
@@ -376,10 +379,12 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 				double other1 = cursor.getDouble(11);
 				double other2 = cursor.getDouble(12);
 				double other3 = cursor.getDouble(13);
+				double vendedor = cursor.getDouble(14);
+				boolean abierto = cursor.getInt(15) != 0;
 				Comisiones com = new Comisiones("Vendedor", comision, iva, tipo);
-				newStand(id, nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3);
+				newStand(id, nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3,vendedor,abierto);
 				if(cursor.isFirst()){
-					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3);
+					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3,vendedor,abierto);
 					onStandSeleccionado(first);
 				}
 		}while(cursor.moveToNext());
@@ -516,6 +521,33 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		
 		dbHelper.close();
 		
+	}
+
+	@Override
+	public void onStandDeleted(int size) {
+		if(size == 0){
+			boolean hayDetalle = 
+					(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+			if(hayDetalle) {
+				((FragmentStandProd)getFragmentManager().
+					findFragmentById(R.id.article_fragment)).setVacio();
+			}
+		}else{
+			frag.reloadData();
+		}
+	}
+
+	@Override
+	public void onStandAbierto(Stand s) {
+		frag.reloadData();
+		boolean hayDetalle = 
+				(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+		if(hayDetalle) {
+			((FragmentStandProd)getFragmentManager().
+				findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+		}
 	}
 
 }

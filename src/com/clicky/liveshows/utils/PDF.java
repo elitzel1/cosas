@@ -444,12 +444,13 @@ public class PDF{
 	
 	public double[] tableProducts(Document document, List<Product> listProd,String[] headers ,float y){
 		//list all the products sold to the customer
-		//float[] columnWidths = {1f, 1f, 1f, 1f, 1f};
+		float[] columnWidths = {0.7f, 1f, 0.8f, 0.6f, 1f, 1.1f, 1.1f, 1f};
 		//create PDF table with the given widths
-		PdfPTable table = new PdfPTable(headers.length);
+		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
 		table.setTotalWidth(500f);
 		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
+		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
 		font.setColor(BaseColor.WHITE);
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
@@ -470,28 +471,28 @@ public class PDF{
 		for(int i = 0; i < listProd.size(); i++){
 			Product prod = listProd.get(i);
 			Comisiones vendedor = prod.getComisiones().get(0);
-			PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(prod.getCantidadStand())));
+			PdfPCell cell = new PdfPCell(new Phrase(String.valueOf(prod.getCantidadStand()),fontTexto));
 			cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 			cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			table.addCell(cell);
 			
-			cell.setPhrase(new Phrase(prod.getNombre()));
+			cell.setPhrase(new Phrase(prod.getNombre(),fontTexto));
 			table.addCell(cell);
-			cell.setPhrase(new Phrase(prod.getArtista()));
+			cell.setPhrase(new Phrase(prod.getArtista(),fontTexto));
 			table.addCell(cell);
 			if(!prod.getTalla().equals("") && prod.getTalla() != null)
-				cell.setPhrase(new Phrase(prod.getTalla()));
+				cell.setPhrase(new Phrase(prod.getTalla(),fontTexto));
 			else
-				cell.setPhrase(new Phrase("N/A"));
+				cell.setPhrase(new Phrase("N/A",fontTexto));
 			table.addCell(cell);
-			cell.setPhrase(new Phrase(df.format(Double.parseDouble(prod.getPrecio()))));
+			cell.setPhrase(new Phrase(df.format(Double.parseDouble(prod.getPrecio())),fontTexto));
 			table.addCell(cell);
-			cell.setPhrase(new Phrase(vendedor.getIva()+" "+vendedor.getCantidad()));
+			cell.setPhrase(new Phrase(vendedor.getIva()+" "+vendedor.getCantidad(),fontTexto));
 			table.addCell(cell);
 			if(vendedor.getIva().equals("$")){
 				double cant = prod.getCantidadStand() * vendedor.getCantidad();
 				amount += cant;
-				cell.setPhrase(new Phrase(df.format(cant)));
+				cell.setPhrase(new Phrase(df.format(cant),fontTexto));
 				table.addCell(cell);
 			}else{
 				double total = prod.getCantidadStand() * Double.parseDouble(prod.getPrecio());
@@ -505,7 +506,10 @@ public class PDF{
 				}
 				double cant = truncate(total * (vendedor.getCantidad() * 0.01));
 				amount += cant;
-				cell.setPhrase(new Phrase(df.format(cant)));
+				cell.setPhrase(new Phrase(df.format(cant),fontTexto));
+				table.addCell(cell);
+				
+				cell.setPhrase(new Phrase(df.format(prod.getCantidadStand() * Double.parseDouble(prod.getPrecio())),fontTexto));
 				table.addCell(cell);
 			}
 			

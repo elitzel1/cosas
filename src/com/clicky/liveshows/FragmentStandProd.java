@@ -22,7 +22,9 @@ import com.clicky.liveshows.utils.Taxes;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -53,7 +55,7 @@ public class FragmentStandProd extends Fragment {
 	TextView txtComision;
 	TextView txtCierreCom,txtCierreTotal;
 	ListView list;
-	Button btnCierre;
+	Button btnCierre,btnAbrir;
 	DBAdapter db;
 	Stand s;
 	List<Product> items;
@@ -62,6 +64,7 @@ public class FragmentStandProd extends Fragment {
 	AdapterStandProduct adapter;
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
+	private OnStandAbierto listenerAbierto;
 
 	int idFecha;
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
@@ -79,11 +82,16 @@ public class FragmentStandProd extends Fragment {
 		public void onSetCortesia(Product product,int position,Stand stand);
 	}
 	
+	public interface OnStandAbierto{
+		public void onStandAbierto(Stand s);
+	}
+	
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
 		try{
 			listener=(OnNewAdicional)activity;
 			listenerCortesia=(OnNewCortesia)activity;
+			listenerAbierto=(OnStandAbierto)activity;
 		}catch(ClassCastException e){}
 	}
 
@@ -109,6 +117,7 @@ public class FragmentStandProd extends Fragment {
 		txtCierreCom = (TextView)v.findViewById(R.id.comision);
 		list=(ListView)v.findViewById(R.id.listStandProd);
 		btnCierre = (Button)v.findViewById(R.id.btnCierreStand);
+		btnAbrir = (Button)v.findViewById(R.id.btnAbrir);
 		
 		return v;
 	}
@@ -152,7 +161,15 @@ public class FragmentStandProd extends Fragment {
 		});
 
 		btnCierre = (Button)getView().findViewById(R.id.btnCierreStand);
-
+		btnAbrir = (Button)getView().findViewById(R.id.btnAbrir);
+		
+		btnAbrir.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				abrirStand();
+			}
+		});
 
 	}
 
@@ -171,7 +188,7 @@ public class FragmentStandProd extends Fragment {
 		empty.setVisibility(View.GONE);
 		Comisiones com = s.getComision();
 		txtEncargado.setText(s.getEncargado());
-		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getTipo());//CORREGIR AQUI
+		txtComision.setText(""+s.getComision().getCantidad()+" "+com.getTipo());
 		items.clear();
 		idProducts.clear();
 		adapter.notifyDataSetChanged();
@@ -332,6 +349,18 @@ public class FragmentStandProd extends Fragment {
 		db.close();
 	}
 
+	private void abrirStand(){
+		if(s!=null){
+			db.open();
+			for(Product prod : items){
+				db.updateStandProducto(prod.getStandId(), s.getId(), (prod.getCantidadStand() + prod.getProdNo()));
+				db.deleteVentas(prod.getStandId());
+			}
+			db.updateAbrirStand(s.getId());
+			db.close();
+			listenerAbierto.onStandAbierto(s);
+		}
+	}
 	private Product verifyImage(Product item){
 		if(item.getPath_imagen().contentEquals("")){
 			for(TipoProduct prod:tipos){
@@ -372,23 +401,7 @@ public class FragmentStandProd extends Fragment {
 		switch (aItem.getItemId()) {
 		case CONTEXTMENU_DELETEITEM:
 			/* Get the selected item out of the Adapter by its position. */
-			Log.i("AP", "POSITION "+menuInfo.position);
-
-			Product p=(Product)list.getAdapter().getItem(menuInfo.position);
-
-
-			db.open();
-			if(db.deleteProductStand(s.getId(), p.getId(),p.getCantidad() + p.getCantidadStand())){
-				items.remove(menuInfo.position);
-				adapter.notifyDataSetChanged();
-				Log.i("DB", " eliminado");
-				Toast.makeText(getActivity(), R.string.p_eliminado, Toast.LENGTH_SHORT).show();
-			}
-			else
-				Log.e("BD", "Error al eliminiar ");
-			/* Remove it from the list.*/
-			db.close();
-
+			deleteProductStand(menuInfo.position);
 			return true; /* true means: "we handled the event". */
 
 		case CONTEXTMENU_DETALLEITEM:
@@ -405,6 +418,36 @@ public class FragmentStandProd extends Fragment {
 		return false;
 	}
 	
+	private void deleteProductStand(final int pos){
+		final Product p=(Product)list.getAdapter().getItem(pos);
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setMessage(getResources().getString(R.string.alert_delete) +" " + p.getNombre()+ "?");
+		builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				db.open();
+				if(db.deleteProductStand(s.getId(), p.getId(),p.getCantidad() + p.getCantidadStand())){
+					db.deleteVentas(p.getStandId());
+					items.remove(pos);
+					adapter.notifyDataSetChanged();
+					Log.i("DB", " eliminado");
+					Toast.makeText(getActivity(), R.string.p_eliminado, Toast.LENGTH_SHORT).show();
+				}
+				else
+					Log.e("BD", "Error al eliminiar ");
+				/* Remove it from the list.*/
+				db.close();
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
 	private void setXML(){
 		XmlPullParserFactory pullParserFactory;
 		try {
@@ -510,6 +553,9 @@ public class FragmentStandProd extends Fragment {
 		dialog.show(getFragmentManager(), "Detalles");
 	}
 	
+	public void setVacio(){
+		empty.setVisibility(View.VISIBLE);
+	}
 	private double truncate(double num){
 		num *= 100;
 		int aux = (int)num;

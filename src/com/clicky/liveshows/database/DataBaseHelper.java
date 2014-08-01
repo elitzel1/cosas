@@ -65,6 +65,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 	static final String colIVAStand="iva";
 	static final String colTipoCStand = "tipo_comision";
 	
+	static final String colCantidadVendedor = "cantidad_vendedor";
+	static final String colAbiertoStand = "stand_abierto";
+	
 	static final String colCantidadEfectivo = "cantidad_efectivo";
 	static final String colCantidadBanamex = "cantidad_banamex";
 	static final String colCantidadBanorte = "cantidad_banorte";
@@ -163,7 +166,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 		colNombreStand+" TEXT NOT NULL, "+colNombreEmpleado+" TEXT NOT NULL, "+colComisionStand+" INTEGER NOT NULL, "
 				+colIVAStand+" TEXT NOT NULL, "+colTipoCStand+" TEXT NOT NULL, "+colCantidadEfectivo+" REAL, "
 				+colCantidadBanamex+" REAL, "+colCantidadBanorte+" REAL, "+colCantidadSantander+" REAL, "
-				+colCantidadAmex+" REAL, "+colCantidadOtro1+" REAL, "+colCantidadOtro2+" REAL, "+colCantidadOtro3+" REAL)";
+				+colCantidadAmex+" REAL, "+colCantidadOtro1+" REAL, "+colCantidadOtro2+" REAL, "+colCantidadOtro3+" REAL, "
+				+colAbiertoStand+" INTEGER, "+colCantidadVendedor+ " REAL )";
 		database.execSQL(SQL_STAND);
 
 		String SQL_PRODUCTOS_STAND ="CREATE TABLE "+TABLE_STAND_PROD+ " ("+colIdStandProd+" INTEGER PRIMARY KEY AUTOINCREMENT, "+

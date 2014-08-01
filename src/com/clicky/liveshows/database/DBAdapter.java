@@ -56,6 +56,9 @@ public class DBAdapter {
 	static final String colIVAStand="iva";
 	static final String colTipoCStand = "tipo_comision";
 	
+	static final String colCantidadVendedor = "cantidad_vendedor";
+	static final String colAbiertoStand = "stand_abierto";
+	
 	static final String colCantidadEfectivo = "cantidad_efectivo";
 	static final String colCantidadBanamex = "cantidad_banamex";
 	static final String colCantidadBanorte = "cantidad_banorte";
@@ -241,9 +244,13 @@ public class DBAdapter {
 		return database.update(TABLE_PRODCUT, updateValues, colIdProduct+" = "+rowId, null)>0;
 	}
 
+	public boolean updateAbrirStand(long rowId){
+		ContentValues updateValues = createContentValuesUpdateStandAbrir();
+		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
+	}
 	public boolean updateStandCierre(long rowId,double efectivo,double banamex,double banorte, double santander, double amex,
-			double otro1,double otro2,double otro3){
-		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro1,otro2,otro3);
+			double otro1,double otro2,double otro3,double vendedor){
+		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro1,otro2,otro3,vendedor);
 		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
 	}
 	//Borra la tarea
@@ -287,7 +294,7 @@ public class DBAdapter {
 		return database.delete(TABLE_STAND, colIdStand+" = "+rowId, null) > 0;
 	}
 	
-	private int deleteVentas(long rowId){
+	public int deleteVentas(long rowId){
 		return database.delete(TABLE_SALES_PRODUCT, colStandProdFK+" = "+rowId, null);
 	}
 	
@@ -376,14 +383,14 @@ public class DBAdapter {
 	public Cursor fetchAllStand(){
 		return database.query(TABLE_STAND, new String[] { colIdStand,colNombreStand,colNombreEmpleado,colComisionStand,colIVAStand,colTipoCStand,
 				colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,colCantidadSantander,colCantidadAmex,
-				colCantidadOtro1,colCantidadOtro2,colCantidadOtro3
+				colCantidadOtro1,colCantidadOtro2,colCantidadOtro3,colCantidadVendedor,colAbiertoStand
 		}, null, null, null,
 		null, null);
 	}
 	
 	public Cursor fetchStandCierre(){
 		return database.query(TABLE_STAND, new String[] { colIdStand,colCantidadEfectivo,colCantidadBanamex,colCantidadBanorte,
-				colCantidadSantander,colCantidadAmex,colCantidadOtro1,colCantidadOtro2,colCantidadOtro3}, 
+				colCantidadSantander,colCantidadAmex,colCantidadOtro1,colCantidadOtro2,colCantidadOtro3,colCantidadVendedor}, 
 				null, null, null,null, null);
 	}
 
@@ -594,6 +601,7 @@ public class DBAdapter {
 		values.put(colComisionStand, comision);
 		values.put(colTipoCStand, tipo);
 		values.put(colIVAStand, iva);
+		values.put(colAbiertoStand,1);
 		/*
 		values.put(colCantidadEfectivo, efectivo);
 		values.put(colCantidadBanamex, banamex);
@@ -685,7 +693,7 @@ public class DBAdapter {
 
 
 	private ContentValues createContentValuesUpdateStandCierre(double efectivo,double banamex,double banorte,double santander,
-			double amex,double otro1,double otro2,double otro3){
+			double amex,double otro1,double otro2,double otro3,double vendedor){
 		ContentValues values = new ContentValues();
 		values.put(colCantidadEfectivo, efectivo);
 		values.put(colCantidadBanamex, banamex);
@@ -695,6 +703,23 @@ public class DBAdapter {
 		values.put(colCantidadOtro1, otro1);
 		values.put(colCantidadOtro2, otro2);
 		values.put(colCantidadOtro3, otro3);
+		values.put(colCantidadVendedor, vendedor);
+		values.put(colAbiertoStand, 0);
+		return values;
+	}
+	
+	private ContentValues createContentValuesUpdateStandAbrir(){
+		ContentValues values = new ContentValues();
+		values.put(colCantidadEfectivo, 0);
+		values.put(colCantidadBanamex, 0);
+		values.put(colCantidadBanorte, 0);
+		values.put(colCantidadSantander, 0);
+		values.put(colCantidadAmex, 0);
+		values.put(colCantidadOtro1, 0);
+		values.put(colCantidadOtro2, 0);
+		values.put(colCantidadOtro3, 0);
+		values.put(colCantidadVendedor, 0);
+		values.put(colAbiertoStand, 1);
 		return values;
 	}
 
