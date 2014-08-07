@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.clicky.liveshows.DialogCantidadProducto.OnCantidadListener;
 import com.clicky.liveshows.adapters.AdapterListaAgregaProductos;
 import com.clicky.liveshows.database.DBAdapter;
 import com.clicky.liveshows.utils.Comisiones;
@@ -17,10 +18,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ActivityAgregarProductos extends Activity {
+public class ActivityAgregarProductos extends Activity implements OnCantidadListener {
 	int id,idFecha;
 	Comisiones comision;
 	private DBAdapter dbHelper;
@@ -43,6 +48,16 @@ public class ActivityAgregarProductos extends Activity {
 		ListView list = (ListView)findViewById(R.id.listAgregaP);
 		adapter = new AdapterListaAgregaProductos(this, R.layout.item_agrega_prod_stand, products);
 		list.setAdapter(adapter);
+		
+		list.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				dialogCantidad(arg2);
+				
+			}
+		});
 
 		ArrayList<Integer> idProductos = b.getIntegerArrayList("idsProductos");
 		dbHelper = new DBAdapter(this);
@@ -165,12 +180,34 @@ public class ActivityAgregarProductos extends Activity {
 		item.setNombre(nombre);
 		item.setTipo(tipo);
 		item.setId(id);
-
+		//item.setCantidadStand(0);
 		item.setCantidad(cantidad);
 		item.setTalla(talla);
 		item.setArtista(artista);
 		products.add(item);
 		adapter.notifyDataSetChanged();
+	}
+	
+	private void dialogCantidad(int position){
+		DialogCantidadProducto dialogA = new DialogCantidadProducto();
+		Bundle params = new Bundle();
+		params.putString("nombre", products.get(position).getNombre());
+		params.putInt("position", position);
+		dialogA.setArguments(params);
+		dialogA.show(getFragmentManager(), "diagCant");
+	}
+
+	@Override
+	public void setCantidad(String cantidad, int position) {
+		Product p = products.get(position);
+		int prodNo = Integer.parseInt(cantidad);
+		if(prodNo <= p.getCantidad()){
+			p.setCantidadStand(prodNo);
+			adapter.notifyDataSetChanged();
+		}else{
+			Toast.makeText(this, R.string.sin_cantidad_valida, Toast.LENGTH_SHORT).show();
+		}
+		
 	}
 
 

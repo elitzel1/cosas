@@ -7,16 +7,12 @@ import com.clicky.liveshows.R;
 import com.clicky.liveshows.utils.Product;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.View.OnFocusChangeListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class AdapterCloseStand extends ArrayAdapter<Product> {
 
@@ -49,7 +45,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 			holder.txtTipo = (TextView)view.findViewById(R.id.txtTipo);
 			holder.txtSize = (TextView)view.findViewById(R.id.txtTallaRopa);
 			holder.txtCantidad = (TextView)view.findViewById(R.id.txtCantidadProducto);
-			holder.editCantidad = (EditText)view.findViewById(R.id.editNumeroProductos);
+			holder.editCantidad = (TextView)view.findViewById(R.id.editNumeroProductos);
 			holder.txtCortesias = (TextView)view.findViewById(R.id.txtCortesias);
 			view.setTag(holder);
 		}else holder = (ViewHolder) view.getTag();
@@ -69,54 +65,22 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		holder.editCantidad.setId(position);
 		holder.txtCortesias.setText(""+cortesias[position]);
 		
-		String oldText = ""+item.getProdNo();
-		if(item.getCantidad()>0){
-			holder.editCantidad.setText(oldText); 
-		}
+		holder.editCantidad.setText(""+item.getProdNo()); 
 
 		holder.txtCortesias.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				((ActivityCierreStand)context).dialogCortesia(row);
+				((ActivityCierreStand)context).menuCortesias(v);
 			}
 		});
 		
-		holder.editCantidad.setOnFocusChangeListener(new OnFocusChangeListener() {
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus){
-					final int pos = v.getId();
-					final EditText Caption = (EditText) v;
-					if(Caption.getEditableText()!=null){
-						if(!Caption.getEditableText().toString().contentEquals("")){
-							if(Integer.parseInt(Caption.getEditableText().toString()) <= item.getCantidadStand()){
-								items.get(pos).setProdNo(Integer.parseInt(Caption.getEditableText().toString()));
-								((ActivityCierreStand)context).calculaTotales();
-							}else{
-								Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
-							}
-
-						}
-					}
-				}
+		holder.editCantidad.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				((ActivityCierreStand)context).dialogCantidad(row);
 			}
 		});
 		
-
-		
-		if(position==items.size()){
-			if(!holder.editCantidad.getEditableText().toString().contentEquals("")){
-				if(Integer.parseInt(holder.editCantidad.getEditableText().toString())<=item.getCantidadStand()){
-					items.get(position).setProdNo(Integer.parseInt(holder.editCantidad.getEditableText().toString()));
-					((ActivityCierreStand)context).calculaTotales();
-				}else{
-					Toast.makeText(context, R.string.err_cantidad, Toast.LENGTH_SHORT).show();
-				}
-
-			}
-	
-		}
-		Log.i("PROD","position: "+position+" Cantidad: "+item.getProdNo());
-
 		return view;
 	}
 	static class ViewHolder{
@@ -125,7 +89,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		TextView txtSize;
 		TextView txtArtista;
 		TextView txtCantidad;
-		EditText editCantidad;
+		TextView editCantidad;
 		TextView txtCortesias;
 
 	}

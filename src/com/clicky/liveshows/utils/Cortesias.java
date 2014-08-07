@@ -2,6 +2,7 @@ package com.clicky.liveshows.utils;
 
 public class Cortesias {
 
+	int id;
 	String tipo;
 	int amount;
 
@@ -9,11 +10,19 @@ public class Cortesias {
 
 	}
 
-	public Cortesias(String tipo, int amout){
+	public Cortesias(int id,String tipo, int amout){
+		this.id = id;
 		this.tipo=tipo;
 		this.amount=amout;
 	}
 
+	public int getId(){
+		return id;
+	}
+	
+	public void setId(int id){
+		this.id=id;
+	}
 	public String getTipo() {
 		return tipo;
 	}

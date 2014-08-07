@@ -48,6 +48,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -123,9 +124,9 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		radioComprobanteSueldos = (RadioGroup)findViewById(R.id.comprobanteSueldo);
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		txtGastos = new String[]{"LONAS","GASOLINA PARA CARRETERA","ESTACIONAMIENTO","HOTELES","VUELOS","CAMIONES","PROPINAS",
-				"BAÑOS PUBLICOS","TELEFONIA","COMIDAS","REPARACIONES","MUDANZAS","TRANSPORTACION","CASETAS","RENTA DE CARPAS",
-				"RENTA DE TABLONES Y MANTELERIA","RENTA DE VALLAS","MULTAS","PERMISOS Y TRAMITES",
+		txtGastos = new String[]{"LONAS","GASOLINA PARA CARRETERA","GASOLINA PLANTAS DE ENERGÍA","ESTACIONAMIENTO","HOTELES",
+				"VUELOS","CAMIONES","PROPINAS","BAÑOS PUBLICOS","TELEFONIA","COMIDAS","REPARACIONES","MUDANZAS","TRANSPORTACION",
+				"CASETAS","RENTA DE CARPAS","RENTA DE TABLONES Y MANTELERIA","RENTA DE VALLAS","MULTAS","PERMISOS Y TRAMITES",
 				prefs.getString("gasto1", "OTHER"),prefs.getString("gasto2", "OTHER"),prefs.getString("gasto3", "OTHER")};
 		
 		txtSueldos = new String[]{"SUPERVISORES","BONO GERENCIAL","SUELDO CHOFER","MONTAJE/DESMONTAJE",
@@ -218,7 +219,23 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
 		case R.id.action_accept:
-			showAlert();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Are you sure?");
+			builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					showAlert();
+				}
+			});
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int arg1) {
+					dialog.dismiss();
+				}
+			});
+			builder.create().show();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -322,7 +339,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			acepta = validaCorreo(mail);
 			if(acepta){
 				tipo = 0;
-				getReport(0, "","","");
+				getReport(0, "","","","sales_report.xls");
 			}
 		}else if(v == (Button)findViewById(R.id.enviarVenue)){
 			String agencia = ((EditText)findViewById(R.id.agenciaVenue)).getText().toString();
@@ -331,19 +348,31 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			acepta = validaCorreo(mail);
 			if(acepta){
 				tipo = 1;
-				getPDFReport(1,agencia , contacto,"");
+				getReport(1,agencia , contacto,"","sales_report_venue.xls");
+				getPDFReport(1,agencia , contacto,"","sales_report_venue.pdf");
 			}	
 		}
 		if(acepta){
 			String reporte = "";
-			if(tipo == 0)
+			String reporte2 = "";
+			ArrayList<Uri> uris = new ArrayList<Uri>();
+			if(tipo == 0){
 				reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.xls";
-			else if(tipo == 1)
-				reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.pdf";
-			Intent email = new Intent(Intent.ACTION_SEND);
-			email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail});		  
-			email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
-			email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+reporte));
+				uris.add(Uri.parse("file:///"+reporte));
+			}
+			else if(tipo == 1){
+				reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_venue.pdf";
+				reporte2 = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_venue.xls";
+				uris.add(Uri.parse("file:///"+reporte));
+				uris.add(Uri.parse("file:///"+reporte2));
+			}
+			Intent email = new Intent(Intent.ACTION_SEND_MULTIPLE);
+			email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail});
+			if(tipo == 1)
+				email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report Venue");
+			else
+				email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
+			email.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 			email.setType("message/rfc822");
 			startActivity(Intent.createChooser(email, "Choose an Email client :"));
 		}
@@ -422,6 +451,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		mail.setLayoutParams(params3);
 		mail.setHint(R.string.hint_mail);
 		mail.setSingleLine();
+		mail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 		linear.addView(mail);
 		
 		Button btnMail = new Button(this);
@@ -448,13 +478,18 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			
 			@Override
 			public void onClick(View v) {
-				getPDFReport(2, agencia.getText().toString(), contacto.getText().toString(),artista);
+				getReport(2, agencia.getText().toString(), contacto.getText().toString(), artista,"sales_report_agency.xls");
+				getPDFReport(2, agencia.getText().toString(), contacto.getText().toString(),artista,"sales_report_agency.pdf");
 				if(validaCorreo(mail.getText().toString())){
-					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report.pdf";
-					Intent email = new Intent(Intent.ACTION_SEND);
+					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_agency.pdf";
+					String reporte2 = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_agency.xls";
+					ArrayList<Uri> uris = new ArrayList<Uri>();
+					uris.add(Uri.parse("file:///"+reporte));
+					uris.add(Uri.parse("file:///"+reporte2));
+					Intent email = new Intent(Intent.ACTION_SEND_MULTIPLE);
 					email.putExtra(Intent.EXTRA_EMAIL, new String[]{mail.getText().toString()});		  
-					email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report");
-					email.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///"+reporte));
+					email.putExtra(Intent.EXTRA_SUBJECT, "Sales Report Agency");
+					email.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
 					email.setType("message/rfc822");
 					startActivity(Intent.createChooser(email, "Choose an Email client :"));
 				}
@@ -740,9 +775,10 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					if(cursorCortesias.moveToFirst()){
 						cortesias= new ArrayList<Cortesias>();
 						do{
+							int cortId = cursorCortesias.getInt(0);
 							String tipoC = cursorCortesias.getString(1);
 							int cantidadC =cursorCortesias.getInt(2);
-							cortesias.add(new Cortesias(tipoC, cantidadC));
+							cortesias.add(new Cortesias(cortId,tipoC, cantidadC));
 						}while(cursorCortesias.moveToNext());
 					}
 
@@ -863,9 +899,10 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					if(cursorCortesias.moveToFirst()){
 						cortesias= new ArrayList<Cortesias>();
 						do{
+							int cortId = cursorCortesias.getInt(0);
 							String tipoC = cursorCortesias.getString(1);
 							int cantidadC =cursorCortesias.getInt(2);
-							cortesias.add(new Cortesias(tipoC, cantidadC));
+							cortesias.add(new Cortesias(cortId,tipoC, cantidadC));
 						}while(cursorCortesias.moveToNext());
 					}
 
@@ -942,11 +979,11 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 	 * @param agency
 	 * @param contact
 	 */
-	private void getReport(int tipo,String agency, String contact,String artista){
+	private void getReport(int tipo,String agency, String contact,String artista,String nombre){
 		getProducts(artista);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		WritableWorkbook wb = excel.createWorkbook("sales_report.xls");
+		WritableWorkbook wb = excel.createWorkbook(nombre);
 		
 		WritableSheet hoja1 = excel.createSheet(wb, "Sales", 0);
 		
@@ -957,7 +994,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(1, 5, "DATE", 6, hoja1);
 			excel.writeCell(2, 5, fecha, 0, hoja1);
 			excel.writeCell(1, 7, "EVENT", 6, hoja1);
-			excel.writeCell(2, 7, evento, 0, hoja1);
+			excel.writeCell(2, 7, artistas.get(art[0]), 0, hoja1);
 			excel.writeCell(1, 9, "VENUE/\nPLACE", 6, hoja1);
 			excel.writeCell(2, 9, local, 0, hoja1);
 			if(tipo != 0){
@@ -1011,9 +1048,13 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					excel.writeCell(4, (16+i), prod.getTalla(), 3, hoja1);
 				
 				int cantIn = prod.getTotalCantidad();
-				for(int j = 0; j < prod.getAdicionalSize(); j++){
+				for(int j = 0; j < 5; j++){
+					try{
 					cantIn -= prod.getAdicional().get(j).getCantidad();
 					excel.writeCell( (6+j), (16+i), ""+prod.getAdicional().get(j).getCantidad(), 3, hoja1);
+					}catch(IndexOutOfBoundsException e){
+						excel.writeCell( (6+j), (16+i), ""+0, 3, hoja1);
+					}
 				}
 				excel.writeCell( 5, (16+i), ""+cantIn, 3, hoja1);
 				
@@ -1043,7 +1084,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				
 				int finalInventory = prod.getTotalCantidad()-(prod.getProdNo()+cmd+cmv+cmo+cmo1+cmo2);
 				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
-				double conTax = total;
+				double conTax = 0;
 				totales.add(total);
 				gross += total;
 				excel.writeCell(18, (16+i), ""+finalInventory, 3, hoja1);
@@ -1060,7 +1101,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 					double cant = 0, aux = 0;
 					if(com.getTipo().equals("After taxes")){
 						cant = conTax;
-					}else if(com.getTipo().equals("Before Taxes")){
+					}else if(com.getTipo().equals("Before taxes")){
 						cant = total;
 					}
 					if(com.getIva().equals("%")){
@@ -1094,6 +1135,14 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			excel.writeCell(22, 18+products.size(), ""+truncate((gross/priceUs)), 11, hoja1);
 			excel.writeCell(22, 19+products.size(), ""+truncate(((gross-subTotal)/priceUs)), 11, hoja1);
 			excel.writeCell(22, 20+products.size(), ""+truncate((subTotal/priceUs)), 11, hoja1);
+			
+			excel.writeCell(15, 5, "ATTENDANCE", 6, hoja1);
+			excel.writeCell(15, 7, "PERCAP", 6, hoja1);
+			excel.writeCell(15, 9, "GROSS TOTAL", 6, hoja1);
+			
+			excel.writeCell(16, 5, ""+capacidad, 3, hoja1);
+			excel.writeCell(16, 7, ""+truncate((gross/capacidad)), 5, hoja1);
+			excel.writeCell(16, 9, ""+gross, 5, hoja1);
 			
 			if(tipo == 1){
 				excel.writeCell(18, 22+products.size(), "VENUE FEE", 6, hoja1);
@@ -1142,7 +1191,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(20, 31+products.size()+gastos.size(), "FACTURA", 2, hoja1);
 				excel.writeCell(21, 31+products.size()+gastos.size(), "NOTA", 2, hoja1);
 				
-				excel.writeCell(18, 32+products.size()+gastos.size(), "Comisión Vendedores", 4, hoja1);
+				excel.writeCell(18, 32+products.size()+gastos.size(), "COMISION VENDEDORES", 4, hoja1);
 				excel.writeCell(19, 32+products.size()+gastos.size(), ""+comisionVendedor, 5, hoja1);
 				
 				double totalSueldos = comisionVendedor;
@@ -1163,7 +1212,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(18, 36+products.size()+gastos.size()+sueldos.size(), "TOTAL SUELDOS/BONOS/COMISIONES", 6, hoja1);
 				excel.writeCell(19, 36+products.size()+gastos.size()+sueldos.size(), ""+totalSueldos, 5, hoja1);
 				
-				double depositar = totalSueldos+totalGastos;
+				double depositar = gross-(totalSueldos+totalGastos);
 				excel.writeCell(18, 38+products.size()+gastos.size()+sueldos.size(), "TOTAL A DEPOSITAR", 6, hoja1);
 				excel.writeCell(19, 38+products.size()+gastos.size()+sueldos.size(), ""+depositar, 5, hoja1);
 				
@@ -1179,6 +1228,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(18, 47+products.size()+gastos.size()+sueldos.size(), prefs.getString("tipo2", "OTHER"), 4, hoja1);
 				excel.writeCell(18, 48+products.size()+gastos.size()+sueldos.size(), prefs.getString("tipo3", "OTHER"), 4, hoja1);
 				
+				efectivo = depositar-banamex-banorte-santander-amex-otro1-otro2-otro3;
 				excel.writeCell(19, 41+products.size()+gastos.size()+sueldos.size(), ""+efectivo, 5, hoja1);
 				excel.writeCell(19, 42+products.size()+gastos.size()+sueldos.size(), ""+banamex, 5, hoja1);
 				excel.writeCell(19, 43+products.size()+gastos.size()+sueldos.size(), ""+banorte, 5, hoja1);
@@ -1195,13 +1245,6 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				excel.writeCell(18, 51+products.size()+gastos.size()+sueldos.size(), "DIF +/-", 6, hoja1);
 				excel.writeCell(19, 51+products.size()+gastos.size()+sueldos.size(), ""+(depositado-depositar), 5, hoja1);
 				
-				excel.writeCell(15, 5, "ATTENDANCE", 6, hoja1);
-				excel.writeCell(15, 7, "PERCAP", 6, hoja1);
-				excel.writeCell(15, 9, "GROSS TOTAL", 6, hoja1);
-				
-				excel.writeCell(16, 5, ""+capacidad, 3, hoja1);
-				excel.writeCell(16, 7, ""+truncate((gross/capacidad)), 5, hoja1);
-				excel.writeCell(16, 9, ""+gross, 5, hoja1);
 			}
 			excel.sheetAutoFitColumns(hoja1);
 		} catch (WriteException e) {
@@ -1217,8 +1260,8 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		}
 	}
 	
-	private void getPDFReport(int tipo,String agency, String contact,String artista){
-		getProducts(artista);
+	private void getPDFReport(int tipo,String agency, String contact,String artista,String nombre){
+		//getProducts(artista);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String[] headers = {"PRICE SALE IN US","#","ITEM","STYLE","SIZE","TOTAL\nINVENTORY","PRICE SALE","DAMAGE","COMPS\nVENUE",
 				"COMPS\nOFFICE\nPRODUCTION",prefs.getString("op1", "OTHER"),prefs.getString("op2", "OTHER"),"FINAL\nINVENTORY",
@@ -1228,7 +1271,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		df.applyPattern("$#,##0.00");
 		df.setRoundingMode(RoundingMode.DOWN);
 		
-		Document docPdf = pdf.createPDFHorizontal("sales_report.pdf");
+		Document docPdf = pdf.createPDFHorizontal(nombre);
 		
 		int pag = 1;
 		pdf.createHeadings(998, 10, 8, ""+pag);
@@ -1238,8 +1281,14 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		String texto = "SALES REPORT (IN "+prefs.getString("moneda", "")+")";
 		pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
 		
+		String event = "";
+		if(!artista.equals("")){
+			event = artista;
+		}else{
+			event = artistas.get(art[0]);
+		}
 		float aux1 = pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE","AGENCY","CONTACT"}, 
-				new String[]{fecha,evento,local,agency,contact}, docPdf.leftMargin(), 515);
+				new String[]{fecha,event,local,agency,contact}, docPdf.leftMargin(), 515);
 		
 		float aux2 = pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
 				new String[]{""+capacidad,df.format(totalVenta/capacidad),df.format(totalVenta),df.format(priceUs)+" "+prefs.getString("moneda", "")}, 620, 515);
@@ -1259,7 +1308,7 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 				double cant = 0, aux = 0;
 				if(com.getTipo().equals("After taxes")){
 					cant = conTax;
-				}else if(com.getTipo().equals("Before Taxes")){
+				}else if(com.getTipo().equals("Before taxes")){
 					cant = total;
 				}
 				if(com.getIva().equals("%")){

@@ -96,5 +96,87 @@ public class Stand {
 	public void setAbierto(boolean abierto){
 		this.abierto = abierto;
 	}
+
+	public Comisiones getComisiones() {
+		return comisiones;
+	}
+
+	public void setComisiones(Comisiones comisiones) {
+		this.comisiones = comisiones;
+	}
+
+	public double getEfectivo() {
+		return efectivo;
+	}
+
+	public void setEfectivo(double efectivo) {
+		this.efectivo = efectivo;
+	}
+
+	public double getBanamex() {
+		return banamex;
+	}
+
+	public void setBanamex(double banamex) {
+		this.banamex = banamex;
+	}
+
+	public double getBanorte() {
+		return banorte;
+	}
+
+	public void setBanorte(double banorte) {
+		this.banorte = banorte;
+	}
+
+	public double getSantander() {
+		return santander;
+	}
+
+	public void setSantander(double santander) {
+		this.santander = santander;
+	}
+
+	public double getAmex() {
+		return amex;
+	}
+
+	public void setAmex(double amex) {
+		this.amex = amex;
+	}
+
+	public double getOther1() {
+		return other1;
+	}
+
+	public void setOther1(double other1) {
+		this.other1 = other1;
+	}
+
+	public double getOther2() {
+		return other2;
+	}
+
+	public void setOther2(double other2) {
+		this.other2 = other2;
+	}
+
+	public double getOther3() {
+		return other3;
+	}
+
+	public void setOther3(double other3) {
+		this.other3 = other3;
+	}
+
+	public double getVendedorComision() {
+		return vendedorComision;
+	}
+
+	public void setVendedorComision(double vendedorComision) {
+		this.vendedorComision = vendedorComision;
+	}
+	
+	
 	
 }

@@ -20,6 +20,12 @@
             android:textColor="@color/azul_textos"
             android:textStyle="bold"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <TextView
+            android:id="@+id/txtTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/azul_live" />
 
         <TextView
             android:id="@+id/txtTallaRopa"
@@ -46,16 +52,14 @@
         android:textColor="@color/azul_textos"
         android:textStyle="bold" />
 
-    <EditText
+    <TextView
         android:id="@+id/editNumeroProductos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:ems="10"
-        android:inputType="number" 
-        android:singleLine="true">
-
-    </EditText>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold"
+        android:textColor="@color/azul_textos" />
 
 </LinearLayout>

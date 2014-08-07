@@ -9,6 +9,7 @@
     <string name="action_new">Add Product</string>
     <string name="action_print">Print</string>
     <string name="action_artist">Add Artist</string>
+    <string name="action_venue">Modify Venue</string>
     <string name="hello_world">Hello world!</string>
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
@@ -93,6 +94,8 @@
     <string name="title_menu">Choose an option</string>
     <string name="m_comision">Change commission</string>
     <string name="m_cortesia">Add Complimentary</string>
+    <string name="m_delete_cortesia">Delete Complimentary</string>
+    <string name="m_regresar">Return to Warehouse</string>
 
     <!-- Stands -->
     <string name="vacio">There are no Stands</string>
@@ -124,7 +127,7 @@
     <string name="lbl_total">Total</string>
     <string name="lbl_comision">Commission</string>
     <string name="lbl_falta">Deposit</string>
-    <string name="alert_cierre">Do you want to send this stand\'s sales report?</string>
+    <string name="alert_cierre">Do you want to print this stand\'s sales report?</string>
 
     <!-- Cierre dia -->
     <string name="viaticos">Gastos Operativos</string>
@@ -207,5 +210,13 @@
 	<string name="m_art_agregado">Artist added</string>
 	<string name="m_date_agregado">Date added</string>
 	<string name="btn_abrir">Reopen Stand</string>
+	<string name="alert_stand_cerrado">This stand is already closed</string>
+	<string name="title_cantidad">Select the amount</string>
+	<string name="alert_regresado">Amount Returned</string>
+	<string name="title_delete_comp">Chose complimentaries to delete</string>
+	<string name="c_eliminado">Complimentaries deleted</string>
+	<string name="no_cortesias">This product has no complimentaries</string>
+	<string name="v_actualizado">Venue Updated</string>
+	<string name="v_noval">Capacity not Valid</string>
 	
 </resources>

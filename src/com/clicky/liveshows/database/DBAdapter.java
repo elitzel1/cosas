@@ -253,6 +253,11 @@ public class DBAdapter {
 		ContentValues updateValues = createContentValuesUpdateStandCierre(efectivo,banamex,banorte,santander,amex,otro1,otro2,otro3,vendedor);
 		return database.update(TABLE_STAND, updateValues, colIdStand+" = "+rowId, null)>0;
 	}
+	
+	public boolean updateEvento(int rowId,String venue,int capacidad){
+		ContentValues updateValues = createContentValuesUpdateEvento(venue,capacidad);
+		return database.update(TABLE_EVENTO, updateValues, colIdEvento+" = "+rowId, null)>0;
+	}
 	//Borra la tarea
 	public boolean deleteEvento(long rowId) {
 		return database.delete(TABLE_EVENTO, colIdEvento + "=" + rowId, null) > 0;
@@ -266,6 +271,10 @@ public class DBAdapter {
 		return database.delete(TABLE_FECHA, colIdFecha + "="+rowId, null)>0;
 	}
 
+	public boolean deleteCortesiasStand(long rowId){
+		return database.delete(TABLE_CORTESIAS, colIdCortesias + " = "+rowId, null)>0;
+	}
+	
 	public boolean deleteProduct(long rowId){
 		int band =database.delete(TABLE_PRODCUT, colIdProduct + " = "+rowId, null);
 		database.delete(TABLE_ADICIONAL, colProductoIdA+" = "+rowId, null);
@@ -302,12 +311,12 @@ public class DBAdapter {
 		return database.delete(TABLE_TAXES_PRODUCT, colIdProductCK+" = "+rowId, null);
 	}
 	
-	private int deleteProductStand(long rowId){
+	public int deleteProductStand(long rowId){
 		return database.delete(TABLE_STAND_PROD, colProductoIdSP+" = "+rowId, null);
 	}
 	
 	private int deleteCortesias(long rowId){
-		return database.delete(TABLE_ADICIONAL, colProductoCortesia+" = "+rowId, null);
+		return database.delete(TABLE_CORTESIAS, colProductoCortesia+" = "+rowId, null);
 	}
 
 	public boolean deleteProductStand(long rowId,long rowIdP, int cantidad){
@@ -631,6 +640,13 @@ public class DBAdapter {
 		return values;
 	}
 
+	private ContentValues createContentValuesUpdateEvento(String lugar,int capacidad) {
+		ContentValues values = new ContentValues();
+		values.put(colLugar, lugar);
+		values.put(colCapacidad, capacidad);
+		return values;
+	}
+	
 	private ContentValues createContentValuesUpdateCantidad(int cantidad){
 		ContentValues values= new ContentValues();
 		values.put(colCantidad, cantidad);

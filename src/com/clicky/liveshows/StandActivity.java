@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.clicky.liveshows.DialogCantidadProducto.OnCantidadListener;
+import com.clicky.liveshows.DialogDeleteCortesia.OnCortesiasSelected;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogStand.OnStandNuevo;
 import com.clicky.liveshows.DialogUpdateComision.OnChangeComision;
 import com.clicky.liveshows.DialogUpdateStand.OnStandUpdate;
+import com.clicky.liveshows.FragmentStandProd.OnDeleteCortesia;
 import com.clicky.liveshows.FragmentStandProd.OnNewAdicional;
 import com.clicky.liveshows.FragmentStandProd.OnNewCortesia;
+import com.clicky.liveshows.FragmentStandProd.OnReturnProduct;
 import com.clicky.liveshows.FragmentStandProd.OnStandAbierto;
 import com.clicky.liveshows.FragmentStands.onDeleteStand;
 import com.clicky.liveshows.FragmentStands.onFragmentCreate;
@@ -27,9 +31,11 @@ import com.itextpdf.text.Document;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
@@ -40,7 +46,7 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 @SuppressLint("UseSparseArrays")
-public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener,OnStandUpdate,onDeleteStand,OnStandAbierto{
+public class StandActivity extends Activity implements OnStandNuevo,OnChangeComision,onStandSelected,onFragmentCreate,OnNewCortesia,OnCortesiaListener,OnNewAdicional,com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener,OnStandUpdate,onDeleteStand,OnStandAbierto,OnReturnProduct,OnCantidadListener,OnDeleteCortesia,OnCortesiasSelected{
 	FragmentStands frag;
 	private DBAdapter dbHelper;
 	Product product;
@@ -137,7 +143,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 			Cursor c  = dbHelper.fetchStandProduct(stand.getId(),idFecha);
 			if(c.moveToFirst()){
 				PDF pdf = new PDF(this);
-				Document docPdf = pdf.createPDF("stand.pdf");
 				List<Product> prodList = new ArrayList<Product>(); 
 				List<Comisiones> comisiones = new ArrayList<Comisiones>();
 				do{
@@ -147,6 +152,10 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					int comVendedorId = c.getInt(4);
 					p.setCantidadStand(cantidad);
 					p.setId(idProd);
+					Cursor cursorVentas = dbHelper.fetchVentasProd(c.getInt(0));
+					if(cursorVentas.moveToFirst()){
+						p.setProdNo(cursorVentas.getInt(3));
+					}
 					Cursor cursorImp = dbHelper.fetchImpuestos(comVendedorId);
 					if(cursorImp.moveToFirst()){
 						int idTaxes = cursorImp.getInt(0);
@@ -218,63 +227,189 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					prodList.add(p);
 				}while(c.moveToNext());
 				
-				String[] headers = {"Amount","Product","Artist","Size","Price","Commission","Total\nCommission","Total\nSale"};
-				
-				int pag = 1;
-				pdf.createHeadings(580, 10, 8, ""+pag);
-				pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
-				pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
-				String texto = "Stand: "+stand.getName();
-				pdf.createHeadings((520-(texto.length() * 9)), 730, 24, texto);
-				double[] dob = pdf.tableProducts(docPdf, prodList, headers,710);
-				int posInit = 710;
-				int mas = (int)dob[0];
-				double totalVendedor = dob[1];
-				
-				if(mas != 0){
-					posInit = 730;
-					int posAct = 0;
-					do{
-						posAct += (int)dob[2];
+				if(stand.isOpened()){
+					Document docPdf = pdf.createPDF("stand_"+stand.getName()+".pdf");
+					
+					String[] headers = {"Amount","Product","Type","Artist","Size","Price","Commission","Total\nCommission","Total\nSale"};
+					
+					int pag = 1;
+					pdf.createHeadings(580, 10, 8, ""+pag);
+					pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
+					pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
+					String texto = "Stand: "+stand.getName();
+					pdf.createHeadings((520-(texto.length() * 9)), 730, 24, texto);
+					double[] dob = pdf.tableProducts(docPdf, prodList, headers,710);
+					int posInit = 710;
+					int mas = (int)dob[0];
+					double totalVendedor = dob[1];
+					
+					if(mas != 0){
+						posInit = 730;
+						int posAct = 0;
+						do{
+							posAct += (int)dob[2];
+							docPdf.newPage();
+							pag++;
+							pdf.createHeadings(580, 10, 8, ""+pag);
+							pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
+							pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
+							dob = pdf.tableProducts(docPdf, prodList.subList(posAct, prodList.size()), headers, 730);
+							totalVendedor += dob[1];
+							mas = (int)dob[0];
+						}while(mas != 0);
+					}
+					
+					float pos = (float) (posInit - dob[2] - 10);
+					if(pos - 41 < 0){
 						docPdf.newPage();
 						pag++;
 						pdf.createHeadings(580, 10, 8, ""+pag);
 						pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
 						pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
-						dob = pdf.tableProducts(docPdf, prodList.subList(posAct, prodList.size()), headers, 730);
-						totalVendedor += dob[1];
-						mas = (int)dob[0];
-					}while(mas != 0);
-				}
+						pos = 730;
+					}
+					pdf.tableNum(docPdf, new String[]{"TOTAL COMMISSION"}, new double[]{totalVendedor}, 150, pos);
+					
+					String line1 = "Gerente";
+					String line2 = stand.getEncargado();
+					pdf.addLine(50, 90);
+					pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
+					pdf.addLine(320, 90);
+					pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
+					docPdf.close();
+					
+					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/stand_"+stand.getName()+".pdf");
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+					intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					startActivity(intent);
+				}else{
+					SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+					String[] headers = {"PRICE SALE IN US","#","ITEM","STYLE","SIZE","TOTAL\nINVENTORY","PRICE SALE","DAMAGE","COMPS\nVENUE",
+							"COMPS\nOFFICE\nPRODUCTION",prefs.getString("op1", "OTHER"),prefs.getString("op2", "OTHER"),"FINAL\nINVENTORY",
+							"SALES PIECES","GROSS TOTAL","% SALES","COMISSION","TOTAL\nCOMISSION"};
+					String[] headerIngresos = {"EFECTIVO","TC BANAMEX","TC BANORTE","TC SANTANDER","TC AMEX",
+							prefs.getString("tipo1", "OTHER"),prefs.getString("tipo2", "OTHER"),prefs.getString("tipo3", "OTHER")};
 				
-				float pos = (float) (posInit - dob[2] - 10);
-				if(pos - 41 < 0){
-					docPdf.newPage();
-					pag++;
-					pdf.createHeadings(580, 10, 8, ""+pag);
-					pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
-					pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
-					pos = 730;
-				}
-				pdf.tableNum(docPdf, new String[]{"TOTAL COMMISSION"}, new double[]{totalVendedor}, 150, pos);
+					double efectivo = 0.0, banorte = 0.0, banamex = 0.0, santander = 0.0, amex = 0.0, other1 = 0.0,other2=0.0,other3=0.0;
+					efectivo = stand.getEfectivo();
+					banorte = stand.getBanorte();
+					banamex = stand.getBanamex();
+					santander = stand.getSantander();
+					amex = stand.getAmex();
+					other1 = stand.getOther1();
+					other2 = stand.getOther2();
+					other3 = stand.getOther3();
 				
-				String line1 = "Gerente";
-				String line2 = stand.getEncargado();
-				pdf.addLine(50, 90);
-				pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
-				pdf.addLine(320, 90);
-				pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
-				docPdf.close();
-				File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/stand.pdf");
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setDataAndType(Uri.fromFile(file), "application/pdf");
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
+					double[] ingresos = {efectivo,banamex,banorte,santander,amex,other1,other2,other3};
+					
+					Document docPdf = pdf.createPDFHorizontal("sales_stand_"+stand.getName()+".pdf");
+					
+					int pag = 1;
+					pdf.createHeadings(983, 15, 8, ""+pag);
+					pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+					pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+					
+					String texto = "SALES REPORT (IN "+prefs.getString("moneda", "")+")";
+					pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
+					
+					pdf.createHeadings(25, 500, 14, "Stand:   "+stand.getName());
+					pdf.createHeadings(25, 485, 14, "Manager: "+stand.getEncargado());
+					
+					double totalVentas = 0;
+					for(Product prod:prodList){
+						totalVentas += prod.getProdNo() * Double.parseDouble(prod.getPrecio());
+						int cantStand = prod.getCantidadStand();
+						int vendidos = prod.getProdNo();
+						prod.setCantidadStand(cantStand+vendidos);
+						prod.setProdNo(cantStand);
+					}
+					
+					float posInit = 470;
+					double[] dob = pdf.tableStandVentas(docPdf, prodList, headers, totalVentas,0, 470);
+					int mas = (int)dob[0];
+					if(mas != 0){
+						posInit = 500;
+						int posAct = 0;
+						do{
+							posAct += (int)dob[1];
+							docPdf.newPage();
+							pag++;
+							pdf.createHeadings(983, 15, 8, ""+pag);
+							pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+							pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+							dob = pdf.tableStandVentas(docPdf, prodList.subList(posAct, prodList.size()), headers, totalVentas,posAct, 500);
+							mas = (int)dob[0];
+						}while(mas != 0);
+					}
+					
+					float pos = (float) (posInit - dob[1] - 10);
+					int x = 650;
+					
+					if(pos - 65 < 0){
+						docPdf.newPage();
+						pag++;
+						pdf.createHeadings(983, 15, 8, ""+pag);
+						pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+						pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+						pos = 500;
+					}
+					pdf.tableNum(docPdf, new String[]{"GROSS TOTAL","VENDOR COMMISION"}, new double[]{totalVentas,stand.getVendedorComision()}, x, (pos));
+					
+					pos -= 50;
+					if(pos - 49 < 0){
+						docPdf.newPage();
+						pag++;
+						pdf.createHeadings(983, 15, 8, ""+pag);
+						pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+						pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+						pos = 500;
+					}
+					pdf.tableNum(docPdf, new String[]{"TOTAL A DEPOSITAR"}, new double[]{(totalVentas - stand.getVendedorComision())}, x, (pos));
+					
+					pos -= 34;
+					if(pos - 183 < 0){
+						docPdf.newPage();
+						pag++;
+						pdf.createHeadings(983, 15, 8, ""+pag);
+						pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+						pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+						pos = 500;
+					}
+					double dep = pdf.tableIngresos(docPdf, "INGRESOS RECIBIDOS", "TOTAL DEPOSITADO", headerIngresos, ingresos, x, (pos));
+					
+					pos -= 168;
+					if(pos - 41 < 0){
+						docPdf.newPage();
+						pag++;
+						pdf.createHeadings(983, 15, 8, ""+pag);
+						pdf.addImage(docPdf, 25,540,"live_shows_logo.png");
+						pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
+						pos = 500;
+					}
+					pdf.tableNum(docPdf, new String[]{"DIF +/-"}, new double[]{dep - (totalVentas - stand.getVendedorComision())}, x, (pos));
+					
+					String line1 = "Gerente";
+					String line2 = stand.getEncargado();
+					pdf.addLine(50, 90);
+					pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
+					pdf.addLine(320, 90);
+					pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
+					
+					docPdf.close();
+					
+					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand_"+stand.getName()+".pdf");
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+					intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+					startActivity(intent);
+				}
 			}else{
 				Toast.makeText(this, R.string.no_products, Toast.LENGTH_SHORT).show();
 			}
 			c.close();
 			dbHelper.close();
+				
 		}else{
 			Toast.makeText(this, R.string.no_stand, Toast.LENGTH_SHORT).show();
 		}
@@ -466,7 +601,9 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 		int total=p.getCantidadStand()-cortesia.getAmount();
 		if((total) >= 0){
 			dbHelper.open();
-			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),(int)stand.getId())>=0){
+			int cortId = (int)dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getId(),(int)stand.getId());
+			if(cortId>=0){
+				cortesia.setId(cortId);
 				p.addCortesia(cortesia);
 				int cantidad = total;
 				p.setCantidadStand(cantidad);
@@ -488,7 +625,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	
 	@Override
 	public void setNewComision(Comisiones com) {
-		// TODO Auto-generated method stub
 		dbHelper.open();
 		
 		if(dbHelper.updateComision(com.getId(), com.getCantidad(), com.getIva(), com.getTipo())){
@@ -548,6 +684,100 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 			((FragmentStandProd)getFragmentManager().
 				findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
 		}
+	}
+
+	@Override
+	public void onReturnProduct(Product product, int position) {
+		this.product = product;
+		DialogCantidadProducto dialogA = new DialogCantidadProducto();
+		Bundle params = new Bundle();
+		params.putString("nombre", product.getNombre());
+		params.putInt("position", position);
+		dialogA.setArguments(params);
+		dialogA.show(getFragmentManager(), "diagCant");
+		
+	}
+
+	@Override
+	public void setCantidad(String cantidad, int position) {
+		Product p = product;
+		int num = Integer.parseInt(cantidad);
+		int resultado = p.getCantidadStand()-num;
+		if(num <= p.getCantidadStand()){
+			dbHelper.open();
+			if(dbHelper.updateProducto(p.getId(), p.getCantidad()+num)){
+				if(resultado != 0){
+					if(dbHelper.updateStandProducto(p.getStandId(), stand.getId(), resultado)){
+						((FragmentStandProd)getFragmentManager().
+								findFragmentById(R.id.article_fragment)).setNewCantidad(resultado, position);
+					}
+				}else{
+					dbHelper.deleteProductStand(stand.getId(), p.getId(),p.getCantidad() + p.getCantidadStand());
+					dbHelper.deleteVentas(p.getStandId());
+					for(Cortesias com:p.getCortesias()){
+						dbHelper.deleteCortesiasStand(com.getId());
+						dbHelper.updateProducto(p.getId(), p.getCantidad()+p.getCantidadStand()+com.getAmount());
+					}
+				}
+				boolean hayDetalle = 
+						(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+				if(hayDetalle) {
+					((FragmentStandProd)getFragmentManager().
+						findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+				}
+			}
+			dbHelper.close();
+			makeToast(R.string.alert_regresado);
+		}else{
+			makeToast(R.string.err_cantidad);
+		}
+		
+	}
+
+	@Override
+	public void onDeleteCortesiaDialog(Product product, int position) {
+		this.product = product;
+		if(product.getCortesias().size() > 0){
+			String[] cortesias = new String[product.getCortesias().size()];
+			
+			for(int i = 0; i < product.getCortesias().size();i++){
+				Cortesias cort = product.getCortesias().get(i);
+				cortesias[i] = ""+cort.getAmount()+" "+cort.getTipo();
+			}
+			
+			DialogDeleteCortesia dialogC = new DialogDeleteCortesia();
+			Bundle b = new Bundle();
+			b.putStringArray("comps", cortesias);
+			b.putInt("pos", position);
+			dialogC.setArguments(b);
+			dialogC.show(getFragmentManager(), "diagCant");
+		}else{
+			makeToast(R.string.no_cortesias);
+		}
+	}
+
+	@Override
+	public void onDialogPositive(boolean[] arr,int pos) {
+		Product p = product;
+		List<Cortesias> corts = product.getCortesias();
+		dbHelper.open();
+		for(int i = 0; i<arr.length;i++){
+			if(arr[i]){
+				dbHelper.deleteCortesiasStand(corts.get(i).getId());
+				dbHelper.updateStandProducto(p.getStandId(), stand.getId(), p.getCantidadStand() + corts.get(i).getAmount());
+			}
+		}
+		makeToast(R.string.c_eliminado);
+		dbHelper.close();
+		boolean hayDetalle = 
+				(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
+
+		if(hayDetalle) {
+			((FragmentStandProd)getFragmentManager().
+				findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
+		}
+		
 	}
 
 }

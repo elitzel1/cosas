@@ -150,7 +150,8 @@ public class PDF{
 				}
 			}
 			
-			int finalInventory = prod.getTotalCantidad()-(cmd+cmv+cmo+cmo1+cmo2);
+			int finalInventory = prod.getCantidad();
+			int prodVendido = prod.getTotalCantidad() - prod.getCantidad() - (cmd+cmv+cmo+cmo1+cmo2);
 			
 			cell.setPhrase(new Phrase(String.valueOf(prod.getTotalCantidad()),fontTexto));
 			table.addCell(cell);
@@ -168,11 +169,11 @@ public class PDF{
 			cell.setPhrase(new Phrase(String.valueOf(cmo2),fontTexto));
 			table.addCell(cell);
 			
-			cell.setPhrase(new Phrase(String.valueOf(0),fontTexto));
+			cell.setPhrase(new Phrase(String.valueOf(finalInventory),fontTexto));
 			table.addCell(cell);
 			
-			double gross = Double.parseDouble(prod.getPrecio())* finalInventory;
-			cell.setPhrase(new Phrase(String.valueOf(prod.getTotalCantidad()),fontTexto));
+			double gross = Double.parseDouble(prod.getPrecio())* prodVendido;
+			cell.setPhrase(new Phrase(String.valueOf(prodVendido),fontTexto));
 			table.addCell(cell);
 			cell.setPhrase(new Phrase(dinero.format(gross),fontTexto));
 			table.addCell(cell);
@@ -444,11 +445,11 @@ public class PDF{
 	
 	public double[] tableProducts(Document document, List<Product> listProd,String[] headers ,float y){
 		//list all the products sold to the customer
-		float[] columnWidths = {0.7f, 1f, 0.8f, 0.6f, 1f, 1.1f, 1.1f, 1f};
+		float[] columnWidths = {0.7f, 1f, 1.0f, 0.8f, 0.6f, 1f, 1.1f, 1.1f, 1f};
 		//create PDF table with the given widths
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
-		table.setTotalWidth(500f);
+		table.setTotalWidth(550f);
 		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
 		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
 		font.setColor(BaseColor.WHITE);
@@ -477,6 +478,8 @@ public class PDF{
 			table.addCell(cell);
 			
 			cell.setPhrase(new Phrase(prod.getNombre(),fontTexto));
+			table.addCell(cell);
+			cell.setPhrase(new Phrase(prod.getTipo(),fontTexto));
 			table.addCell(cell);
 			cell.setPhrase(new Phrase(prod.getArtista(),fontTexto));
 			table.addCell(cell);
@@ -508,10 +511,9 @@ public class PDF{
 				amount += cant;
 				cell.setPhrase(new Phrase(df.format(cant),fontTexto));
 				table.addCell(cell);
-				
-				cell.setPhrase(new Phrase(df.format(prod.getCantidadStand() * Double.parseDouble(prod.getPrecio())),fontTexto));
-				table.addCell(cell);
 			}
+			cell.setPhrase(new Phrase(df.format(prod.getCantidadStand() * Double.parseDouble(prod.getPrecio())),fontTexto));
+			table.addCell(cell);
 			
 			float size = table.getTotalHeight();
 			if(y-size <= 25){
@@ -520,7 +522,7 @@ public class PDF{
 			}
 		}
 		//absolute location to print the PDF table from 
-		table.writeSelectedRows(0, -1, document.leftMargin(), y, docWriter.getDirectContent());
+		table.writeSelectedRows(0, -1, document.leftMargin()-5, y, docWriter.getDirectContent());
 		
 		return new double[]{0,amount,table.getTotalHeight()};
 	}

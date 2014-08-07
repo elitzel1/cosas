@@ -53,23 +53,25 @@
         android:textColor="@color/azul_textos"
         android:textStyle="bold" />
 
-    <EditText
+    <TextView
         android:id="@+id/editNumeroProductos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
         android:layout_marginRight="8dp"
         android:layout_weight="0.7"
-        android:inputType="number" 
-        android:singleLine="true">
+        android:clickable="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/azul_textos"
+        android:textStyle="bold" />
 
-    </EditText>
-    
     <TextView
         android:id="@+id/txtCortesias"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
         android:layout_weight="0.7"
         android:clickable="true"
         android:textAppearance="?android:attr/textAppearanceMedium"

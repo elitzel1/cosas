@@ -37,7 +37,7 @@ public class DialogUpdate extends DialogFragment {
 	private String[]comison = {"AGENCY","VENUE","PROMOTOR","OTHER"};
 	private EditText editNombre;
 	//private EditText editCantidad;
-	private EditText editPrecio;
+	private EditText editPrecio,editCantidad;
 	private Spinner spinnerTipos;
 	private Spinner spinnerArtistas;
 	private OnDialogUpdateListener listener;
@@ -86,7 +86,7 @@ public class DialogUpdate extends DialogFragment {
 		view = inflater.inflate(R.layout.dialog_update_prod,null);
 		img = (ImageView)view.findViewById(R.id.imgProdD);
 		editNombre = (EditText)view.findViewById(R.id.editNombreProd);
-		//editCantidad = (EditText)view.findViewById(R.id.editCantidadProd);
+		editCantidad = (EditText)view.findViewById(R.id.editCantidadProd);
 		editPrecio = (EditText)view.findViewById(R.id.editPrecio);
 		spinnerTipos = (Spinner)view.findViewById(R.id.spinnerTipo);
 		spinnerArtistas = (Spinner)view.findViewById(R.id.spinnerArtista);
@@ -113,6 +113,7 @@ public class DialogUpdate extends DialogFragment {
 		editNombre.setText(product.getNombre());
 		//editCantidad.setText(""+product.getTotalCantidad());
 		editPrecio.setText(""+product.getPrecio());
+		editCantidad.setText(""+product.getTotalCantidad());
 
 		if(!product.getTalla().contentEquals("")){
 			talla.setText(product.getTalla());
@@ -154,8 +155,6 @@ public class DialogUpdate extends DialogFragment {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-
 			}
 		});
 
@@ -165,7 +164,6 @@ public class DialogUpdate extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(enableTipos==false){
 					setImage(iCurrentSelection);
 					spinnerTipos.setVisibility(View.VISIBLE);
@@ -261,7 +259,6 @@ public class DialogUpdate extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
 				if(!amount.contentEquals("")){
 					if(Integer.parseInt(amount) >= 0 && Integer.parseInt(amount) <= 100){
@@ -316,7 +313,6 @@ public class DialogUpdate extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(countT>0){
 					final LinearLayout temp = (LinearLayout)mLinearT.findViewById(countT);
 					temp.removeAllViews();
@@ -348,7 +344,6 @@ public class DialogUpdate extends DialogFragment {
 					}else {listener.makeToastDialog(R.string.sin_tipo);
 					return;}
 				}
-				// TODO Auto-generated method stub
 				if(editNombre.getEditableText()!=null){
 					if(!editNombre.getEditableText().toString().contentEquals(""))
 						if(editNombre.getEditableText().toString().contentEquals(product.getNombre())){
@@ -397,17 +392,24 @@ public class DialogUpdate extends DialogFragment {
 					return;
 				}
 				
-				/*
+				
 				if(editCantidad.getEditableText()!=null){
 					if(!editCantidad.getEditableText().toString().contentEquals("")){
-						if(Integer.parseInt(editCantidad.getEditableText().toString()) < product.getTotalCantidad()){
-							if(editCantidad.getEditableText().toString().contentEquals(""+product.getTotalCantidad())){
-								cantidad = ""+product.getTotalCantidad();
+						int cant = Integer.parseInt(editCantidad.getEditableText().toString());
+						if(cant > product.getTotalCantidad()){
+							int newCant = product.getCantidad() + (cant - product.getTotalCantidad());
+							product.setTotalCantidad(cant);
+							product.setCantidad(newCant);
+						}else if(cant < product.getTotalCantidad()){
+							if((product.getTotalCantidad() - cant) <= product.getCantidad()){
+								int newCant = product.getCantidad() - (product.getTotalCantidad() - cant);
+								product.setTotalCantidad(cant);
+								product.setCantidad(newCant);
 							}else{
-								cantidad = editCantidad.getEditableText().toString();
+								listener.makeToastDialog(R.string.sin_cantidad_valida);
+								return;
 							}
-						}else{listener.makeToastDialog(R.string.sin_cantidad_valida);
-						return;}
+						}
 					}else{
 						listener.makeToastDialog(R.string.sin_cantidad);
 						return;
@@ -416,9 +418,9 @@ public class DialogUpdate extends DialogFragment {
 					listener.makeToastDialog(R.string.sin_cantidad);
 					return;
 				}
-				*/
+				
 
-				Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, "", product.getCantidad(), list_comisiones, path);
+				Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, product.getTalla(), product.getCantidad(), list_comisiones, path);
 				p.setTotalCantidad(product.getTotalCantidad());
 				p.setId(product.getId());
 				p.setComisiones(list_comisiones);
@@ -432,7 +434,6 @@ public class DialogUpdate extends DialogFragment {
 		btnCancelar.setOnClickListener(new OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				dismiss();
 			}
 		});

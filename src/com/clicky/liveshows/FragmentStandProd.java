@@ -65,12 +65,16 @@ public class FragmentStandProd extends Fragment {
 	private OnNewAdicional listener;
 	private OnNewCortesia listenerCortesia;
 	private OnStandAbierto listenerAbierto;
+	private OnReturnProduct listenerReturn;
+	private OnDeleteCortesia listenerDelete;
 
 	int idFecha;
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
 	protected static final int CONTEXTMENU_CHANGECOMISION = 1;
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
+	protected static final int CONTEXTMENU_DELETECORTESIA = 4;
+	protected static final int CONTEXTMENU_RETURNITEM = 5;
 	protected static final int PRODUCTOS = 0;
 	protected static final int STAND = 1;
 
@@ -86,12 +90,22 @@ public class FragmentStandProd extends Fragment {
 		public void onStandAbierto(Stand s);
 	}
 	
+	public interface OnReturnProduct{
+		public void onReturnProduct(Product product,int position);
+	}
+	
+	public interface OnDeleteCortesia{
+		public void onDeleteCortesiaDialog(Product product,int position);
+	}
+	
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
 		try{
 			listener=(OnNewAdicional)activity;
 			listenerCortesia=(OnNewCortesia)activity;
 			listenerAbierto=(OnStandAbierto)activity;
+			listenerReturn=(OnReturnProduct)activity;
+			listenerDelete=(OnDeleteCortesia)activity;
 		}catch(ClassCastException e){}
 	}
 
@@ -147,6 +161,8 @@ public class FragmentStandProd extends Fragment {
 				menu.add(0, CONTEXTMENU_DELETEITEM,0,R.string.m_eliminar);
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
 				menu.add(0, CONTEXTMENU_ADDCORTESIA, 3, R.string.m_cortesia);
+				menu.add(0, CONTEXTMENU_DELETECORTESIA, 4, R.string.m_delete_cortesia);
+				menu.add(0, CONTEXTMENU_RETURNITEM, 5, R.string.m_regresar);
 			//	menu.add(R.string.title_menu);
 			}
 		});
@@ -233,6 +249,7 @@ public class FragmentStandProd extends Fragment {
 					if(cursorCr.moveToFirst()){
 						do{
 							Cortesias cort = new Cortesias();
+							cort.setId(cursorCr.getInt(0));
 							cort.setTipo(cursorCr.getString(1));
 							cort.setAmount(cursorCr.getInt(2));
 							listCor.add(cort);
@@ -337,7 +354,7 @@ public class FragmentStandProd extends Fragment {
 					total = iva;
 				}
 				if(vendedor.getIva().equals("%")){
-					comision += total * (vendedor.getCantidad() * 0.01);
+					comision += truncate( total * (vendedor.getCantidad() * 0.01));
 				}else{
 					comision += vendedor.getCantidad() * prod.getProdNo();
 				}
@@ -413,6 +430,12 @@ public class FragmentStandProd extends Fragment {
 		case CONTEXTMENU_ADDCORTESIA:
 			listenerCortesia.onSetCortesia((Product)list.getAdapter().getItem(menuInfo.position), menuInfo.position, s);
 			return true;
+		case CONTEXTMENU_DELETECORTESIA:
+			listenerDelete.onDeleteCortesiaDialog((Product)list.getAdapter().getItem(menuInfo.position), menuInfo.position);
+			return true;
+		case CONTEXTMENU_RETURNITEM:
+			listenerReturn.onReturnProduct((Product)list.getAdapter().getItem(menuInfo.position), menuInfo.position);
+			return true;
 		}
 
 		return false;
@@ -428,6 +451,10 @@ public class FragmentStandProd extends Fragment {
 				db.open();
 				if(db.deleteProductStand(s.getId(), p.getId(),p.getCantidad() + p.getCantidadStand())){
 					db.deleteVentas(p.getStandId());
+					for(Cortesias com:p.getCortesias()){
+						db.deleteCortesiasStand(com.getId());
+						db.updateProducto(p.getId(), p.getCantidad()+p.getCantidadStand()+com.getAmount());
+					}
 					items.remove(pos);
 					adapter.notifyDataSetChanged();
 					Log.i("DB", " eliminado");
@@ -464,7 +491,6 @@ public class FragmentStandProd extends Fragment {
 
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -528,7 +554,7 @@ public class FragmentStandProd extends Fragment {
 		public String getNombre(){ return name;}
 		public int getImage(){return image;}
 	}
-	
+
 	private void changeComision(int position){
 		DialogUpdateComision dialog = new DialogUpdateComision();
 		Product p = (Product)list.getAdapter().getItem(position);

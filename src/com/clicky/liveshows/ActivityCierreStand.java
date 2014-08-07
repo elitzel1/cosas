@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import com.clicky.liveshows.DialogCantidadProducto.OnCantidadListener;
+import com.clicky.liveshows.DialogDeleteCortesia.OnCortesiasSelected;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.adapters.AdapterCloseStand;
 import com.clicky.liveshows.database.DBAdapter;
@@ -32,14 +34,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class ActivityCierreStand extends Activity implements OnCortesiaListener, TextWatcher {
+public class ActivityCierreStand extends Activity implements OnCortesiaListener, TextWatcher, OnCantidadListener, OnCortesiasSelected {
 
 	private DBAdapter dbHelper;
 	private PDF pdf;
@@ -51,6 +58,9 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	String nombre,encargado;
 	TextView txtTotal,txtComision,txtFalta;
 	EditText editEfectivo,editBanamex,editBanorte,editSantander,editAmex,editOtro1,editOtro2,editOtro3;
+	
+	protected static final int CONTEXTMENU_ADDCORTESIA = 0;
+	protected static final int CONTEXTMENU_DELETECORTESIA = 1;
 
 	@SuppressLint("UseSparseArrays")
 	@Override
@@ -172,6 +182,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 						int cantCor = 0;
 						do{
 							Cortesias cort = new Cortesias();
+							cort.setId(cursorCr.getInt(0));
 							cort.setTipo(cursorCr.getString(1));
 							cort.setAmount(cursorCr.getInt(2));
 							cantCor += cursorCr.getInt(2);
@@ -214,8 +225,42 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		
 		adapter = new AdapterCloseStand(this, R.layout.item_cierra_stand, products,comisiones);
 		list.setAdapter(adapter);
+		list.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v,
+					ContextMenuInfo menuInfo) {
+				//	menu.add(R.string.title_menu);
+				menu.add(0, CONTEXTMENU_ADDCORTESIA, 0, R.string.m_cortesia);
+				menu.add(0, CONTEXTMENU_DELETECORTESIA, 1, R.string.m_delete_cortesia);
+			}
+		});
 		
 		calculaTotales();
+	}
+	
+	public boolean onContextItemSelected(MenuItem aItem) {
+
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem.getMenuInfo();
+		/* Switch on the ID of the item, to get what the user selected. */
+		switch (aItem.getItemId()) {
+
+			case CONTEXTMENU_ADDCORTESIA:
+				dialogCortesia(menuInfo.position);
+				return true;
+			case CONTEXTMENU_DELETECORTESIA:
+				dialogDeleteCortesia(menuInfo.position);
+				return true;
+
+		}
+
+		return false;
+	}
+	
+	public void menuCortesias(View sender){
+		registerForContextMenu(sender); 
+	    openContextMenu(sender);
+	    unregisterForContextMenu(sender);
 	}
 	
 	public void calculaTotales(){
@@ -237,7 +282,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		
 		txtTotal.setText("$"+formatter.format(totalVentas));
 		txtComision.setText("$"+formatter.format(comision));
-		txtFalta.setText("$"+formatter.format(totalVentas-comision-depositado));
+		txtFalta.setText("$"+formatter.format(totalVentas-(comision+depositado)));
 	}
 
 	/**
@@ -282,8 +327,17 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		super.onResume();
 
 	}
+	
+	public void dialogCantidad(int position){
+		DialogCantidadProducto dialogA = new DialogCantidadProducto();
+		Bundle params = new Bundle();
+		params.putString("nombre", products.get(position).getNombre());
+		params.putInt("position", position);
+		dialogA.setArguments(params);
+		dialogA.show(getFragmentManager(), "diagCant");
+	}
 
-	public void dialogCortesia(int position){
+	private void dialogCortesia(int position){
 		DialogSetCortesia dialogA = new DialogSetCortesia();
 		Bundle params = new Bundle();
 		params.putString("nombre", products.get(position).getNombre());
@@ -291,17 +345,39 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		dialogA.setArguments(params);
 		dialogA.show(getFragmentManager(), "diagCor");
 	}
+	
+	private void dialogDeleteCortesia(int position){
+		Product product = products.get(position);
+		if(product.getCortesias().size() > 0){
+			String[] cortesias = new String[product.getCortesias().size()];
+			
+			for(int i = 0; i < product.getCortesias().size();i++){
+				Cortesias cort = product.getCortesias().get(i);
+				cortesias[i] = ""+cort.getAmount()+" "+cort.getTipo();
+			}
+			
+			DialogDeleteCortesia dialogC = new DialogDeleteCortesia();
+			Bundle b = new Bundle();
+			b.putStringArray("comps", cortesias);
+			b.putInt("pos", position);
+			dialogC.setArguments(b);
+			dialogC.show(getFragmentManager(), "diagCant");
+		}else{
+			Toast.makeText(this,R.string.no_cortesias,Toast.LENGTH_SHORT).show();
+		}
+	}
 
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
-		// TODO Auto-generated method stub
 		Product p = products.get(position);
 		Log.i("COR", "Set cortesia "+p.getNombre()+" "+cortesia);
 		int total=p.getCantidadStand()-cortesia.getAmount();
-		if((total) >= 0){
+		if(total >= 0){
 			dbHelper.open();
-			if(dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getStandId(),id)>=0){
+			int cortId = (int)dbHelper.createCortesia(cortesia.getTipo(), cortesia.getAmount(), p.getStandId(),id); 
+			if(cortId>=0){
 				int cantidad = total;
+				cortesia.setId(cortId);
 				p.addCortesia(cortesia);
 				p.setCantidadStand(cantidad);
 				comisiones[position] += cortesia.getAmount();
@@ -384,7 +460,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					getReport();
-					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand.pdf");
+					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/sales_stand_"+nombre+".pdf");
 					Intent intent = new Intent(Intent.ACTION_VIEW);
 					intent.setDataAndType(Uri.fromFile(file), "application/pdf");
 					intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -483,7 +559,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		}
 		
 		double[] ingresos = {efectivo,banamex,banorte,santander,amex,other1,other2,other3};
-		Document docPdf = pdf.createPDFHorizontal("sales_stand.pdf");
+		Document docPdf = pdf.createPDFHorizontal("sales_stand_"+nombre+".pdf");
 		
 		int pag = 1;
 		pdf.createHeadings(983, 15, 8, ""+pag);
@@ -613,6 +689,41 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		int aux = (int)num;
 		double res = (double)aux / 100;
 		return res;
+	}
+
+	@Override
+	public void setCantidad(String cantidad, int position) {
+		Product p = products.get(position);
+		int prodNo = Integer.parseInt(cantidad);
+		if(prodNo <= p.getCantidadStand()){
+			p.setProdNo(prodNo);
+			adapter.notifyDataSetChanged();
+			calculaTotales();
+		}else{
+			Toast.makeText(this, R.string.sin_cantidad_valida, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	public void onDialogPositive(boolean[] arr, int pos) {
+		Product p = products.get(pos);
+		List<Cortesias> corts = p.getCortesias();
+		List<Cortesias> sobrantes = new ArrayList<Cortesias>();
+		dbHelper.open();
+		for(int i = 0; i<arr.length;i++){
+			if(arr[i]){
+				dbHelper.deleteCortesiasStand(corts.get(i).getId());
+				dbHelper.updateStandProducto(p.getStandId(), id, p.getCantidadStand() + corts.get(i).getAmount());
+				p.setCantidadStand(p.getCantidadStand()+corts.get(i).getAmount());
+				comisiones[pos] -= corts.get(i).getAmount();
+			}else{
+				sobrantes.add(corts.get(i));
+			}
+		}
+		p.setCortesias(sobrantes);
+		Toast.makeText(this, R.string.c_eliminado, Toast.LENGTH_SHORT).show();
+		dbHelper.close();
+		adapter.notifyDataSetChanged();
 	}
 	
 }

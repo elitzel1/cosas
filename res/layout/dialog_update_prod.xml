@@ -132,7 +132,6 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="@string/cantidad"
-                    android:visibility="gone"
                     android:inputType="number" >
               
                 </EditText>

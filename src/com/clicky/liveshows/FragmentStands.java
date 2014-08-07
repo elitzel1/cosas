@@ -40,8 +40,8 @@ public class FragmentStands extends Fragment {
 	DBAdapter dbHelper;
 	int idFecha;
 
-	protected static final int CONTEXTMENU_DELETESTAND = 4;
-	protected static final int CONTEXTMENU_UPDATEITEM = 5;
+	protected static final int CONTEXTMENU_DELETESTAND = 6;
+	protected static final int CONTEXTMENU_UPDATEITEM = 7;
 	
 	public void onAttach(Activity activity){
 		super.onAttach(activity);

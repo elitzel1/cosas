@@ -349,7 +349,7 @@ public class DialogAddProduct extends DialogFragment {
 		
 				if(editCantidadTallas.getEditableText()!=null){
 					if(!editCantidadTallas.getEditableText().toString().equals("")){
-						if(Integer.parseInt(editCantidadTallas.getEditableText().toString())>0){
+						if(Integer.parseInt(editCantidadTallas.getEditableText().toString()) >= 0){
 							list_tallas.add(new Talla(com,editCantidadTallas.getEditableText().toString()));
 							countTallas++;
 							addView(com,editCantidadTallas.getEditableText().toString(), countTallas, mLinearTallas);

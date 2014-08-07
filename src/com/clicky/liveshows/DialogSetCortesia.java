@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -85,7 +84,7 @@ public class DialogSetCortesia extends DialogFragment {
 					if(!editAdicional.getEditableText().toString().contentEquals("")){
 						int amount = Integer.parseInt(editAdicional.getEditableText().toString());
 						if(amount>0){
-							listener.setCortesia(new Cortesias((String)spinner.getSelectedItem(),amount),position);
+							listener.setCortesia(new Cortesias(0,(String)spinner.getSelectedItem(),amount),position);
 							dismiss();
 						}else return;
 					}else return;
