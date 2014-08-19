@@ -55,10 +55,6 @@ public class Excel {
 	    //add on the your app's path
 	    File dir = new File(sdCard.getAbsolutePath() + "/MerchSys");
 	    
-	    if(dir.exists()){
-	    	dir.delete();
-	    }
-	    
 	    //make them in case they're not there
 	    dir.mkdir();
 	    //create a standard java.io.File object for the Workbook to use

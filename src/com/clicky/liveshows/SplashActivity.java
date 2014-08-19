@@ -1,9 +1,12 @@
 package com.clicky.liveshows;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 
@@ -19,6 +22,11 @@ public class SplashActivity extends Activity{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		final int bandEvento = prefs.getInt("evento", 0);
 		
+		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MerchSys");
+	    
+	    //make them in case they're not there
+	    dir.mkdir();
+	    
 		new Handler().postDelayed(new Runnable() {
 			 
             @Override

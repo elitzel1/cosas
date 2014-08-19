@@ -307,6 +307,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
+			setResult(RESULT_CANCELED);
 			finish();
 			overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 			return true;
@@ -320,6 +321,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 	@Override
 	public void onBackPressed(){
 		super.onBackPressed();
+		setResult(RESULT_CANCELED);
 		overridePendingTransition(R.anim.finish_enter_anim, R.anim.finish_exit_anim);
 	}
 	
@@ -713,7 +715,7 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		for(int i = 0; i<arr.length;i++){
 			if(arr[i]){
 				dbHelper.deleteCortesiasStand(corts.get(i).getId());
-				dbHelper.updateStandProducto(p.getStandId(), id, p.getCantidadStand() + corts.get(i).getAmount());
+				dbHelper.updateStandProducto(p.getId(), id, p.getCantidadStand() + corts.get(i).getAmount());
 				p.setCantidadStand(p.getCantidadStand()+corts.get(i).getAmount());
 				comisiones[pos] -= corts.get(i).getAmount();
 			}else{

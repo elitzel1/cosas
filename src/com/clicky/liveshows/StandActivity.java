@@ -436,7 +436,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 
 	@Override
 	public void onStandSeleccionado(Stand s) {
-		// TODO Auto-generated method stub
 		this.stand = s;
 		boolean hayDetalle = 
 				(getFragmentManager().findFragmentById(R.id.article_fragment) != null);
@@ -471,6 +470,8 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					((FragmentStandProd)getFragmentManager().
 						findFragmentById(R.id.article_fragment)).setStand(stand,idFecha);
 				}
+	    	}else if(requestCode == Activity.RESULT_CANCELED){
+	    		onGetData();
 	    	}
 	    }
 	}
@@ -495,7 +496,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	
 	@Override
 	public void onGetData() {
-		// TODO Auto-generated method stub
 		dbHelper.open();
 		Cursor cursor = dbHelper.fetchAllStand();
 		if(cursor.moveToFirst()){
@@ -531,7 +531,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 
 	@Override
 	public void onSetAdicional(Product p,int position, Stand s) {
-		// TODO Auto-generated method stub
 		DialogAddAdcional dialogA = new DialogAddAdcional();
 		this.product=p;
 		this.stand=s;
@@ -557,9 +556,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	//CORREGIR CANTIDAD
 	@Override
 	public void setAdicional(String adicional, int position) {
-		// TODO Auto-generated method stub
-		Log.i("ERROR","En set adicional "+adicional+" "+position+" "+product.getCantidad());
-		
 		Product p = product;
 		dbHelper.open();
 		if((p.getCantidad()-Integer.parseInt(adicional)) >= 0){
@@ -596,7 +592,6 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 	
 	@Override
 	public void setCortesia(Cortesias cortesia, int position) {
-		// TODO Auto-generated method stub
 		Product p = product;
 		int total=p.getCantidadStand()-cortesia.getAmount();
 		if((total) >= 0){

@@ -467,7 +467,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	}
 	
 	private void dialogVenue(){
-		//TODO
 		DialogVenue dialog = new DialogVenue();
 		Bundle b = new Bundle();
 		b.putString("nombre", venue);
@@ -614,7 +613,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		//		File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF); //Guardamos temporalmente
 		//la imagen indicando el sufijo, y el album, y el prefijo(Nombre de la imagen)
 		File imageF = new File(Environment
-				.getExternalStorageDirectory(),imageFileName+JPEG_FILE_SUFFIX); //Guardamos temporalmente
+				.getExternalStorageDirectory()+"/MerchSys",imageFileName+JPEG_FILE_SUFFIX); //Guardamos temporalmente
 
 		return imageF;
 	}

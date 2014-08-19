@@ -1,5 +1,6 @@
 package com.clicky.liveshows;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.RoundingMode;
@@ -478,11 +479,11 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 			
 			@Override
 			public void onClick(View v) {
-				getReport(2, agencia.getText().toString(), contacto.getText().toString(), artista,"sales_report_agency.xls");
-				getPDFReport(2, agencia.getText().toString(), contacto.getText().toString(),artista,"sales_report_agency.pdf");
+				getReport(2, agencia.getText().toString(), contacto.getText().toString(), artista,"sales_report_"+agencia.getText().toString()+".xls");
+				getPDFReport(2, agencia.getText().toString(), contacto.getText().toString(),artista,"sales_report_"+agencia.getText().toString()+".pdf");
 				if(validaCorreo(mail.getText().toString())){
-					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_agency.pdf";
-					String reporte2 = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_agency.xls";
+					String reporte = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_"+agencia.getText().toString()+".pdf";
+					String reporte2 = Environment.getExternalStorageDirectory().getAbsolutePath()+ "/MerchSys/sales_report_"+agencia.getText().toString()+".xls";
 					ArrayList<Uri> uris = new ArrayList<Uri>();
 					uris.add(Uri.parse("file:///"+reporte));
 					uris.add(Uri.parse("file:///"+reporte2));
@@ -617,6 +618,13 @@ public class ActivityCierreDia extends Activity implements DatePickerFragmentLis
 		SharedPreferences.Editor edit = prefs.edit();
 		edit.putInt("evento", 0);
 		edit.commit();
+		
+		File folder = new File(Environment.getExternalStorageDirectory()+ "/MerchSys");
+		if (folder.isDirectory()){
+	        for (File child : folder.listFiles())
+	            child.delete();
+	    }
+		
 		setResult(RESULT_OK);
 		finish();
 	}
