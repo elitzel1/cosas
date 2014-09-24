@@ -146,7 +146,6 @@ public class DialogAddProduct extends DialogFragment {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -157,7 +156,6 @@ public class DialogAddProduct extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(enableTipos==false){
 					setImage(iCurrentSelection);
 					spinnerTipos.setVisibility(View.VISIBLE);
@@ -281,7 +279,6 @@ public class DialogAddProduct extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				String amount = ((EditText)view.findViewById(R.id.editImpuestoCantidad)).getEditableText().toString();
 				if(!amount.contentEquals("")){
 					if(Integer.parseInt(amount) >= 0 && Integer.parseInt(amount) <= 100){
@@ -311,7 +308,6 @@ public class DialogAddProduct extends DialogFragment {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 			
 				if(isChecked){
 					LinearLayout linear = (LinearLayout)view.findViewById(R.id.linearTalla);
@@ -320,8 +316,7 @@ public class DialogAddProduct extends DialogFragment {
 					mLinearTallas.setVisibility(View.VISIBLE);
 					list_tallas = new ArrayList<Talla>();
 					enableTallas=true;
-				}else
-				{
+				}else{
 					enableTallas=false;
 					editCantidad.setVisibility(View.VISIBLE);
 					((LinearLayout)view.findViewById(R.id.linearTalla)).setVisibility(View.GONE);
@@ -380,7 +375,6 @@ public class DialogAddProduct extends DialogFragment {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(countTallas>0){
 					final LinearLayout temp = (LinearLayout)mLinearTallas.findViewById(countTallas);
 					temp.removeAllViews();
@@ -412,7 +406,6 @@ public class DialogAddProduct extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				if(countT>0){
 					final LinearLayout temp = (LinearLayout)mLinearT.findViewById(countT);
 					temp.removeAllViews();
@@ -447,7 +440,6 @@ public class DialogAddProduct extends DialogFragment {
 						return;
 					}
 				}
-				// TODO Auto-generated method stub
 				if(editNombre.getEditableText()!=null){
 					if(!editNombre.getEditableText().toString().contentEquals(""))
 						nombre=editNombre.getEditableText().toString();
@@ -505,14 +497,13 @@ public class DialogAddProduct extends DialogFragment {
 				}
 
 				if(enableTallas){
-					for(int i = 0;i<list_tallas.size();i++){
-									//Nombre, Tipo, cantidadTalla, artista, precio, impuestos, comisiones, path,idimagen, talla
-									Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, list_tallas.get(i).getTalla(),Integer.parseInt(list_tallas.get(i).getCantidad()),list_comisiones ,path);
-									p.setTotalCantidad(Integer.parseInt(list_tallas.get(i).getCantidad()));
-									p.setComisiones(list_comisiones);
-									p.setTaxes(list_taxes);
-									listener.articuloNuevo(p, idImagen);
-				
+					for(int i = 0; i < list_tallas.size(); i++){
+						//Nombre, Tipo, cantidadTalla, artista, precio, impuestos, comisiones, path,idimagen, talla
+						Product p = new Product(nombre, tipo, spinnerArtistas.getSelectedItem().toString(), precio, list_tallas.get(i).getTalla(),Integer.parseInt(list_tallas.get(i).getCantidad()),list_comisiones ,path);
+						p.setTotalCantidad(Integer.parseInt(list_tallas.get(i).getCantidad()));
+						p.setComisiones(list_comisiones);
+						p.setTaxes(list_taxes);
+						listener.articuloNuevo(p, idImagen);				
 					}
 
 				}else{
@@ -529,7 +520,6 @@ public class DialogAddProduct extends DialogFragment {
 		btnCancelar.setOnClickListener(new OnClickListener() {	
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				dismiss();
 			}
 		});

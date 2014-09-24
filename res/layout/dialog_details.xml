@@ -159,6 +159,30 @@
                         android:textColor="@color/azul"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
+                
+                <TableRow
+                    android:id="@+id/tableRowStand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:id="@+id/textViewS"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/d_cantidad_stand"
+                        android:textColor="@color/azul_textos"
+                        android:textStyle="bold"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/txtCantidadS"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:textColor="@color/azul"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                </TableRow>
 
                 <TableRow
                     android:id="@+id/tableRow6"

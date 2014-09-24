@@ -23,6 +23,7 @@ import com.clicky.liveshows.DialogAddAdcional.OnAdicionalListener;
 import com.clicky.liveshows.DialogAddArtist.OnAddArtist;
 import com.clicky.liveshows.DialogAddProduct.OnDialogListener;
 import com.clicky.liveshows.DialogDeleteCortesia.OnCortesiasSelected;
+import com.clicky.liveshows.DialogEvent.OnEventListener;
 import com.clicky.liveshows.DialogSetCortesia.OnCortesiaListener;
 import com.clicky.liveshows.DialogUpdate.OnDialogUpdateListener;
 import com.clicky.liveshows.DialogVenue.OnVenueListener;
@@ -66,7 +67,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener,OnDialogUpdateListener,OnAddArtist,OnCortesiasSelected,OnVenueListener {
+public class ActivityProductos extends Activity implements OnDialogListener, OnItemClickListener,OnAdicionalListener,OnCortesiaListener,OnDialogUpdateListener,OnAddArtist,OnCortesiasSelected,OnVenueListener,OnEventListener {
 
 	private DBAdapter dbHelper;
 	private Cursor cursor;
@@ -88,6 +89,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	protected static final int CONTEXTMENU_DETALLEITEM =2;
 	protected static final int CONTEXTMENU_ADDCORTESIA = 3;
 	protected static final int CONTEXTMENU_DELETECORTESIA = 4;
+	protected static final int CONTEXTMENU_DELETEADDING = 5;
 	
 
 	private static final String JPEG_FILE_PREFIX = "IMG_";
@@ -126,6 +128,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				menu.add(0, CONTEXTMENU_DETALLEITEM, 2, R.string.m_detalles);
 				menu.add(0, CONTEXTMENU_ADDCORTESIA, 3, R.string.m_cortesia);
 				menu.add(0, CONTEXTMENU_DELETECORTESIA, 4, R.string.m_delete_cortesia);
+				menu.add(0, CONTEXTMENU_DELETEADDING, 5, R.string.m_delete_adding);
 			}
 		});
 
@@ -193,9 +196,10 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				if(cursorA.moveToFirst()){
 					a = new ArrayList<Adicionales>();
 					do{
+						int adId = cursorA.getInt(0);
 						int cantidadA = cursorA.getInt(1);
 						String nomA = cursorA.getString(2);
-						a.add(new Adicionales(nomA, cantidadA, id));
+						a.add(new Adicionales(adId,nomA, cantidadA, id));
 						Log.i("PAdicionales",nomA+" "+cantidadA);
 					}while(cursorA.moveToNext());
 				}
@@ -217,7 +221,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 						cortesias.add(new Cortesias(cortId,tipoC, cantidadC));
 					}while(cursorCortesias.moveToNext());
 				}
-
+				cursorCortesias.close();
 
 				List<Integer> id_impuestos = new ArrayList<Integer>();
 				Cursor cursorI=dbHelper.fetchProductImpuestoProd(id);
@@ -255,6 +259,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 							}
 						}while(cursorPI.moveToNext());	
 					}
+					cursorPI.close();
 				}
 				Product p = new Product(nombre, tipo, artistas.get(idArtista), precio, talla, cantidad, null, foto);
 				p.setTotalCantidad(cantidadTotal);
@@ -267,9 +272,8 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				addProduct(p, a);
 				Log.i("PRODUCTS",""+id+" "+nombre+" "+tipo+" "+talla+" "+cantidad+" "+cantidadTotal+" "+precio+" "+idEvento+" "+idArtista);
 			}while(cursorProd.moveToNext());
-			cursorProd.close();
-
 		}
+		cursorProd.close();
 
 		dbHelper.close();
 
@@ -326,6 +330,9 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		case R.id.action_venue:
 			dialogVenue();
 			return true;
+		case R.id.action_event:
+			dialogEvent();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -347,7 +354,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 			df.applyPattern("$#,##0.00");
 				
-			double subTotal = 0, venueFee = 0, royaltyFee = 0,promotorFee =0,otherFee=0,totalVenta = 0;
+			double subTotal = 0, totalVenta = 0;
 			for(Product prod : products){
 				int totalCant = prod.getTotalCantidad() - prod.getCantidad();
 				for(Cortesias cort : prod.getCortesias()){
@@ -355,36 +362,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				}
 				double total = Double.parseDouble(prod.getPrecio()) * totalCant;
 				totalVenta += total;
-				double conTax = 0;
 					
 				for(Taxes tax : prod.getTaxes()){
 					double aux = 1 + (tax.getAmount()* 0.01);
-					conTax += truncate(total / aux);
 					subTotal += truncate(total / aux);
 				}
 					
-				for(Comisiones com : prod.getComisiones()){
-					double cant = 0, aux = 0;
-					if(com.getTipo().equals("After taxes")){
-						cant = conTax;
-					}else if(com.getTipo().equals("Before taxes")){
-						cant = total;
-					}
-					if(com.getIva().equals("%")){
-						aux = truncate(cant * (com.getCantidad() * 0.01));  
-					}else if(com.getIva().equals("$")){
-						aux = com.getCantidad() * prod.getProdNo();
-					}
-					if(com.getName().equals("VENUE")){
-						venueFee += aux;
-					}else if(com.getName().equals("AGENCY")){
-						royaltyFee += aux;
-					}else if(com.getName().equals("PROMOTOR")){
-						promotorFee += aux;
-					}else if(com.getName().equals("OTHER")){
-						otherFee += aux;
-					}
-				}
 			}
 				
 			Document docPdf = pdf.createPDFHorizontal("warehouse_report.pdf");
@@ -398,7 +381,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			pdf.createHeadings(504-((texto.length()/2)*9), 535, 14, texto);
 				
 			float aux1 = pdf.tableDatos(docPdf, new String[]{"DATE","EVENT","VENUE"}, 
-					new String[]{fechaEvento,artistas.get(1),venue}, docPdf.leftMargin(), 515);
+					new String[]{fechaEvento,nameEvento,venue}, docPdf.leftMargin(), 515);
 				
 			float aux2 = pdf.tableDatos(docPdf, new String[]{"ATTENDANCE","PERCAP","GROSS TOTAL","RATE EXCHANGE US$1 ="}, 
 					new String[]{""+capacidad,df.format(totalVenta/capacidad),df.format(totalVenta),df.format(priceUs)+" "+prefs.getString("moneda", "")}, 620, 515);
@@ -448,7 +431,6 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 				pdf.addImage(docPdf, 923,540,"merchsys_logo.png");
 				pos = 500;
 			}
-			pdf.tableNum(docPdf, new String[]{"VENUE FEE","ROYALTY FEE","PROMOTOR FEE","OTHER FEE"}, new double[]{venueFee,royaltyFee,promotorFee,otherFee}, x, (pos));
 			
 			docPdf.close();
 			File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/warehouse_report.pdf");
@@ -473,6 +455,14 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		b.putInt("capacidad", capacidad);
 		dialog.setArguments(b);
 		dialog.show(getFragmentManager(), "Change Venue");
+	}
+	
+	private void dialogEvent(){
+		DialogEvent dialog = new DialogEvent();
+		Bundle b = new Bundle();
+		b.putString("nombre", nameEvento);
+		dialog.setArguments(b);
+		dialog.show(getFragmentManager(), "Change Event");
 	}
 	
 	private void setupActionBar(){
@@ -675,6 +665,7 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			for(TipoProduct prod:tipos){
 				if(prod.getNombre().contentEquals(item.getTipo())){
 					item.setId_imagen(prod.getImage());
+					break;
 				}
 			}
 		}else{
@@ -722,11 +713,12 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		Product p = products.get(position);
 		if(p.getAdicional().size()<5){
 			String nombre ="Adicional"+(p.getAdicional().size()+1); 
-			p.setAdicional(nombre, Integer.parseInt(adicional), p.getId());
 			dbHelper.open();
-			if(dbHelper.createAdicional(nombre, Integer.parseInt(adicional),  p.getId())==-1){
+			int adId = (int)dbHelper.createAdicional(nombre, Integer.parseInt(adicional),  p.getId());
+			if(adId == -1){
 				makeToast(R.string.error);
 			}else{
+				p.setAdicional(adId,nombre, Integer.parseInt(adicional), p.getId());
 				dbHelper.updateProducto(p.getId(), p.getTotalCantidad()+Integer.parseInt(adicional),  p.getCantidad()+Integer.parseInt(adicional));
 				p.setTotalCantidad(p.getTotalCantidad()+Integer.parseInt(adicional));
 				p.setCantidad(p.getCantidad()+Integer.parseInt(adicional));
@@ -780,7 +772,9 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 		case CONTEXTMENU_DELETECORTESIA:
 			showDeleteCortesias(menuInfo.position);
 			return true;
-
+		case CONTEXTMENU_DELETEADDING:
+			deleteAdding(menuInfo.position);
+			return true;
 		}
 
 		return false;
@@ -873,6 +867,43 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			makeToast(R.string.no_cortesias);
 		}
 	}
+	private void deleteAdding(final int position){
+		final Product p = products.get(position);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(getResources().getString(R.string.alert_delete_adding));
+		builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Adicionales ad = p.getAdicionalA(p.getAdicionalSize()-1);
+				
+				if(ad.getCantidad() <= p.getCantidad()){
+					dbHelper.open();
+					
+					dbHelper.updateProducto(p.getId(), p.getTotalCantidad() - ad.getCantidad(), p.getCantidad() - ad.getCantidad());
+					dbHelper.deleteAdicional(ad.getId());
+					
+					p.setTotalCantidad(p.getTotalCantidad() - ad.getCantidad());
+					p.setCantidad(p.getCantidad() - ad.getCantidad());
+					p.setAdicional(p.getAdicional().subList(0, p.getAdicionalSize()-1));
+					dbHelper.close();
+					adapter.notifyDataSetChanged();
+					makeToast(R.string.a_eliminado);
+				}else{
+					makeToast(R.string.err_cantidad);
+				}
+			}
+		});
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
+	
 	public Product getProduct(Product p){
 		return p;
 	}
@@ -1064,8 +1095,14 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 	
 	@Override
 	public void setNewArtist(String artistName) {
+		for(int i = 0 ; i < id_artists.length; i++){
+			if(artistas.containsValue(artistName)){
+				makeToast(R.string.e_artista);
+				return;
+			}
+		}
 		dbHelper.open();
-		long newId = dbHelper.createArtista(artistName);
+		long newId = dbHelper.createArtista(artistName,idEvento);
 		if(newId != -1){
 			int[] resultInt = Arrays.copyOf(id_artists, id_artists.length +1);
 			resultInt[id_artists.length] = (int) newId;
@@ -1119,9 +1156,25 @@ public class ActivityProductos extends Activity implements OnDialogListener, OnI
 			}else{
 				makeToast(R.string.error);
 			}
+			dbHelper.close();
 		}else{
 			makeToast(R.string.v_noval);
 		}
+		
+	}
+
+	@Override
+	public void changeEvent(String nombre) {
+		dbHelper.open();
+		if(dbHelper.updateEvento(idEvento, nombre)){
+			nameEvento = nombre;
+			TextView txtEvento = (TextView)findViewById(R.id.txtArtistaP);
+			txtEvento.setText(nameEvento);
+			makeToast(R.string.e_actualizado);
+		}else{
+			makeToast(R.string.error);
+		}
+		dbHelper.close();
 		
 	}
 

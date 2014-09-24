@@ -61,7 +61,7 @@ public class AdapterCloseStand extends ArrayAdapter<Product> {
 		holder.txtProduct.setText(item.getNombre());
 		holder.txtTipo.setText(item.getTipo());
 		holder.txtArtista.setText(item.getArtista());
-		holder.txtCantidad.setText(""+item.getCantidadStand());
+		holder.txtCantidad.setText(""+(item.getCantidadStand() - item.getProdNo()));
 		holder.editCantidad.setId(position);
 		holder.txtCortesias.setText(""+cortesias[position]);
 		

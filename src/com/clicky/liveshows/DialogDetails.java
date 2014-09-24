@@ -37,6 +37,7 @@ public class DialogDetails extends DialogFragment {
 	ImageView img;
 	Product product;
 	Activity ac;
+	boolean isStand = false;
 
 	public void onAttach(Activity activity){
 		super.onAttach(activity);
@@ -48,7 +49,11 @@ public class DialogDetails extends DialogFragment {
 	public void setProduct(Product product){
 		this.product=product;
 	}
-
+	
+	public void isStand(boolean isStand){
+		this.isStand = isStand;
+	}
+	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState){
 		AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
@@ -78,6 +83,14 @@ public class DialogDetails extends DialogFragment {
 		txtPrecio.setText(product.getPrecio());
 		txtCantidad.setText(""+product.getCantidad());
 		txtArtista.setText(product.getArtista());
+		
+		if(isStand){
+			TableRow row = (TableRow)view.findViewById(R.id.tableRowStand);
+			TextView txtCantidadStand = (TextView)view.findViewById(R.id.txtCantidadS);
+			
+			row.setVisibility(View.VISIBLE);
+			txtCantidadStand.setText(""+product.getCantidadStand());
+		}
 
 		if(product.getId_imagen()==0){
 			setPic(product.getPath_imagen());

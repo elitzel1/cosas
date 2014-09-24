@@ -8,7 +8,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import com.clicky.liveshows.DatePickerFragment.DatePickerFragmentListener;
+import com.clicky.liveshows.DatePickerFragment.OnDateSelected;
 import com.clicky.liveshows.adapters.AdapterArtista;
 import com.clicky.liveshows.adapters.AdapterSpinnerMoneda;
 import com.clicky.liveshows.adapters.AdpterSpinner;
@@ -34,7 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements DatePickerFragmentListener {
+public class MainActivity extends Activity implements OnDateSelected {
 
 	private Spinner spinnerLocal;
 	AdapterArtista adapterArtista;
@@ -124,13 +124,17 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 		EditText editArtista = (EditText)findViewById(R.id.editArtista);
 		if(editArtista.getEditableText()!=null){
 			if(!editArtista.getEditableText().toString().contentEquals("")){
-				artistas.add(editArtista.getEditableText().toString());
-				countA++;
-				addView(editArtista.getEditableText().toString(),countA,mLinear);
-				makeToast(R.string.m_art_agregado);
-				if(visibleArtista==false){
-					findViewById(R.id.btnEliminarArtista).setVisibility(View.VISIBLE);
-					visibleArtista=true;
+				if(artistas.contains(editArtista.getEditableText().toString())){
+					makeToast(R.string.e_artista);
+				}else{
+					artistas.add(editArtista.getEditableText().toString());
+					countA++;
+					addView(editArtista.getEditableText().toString(),countA,mLinear);
+					makeToast(R.string.m_art_agregado);
+					if(visibleArtista==false){
+						findViewById(R.id.btnEliminarArtista).setVisibility(View.VISIBLE);
+						visibleArtista=true;
+					}
 				}
 				editArtista.setText("");
 			}
@@ -244,7 +248,9 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 						currentLocal.setNombre(parser.nextText());
 					} else if (name.contentEquals("capacidad")){
 						currentLocal.setCapacidad(Integer.parseInt(parser.nextText()));
-					}  
+					}  else if(name.contentEquals("lugar")){
+						currentLocal.setLugar(parser.nextText());
+					}
 				}
 				break;
 			case XmlPullParser.END_TAG:
@@ -285,17 +291,23 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 	@Override
 	public void onFinishDatePickerDialog(int year, int month, int day) {
-		fechas.add(day+"/"+(month+1)+"/"+year);
-		countD++;
-		addView(""+day+"/"+(month+1)+"/"+year, countD, mLinearDate);
-		makeToast(R.string.m_date_agregado);
-		if(visibleDate==false){
-			findViewById(R.id.btnEliminarFecha).setVisibility(View.VISIBLE);
-			visibleDate=true;
+		if(fechas.contains(""+day+"/"+(month+1)+"/"+year)){
+			makeToast(R.string.e_fecha);
+		}else{
+			fechas.add(day+"/"+(month+1)+"/"+year);
+			countD++;
+			addView(""+day+"/"+(month+1)+"/"+year, countD, mLinearDate);
+			makeToast(R.string.m_date_agregado);
+			if(visibleDate==false){
+				findViewById(R.id.btnEliminarFecha).setVisibility(View.VISIBLE);
+				visibleDate=true;
+			}
 		}
 	}
 
 	public void guardarDatos(View v){
+		EditText editNombre = (EditText)findViewById(R.id.editNombre);
+		
 		boolean bandera[] = new boolean[5];
 
 		for(int i=0;i<bandera.length;i++){
@@ -304,7 +316,11 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 		Evento evento = new Evento();
 
-		evento.setNombre("LiveShows");
+		if(editNombre.getEditableText()!=null){
+			if(!editNombre.getEditableText().toString().contentEquals("")){
+				evento.setNombre(editNombre.getEditableText().toString());
+			}else { makeToast(R.string.sin_evento); return;}
+		}else { makeToast(R.string.sin_evento); return;}
 
 		if(artistas.size()<=0){
 			makeToast(R.string.sin_artista);
@@ -373,13 +389,13 @@ public class MainActivity extends Activity implements DatePickerFragmentListener
 
 	private void guardarBD(Evento evento){
 		dbHelper.open();
-		dbHelper.createEvento(evento.getNombre(), evento.getLocal(), evento.getCapacidad());
+		int eventoId = (int)dbHelper.createEvento(evento.getNombre(), evento.getLocal(), evento.getCapacidad());
 		for(int i = 0 ;i<artistas.size();i++){
-			dbHelper.createArtista(artistas.get(i));
+			dbHelper.createArtista(artistas.get(i),eventoId);
 		}
 		
 		for(int i = 0;i<fechas.size();i++){
-			dbHelper.createFecha(fechas.get(i));
+			dbHelper.createFecha(fechas.get(i),eventoId);
 		}
 		dbHelper.close();
 		

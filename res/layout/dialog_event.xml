@@ -29,27 +29,17 @@
         android:orientation="horizontal" >
 
 	    <EditText
-	        android:id="@+id/editVenue"
+	        android:id="@+id/editEvent"
 	        android:layout_width="0dp"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
 	        android:layout_marginLeft="5dp"
 	        android:layout_marginRight="5dp"
-	        android:hint="@string/evento_local"
+	        android:hint="@string/hint_evento"
 	        android:inputType="text" >
 	
 	        <requestFocus />
 	    </EditText>
-	    
-	    <EditText
-	        android:id="@+id/editCapacidad"
-	        android:layout_width="0dp"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"
-	        android:layout_marginLeft="5dp"
-	        android:layout_marginRight="5dp"
-	        android:hint="@string/evento_capacidad"
-	        android:inputType="number" />
     
     </LinearLayout>
 

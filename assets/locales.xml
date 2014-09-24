@@ -6,14 +6,29 @@
         <lugar>DF,MEXICO</lugar>
     </item>
     <item>
+        <title>ARENA HSBC</title>
+        <capacidad>15000</capacidad>
+        <lugar>RIO DE JANEIRO,BRASIL</lugar>
+    </item>
+    <item>
         <title>ARENA MONTERREY</title>
         <capacidad>17599</capacidad>
         <lugar>MONTERREY ,NL ,MEXICO</lugar>
     </item>
     <item>
+        <title>ARENA MOVISTAR</title>
+        <capacidad>17419</capacidad>
+        <lugar>SANTIAGO , CHILE</lugar>
+    </item>
+    <item>
         <title>ARENA VFG</title>
         <capacidad>10500</capacidad>
         <lugar>TLAJOMULCO,JAL,MEXICO</lugar>
+    </item>
+    <item>
+        <title>AUDIO</title>
+        <capacidad>2500</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
     </item>
     <item>
         <title>AUDITORIO BANAMEX</title>
@@ -51,6 +66,16 @@
         <lugar>DF,MEXICO</lugar>
     </item>
     <item>
+        <title>CARIOCA CLUB</title>
+        <capacidad>0</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>CASA DE LA CULTURA ECUATORIANA</title>
+        <capacidad>2450</capacidad>
+        <lugar>QUITO,ECUADOR</lugar>
+    </item>
+    <item>
         <title>CCCULTURAL 1</title>
         <capacidad>2200</capacidad>
         <lugar>DF,MEXICO</lugar>
@@ -61,9 +86,29 @@
         <lugar>DF,MEXICO</lugar>
     </item>
     <item>
+        <title>CENTRO DE CONVENCIONES GIMARAES</title>
+        <capacidad>3000</capacidad>
+        <lugar>BRASILICA, BRASIL</lugar>
+    </item>
+    <item>
+        <title>CHEVROLET HALL</title>
+        <capacidad>5000</capacidad>
+        <lugar>BELO HORIZONTE, BRASIL</lugar>
+    </item>
+    <item>
+        <title>CHEVROLET HALL CENTER</title>
+        <capacidad>6000</capacidad>
+        <lugar>RIO DE JANEIRO,BRASIL</lugar>
+    </item>
+    <item>
         <title>CIRCO VOLADOR</title>
         <capacidad>2800</capacidad>
         <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+        <title>CITI BANK HALL</title>
+        <capacidad>7744</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
     </item>
     <item>
         <title>EL DOMO</title>
@@ -81,9 +126,19 @@
         <lugar>DF,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO ARENA MAIPU</title>
+        <capacidad>5000</capacidad>
+        <lugar>MENDOZA,ARGENTINA</lugar>
+    </item>
+    <item>
         <title>ESPACIO UNIVERSTARIO DE CULTURA</title>
         <capacidad>3500</capacidad>
         <lugar>PUEBLA ,PUEBLA, MEXICO</lugar>
+    </item>
+    <item>
+        <title>ESPACO DOS AMERICAS</title>
+        <capacidad>8000</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
     </item>
     <item>
         <title>ESTADIO 20 DE NOV</title>
@@ -101,6 +156,11 @@
         <lugar>CANCUN ,QUINTANA ROO,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO ATANASIO GIRARDOT</title>
+        <capacidad>47000</capacidad>
+        <lugar>MEDELLIN,COLOMBIA</lugar>
+    </item>
+    <item>
         <title>ESTADIO AZTECA</title>
         <capacidad>104000</capacidad>
         <lugar>DF,MEXICO</lugar>
@@ -109,6 +169,11 @@
         <title>ESTADIO CALIENTE</title>
         <capacidad>12000</capacidad>
         <lugar>TIJUANA,BAJA CAL.NORTE, MEXICO</lugar>
+    </item>
+    <item>
+        <title>ESTADIO CENTENARIO </title>
+        <capacidad>65235</capacidad>
+        <lugar>MONTEVIDEO ,URUGUAY</lugar>
     </item>
     <item>
         <title>ESTADIO CORONA</title>
@@ -121,12 +186,57 @@
         <lugar>HERMOSILLO,SON,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO DE BEISBOL</title>
+        <capacidad>14000</capacidad>
+        <lugar>SANTO DOMINGO,REP.DOMINICANA</lugar>
+    </item>
+    <item>
         <title>ESTADIO DE CHIAPAS</title>
         <capacidad>25508</capacidad>
         <lugar>TUXTLA ,CHIAPAS,MEXICO</lugar>
     </item>
     <item>
-        <title>ESTADIO JALISCO </title>
+        <title>ESTADIO DE LA PLATA</title>
+        <capacidad>40000</capacidad>
+        <lugar>LA PLATA ,ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO DE RIVER PLATE</title>
+        <capacidad>74624</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO DE SAN MARCOS</title>
+        <capacidad>67469</capacidad>
+        <lugar>LIMA ,PERU</lugar>
+    </item>
+    <item>
+        <title>ESTADIO DEFENSORES DEL SUCRE</title>
+        <capacidad>1700</capacidad>
+        <lugar>QUITO,ECUADOR</lugar>
+    </item>
+    <item>
+        <title>ESTADIO DO VASCO DAGAMA</title>
+        <capacidad>25000</capacidad>
+        <lugar>RIO DE JANEIRO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>ESTADIO EL CAMPIN</title>
+        <capacidad>35000</capacidad>
+        <lugar>BOGOTA ,COLOMBIA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO FERROCARRIL</title>
+        <capacidad>18000</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO INTERNACIONAL DE PORTO ALEGRE</title>
+        <capacidad>65205</capacidad>
+        <lugar>PORTO ALEGRE ,BRASIL</lugar>
+    </item>
+    <item>
+        <title>ESTADIO JALISCO</title>
         <capacidad>63187</capacidad>
         <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
     </item>
@@ -141,9 +251,69 @@
         <lugar>VER,VERACRUZ,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO MAGICO GONZALEZ</title>
+        <capacidad>16000</capacidad>
+        <lugar>EL SAVADOR ,EL SALVADOR</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MALVINAS EXPLANADA</title>
+        <capacidad>24000</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MALVINAS TECHADO</title>
+        <capacidad>12980</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MARIO A KEMPES</title>
+        <capacidad>57000</capacidad>
+        <lugar>CORDOBA,ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MATEO FLORES</title>
+        <capacidad>26000</capacidad>
+        <lugar>GUATEMALA,GUATEMALA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MONUMENTAL</title>
+        <capacidad>80000</capacidad>
+        <lugar>LIMA ,PERU</lugar>
+    </item>
+    <item>
+        <title>ESTADIO MORUMBI</title>
+        <capacidad>72000</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>ESTADIO NACIONAL CHILE</title>
+        <capacidad>65127</capacidad>
+        <lugar>SANTIAGO , CHILE</lugar>
+    </item>
+    <item>
+        <title>ESTADIO NACIONAL DE COSTA RICA</title>
+        <capacidad>40000</capacidad>
+        <lugar>SAN JOSE ,COSTARICA</lugar>
+    </item>
+    <item>
+        <title>ESTADIO NACIONAL DE PERU</title>
+        <capacidad>47574</capacidad>
+        <lugar>LIMA ,PERU</lugar>
+    </item>
+    <item>
+        <title>ESTADIO NILSON NELSON</title>
+        <capacidad>5000</capacidad>
+        <lugar>BRASILICA, BRASIL</lugar>
+    </item>
+    <item>
         <title>ESTADIO OMNILIFE</title>
         <capacidad>49850</capacidad>
         <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
+    </item>
+    <item>
+        <title>ESTADIO ROD CAREW</title>
+        <capacidad>27000</capacidad>
+        <lugar>PANAMA,PANAMA</lugar>
     </item>
     <item>
         <title>ESTADIO ROMO CHAVEZ</title>
@@ -151,14 +321,34 @@
         <lugar>QUERETARO,QRO,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO SAPRISSA</title>
+        <capacidad>23112</capacidad>
+        <lugar>SAN JOSE ,COSTARICA</lugar>
+    </item>
+    <item>
         <title>ESTADIO UNIVERSITARIO DE NL</title>
         <capacidad>43000</capacidad>
         <lugar>MONTERREY ,NL ,MEXICO</lugar>
     </item>
     <item>
+        <title>ESTADIO VELEZ</title>
+        <capacidad>49590</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
         <title>ESTUDIO CABARET (CALLE "2")</title>
         <capacidad>2600</capacidad>
         <lugar>ZAPOPAN,JAL,MEXICO</lugar>
+    </item>
+    <item>
+        <title>EXPLANADA DE ARENA MOVISTAR</title>
+        <capacidad>12000</capacidad>
+        <lugar>SANTIAGO , CHILE</lugar>
+    </item>
+    <item>
+        <title>EXPLANADA DE ESTADIO SAN MARCOS</title>
+        <capacidad>25000</capacidad>
+        <lugar>LIMA ,PERU</lugar>
     </item>
     <item>
         <title>EXPLANADA DE VFG</title>
@@ -181,6 +371,11 @@
         <lugar>VILLA HERNMOSA, TAB,MEXICO</lugar>
     </item>
     <item>
+        <title>FIGALI CONVENTION CENTER</title>
+        <capacidad>10275</capacidad>
+        <lugar>PANAMA,PANAMA</lugar>
+    </item>
+    <item>
         <title>FORO SOL</title>
         <capacidad>53000</capacidad>
         <lugar>DF,MEXICO</lugar>
@@ -191,14 +386,109 @@
         <lugar>ACAPULCO,GRO,MEX</lugar>
     </item>
     <item>
+        <title>GEBA</title>
+        <capacidad>18000</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>GIMNASIO DE IBIRAPUERA</title>
+        <capacidad>4500</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>GIMNASIO DE INTERNACIONAL</title>
+        <capacidad>20000</capacidad>
+        <lugar>PORTO ALEGRE ,BRASIL</lugar>
+    </item>
+    <item>
+        <title>GRAN REX</title>
+        <capacidad>3262</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>GROOVE</title>
+        <capacidad>1200</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>HARD ROCK CAFÉ PUNTA CANA</title>
+        <capacidad>1350</capacidad>
+        <lugar>PUNTA CANA,REP. DOM.</lugar>
+    </item>
+    <item>
+        <title>HIPODROMO DO SAO PAULO</title>
+        <capacidad>100000</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>HSBC</title>
+        <capacidad>3000</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>JOCKEY CLUB PERU</title>
+        <capacidad>25000</capacidad>
+        <lugar>LIMA ,PERU</lugar>
+    </item>
+    <item>
+        <title>JOCKEY CLUB PARAGUAY</title>
+        <capacidad>80000</capacidad>
+        <lugar>ASUNCION,PARAGUAY</lugar>
+    </item>
+    <item>
         <title>JOSÉ CUERVO SALÓN</title>
         <capacidad>3500</capacidad>
         <lugar>DF,MEXICO</lugar>
     </item>
     <item>
+        <title>LUNA PARK</title>
+        <capacidad>11290</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>MASTER HALL</title>
+        <capacidad>2500</capacidad>
+        <lugar>CURITIBA, BRASIL</lugar>
+    </item>
+    <item>
+        <title>MUNDO E</title>
+        <capacidad>10000</capacidad>
+        <lugar>GUATEMALA,GUATEMALA</lugar>
+    </item>
+    <item>
+        <title>MUSIC HALL</title>
+        <capacidad>1200</capacidad>
+        <lugar>CURITIBA, BRASIL</lugar>
+    </item>
+    <item>
+        <title>MUSIC HALL</title>
+        <capacidad>2000</capacidad>
+        <lugar>BELO HORIZONTE, BRASIL</lugar>
+    </item>
+    <item>
         <title>PALACIO DE LOS DEPORTES</title>
         <capacidad>18500</capacidad>
         <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+        <title>PALACIO DE LOS DEPORTES</title>
+        <capacidad>5000</capacidad>
+        <lugar>BOGOTA ,COLOMBIA</lugar>
+    </item>
+    <item>
+        <title>PARQUE DOS ATLETAS</title>
+        <capacidad>100000</capacidad>
+        <lugar>RIO DE JANEIRO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>PARQUE SIMON BOLIVAR</title>
+        <capacidad>22000</capacidad>
+        <lugar>BOGOTA ,COLOMBIA</lugar>
+    </item>
+    <item>
+        <title>PEPSI  ONE STAGE  DE PORTO ALEGRE</title>
+        <capacidad>31098</capacidad>
+        <lugar>PORTO ALEGRE ,BRASIL</lugar>
     </item>
     <item>
         <title>PEPSI CENTER WTC</title>
@@ -216,9 +506,34 @@
         <lugar>LEON,GTO,MEXICO</lugar>
     </item>
     <item>
+        <title>SALON METROPOLITANO</title>
+        <capacidad>2500</capacidad>
+        <lugar>ROSARIO ,ARGENTINA</lugar>
+    </item>
+    <item>
+        <title>SAMBODROMO DO AMHENBI</title>
+        <capacidad>30000</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>SAMBODROMO DO APOTEOSIS</title>
+        <capacidad>80000</capacidad>
+        <lugar>RIO DE JANEIRO,BRASIL</lugar>
+    </item>
+    <item>
         <title>TEATRO ALDAMA</title>
         <capacidad>1570</capacidad>
         <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+        <title>TEATRO BURBON</title>
+        <capacidad>3000</capacidad>
+        <lugar>PORTO ALEGRE ,BRASIL</lugar>
+    </item>
+    <item>
+        <title>TEATRO CAOPOLICAN</title>
+        <capacidad>4500</capacidad>
+        <lugar>SANTIAGO , CHILE</lugar>
     </item>
     <item>
         <title>TEATRO DIANA</title>
@@ -226,9 +541,29 @@
         <lugar>GUADALAJARA ,JAL,MEXICO</lugar>
     </item>
     <item>
+        <title>TEATRO ORFEO</title>
+        <capacidad>12000</capacidad>
+        <lugar>CORDOBA,ARGENTINA</lugar>
+    </item>
+    <item>
         <title>TEATRO TELCEL</title>
         <capacidad>1400</capacidad>
         <lugar>DF,MEXICO</lugar>
+    </item>
+    <item>
+        <title>UPINAO BAR</title>
+        <capacidad>1800</capacidad>
+        <lugar>PORTO ALEGRE ,BRASIL</lugar>
+    </item>
+    <item>
+        <title>VIA MARQUES</title>
+        <capacidad>1300</capacidad>
+        <lugar>SAO PAULO,BRASIL</lugar>
+    </item>
+    <item>
+        <title>VORTERIX</title>
+        <capacidad>1249</capacidad>
+        <lugar>BUENOS AIRES, ARGENTINA</lugar>
     </item>
     <item>
         <title>WTC VERACRUZ</title>

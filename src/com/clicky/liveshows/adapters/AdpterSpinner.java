@@ -39,9 +39,10 @@ public class AdpterSpinner extends ArrayAdapter<Local> {
 		else
 			holderDrop = (ViewHolderDrop)view.getTag();
 
-		holderDrop.txtDrop.setText(""+
-				items.get(position).getNombre());
-
+		if(items.get(position).getLugar() != null)
+			holderDrop.txtDrop.setText(""+items.get(position).getNombre()+" - "+items.get(position).getLugar());
+		else
+			holderDrop.txtDrop.setText(""+items.get(position).getNombre());
 		return view;
 	}
 

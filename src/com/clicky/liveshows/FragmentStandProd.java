@@ -49,7 +49,7 @@ import android.widget.Toast;
 @SuppressLint("UseSparseArrays")
 public class FragmentStandProd extends Fragment {
 
-	LinearLayout empty,closed;
+	LinearLayout empty,closed,opened;
 	TextView txtNombre;
 	TextView txtEncargado;
 	TextView txtComision;
@@ -124,6 +124,7 @@ public class FragmentStandProd extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_stand_prod, container, false); 
 		
 		empty = (LinearLayout)v.findViewById(R.id.vacio);
+		opened = (LinearLayout)v.findViewById(R.id.opened);
 		closed = (LinearLayout)v.findViewById(R.id.closed);
 		txtEncargado = (TextView)v.findViewById(R.id.txtEncargado);
 		txtComision = (TextView)v.findViewById(R.id.txtComision);
@@ -243,6 +244,7 @@ public class FragmentStandProd extends Fragment {
 					comi.setId(idTaxes);
 					comisiones.add(comi);
 				}
+				cursorImp.close();
 				Cursor cursor = db.fetchProducto(idProd);
 				if(cursor.moveToFirst()){
 					Cursor cursorCr = db.fetchCortesias(cursor.getLong(0), s.getId());
@@ -255,6 +257,7 @@ public class FragmentStandProd extends Fragment {
 							listCor.add(cort);
 						}while(cursorCr.moveToNext());
 					}
+					cursorCr.close();
 					String nombre = cursor.getString(1);
 					int idArtista = cursor.getInt(9);
 					String artista = artistas.get(idArtista);
@@ -299,6 +302,7 @@ public class FragmentStandProd extends Fragment {
 								}
 							}while(cursorPI.moveToNext());	
 						}
+						cursorPI.close();
 					}
 					p.setNombre(nombre);
 					p.setArtista(artista);
@@ -316,20 +320,22 @@ public class FragmentStandProd extends Fragment {
 						if(ventas.moveToFirst()){
 							p.setProdNo(ventas.getInt(3));
 						}
+						ventas.close();
 					}
 					idProducts.add(idProd);
 				}
 				items.add(p);
 				Log.i("STAND_PROD", p.getNombre()+" "+p.getTipo()+" "+p.getTalla()+" "+cantidad);
 			}while(c.moveToNext());
+			c.close();
 			adapter.notifyDataSetChanged();
 		}else{
 			items.clear();
 			adapter.notifyDataSetChanged();
 		}
-		c.close();
 		if(s.isOpened()){
 			closed.setVisibility(View.GONE);
+			opened.setVisibility(View.VISIBLE);
 			if(items.isEmpty()){
 				btnCierre.setVisibility(View.INVISIBLE);
 			}else{
@@ -341,6 +347,7 @@ public class FragmentStandProd extends Fragment {
 			
 			double comision = 0,totalVentas = 0;
 			closed.setVisibility(View.VISIBLE);
+			opened.setVisibility(View.GONE);
 			for(Product prod : items){
 				double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
 				totalVentas += total;
@@ -379,10 +386,12 @@ public class FragmentStandProd extends Fragment {
 		}
 	}
 	private Product verifyImage(Product item){
+		item.setId_imagen(R.drawable.ic_launcher);
 		if(item.getPath_imagen().contentEquals("")){
 			for(TipoProduct prod:tipos){
 				if(prod.getNombre().contentEquals(item.getTipo())){
 					item.setId_imagen(prod.getImage());
+					break;
 				}
 			}
 		}else{
@@ -576,6 +585,7 @@ public class FragmentStandProd extends Fragment {
 	private void showDetails(int position){
 		DialogDetails dialog = new DialogDetails();
 		dialog.setProduct((Product)list.getAdapter().getItem(position));
+		dialog.isStand(true);
 		dialog.show(getFragmentManager(), "Detalles");
 	}
 	

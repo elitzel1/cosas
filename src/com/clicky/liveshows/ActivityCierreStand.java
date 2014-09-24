@@ -95,6 +95,10 @@ public class ActivityCierreStand extends Activity implements OnCortesiaListener,
 		((TextView)findViewById(R.id.ingreso_2)).setText(prefs.getString("tipo2", "OTHER"));
 		((TextView)findViewById(R.id.ingreso_3)).setText(prefs.getString("tipo3", "OTHER"));
 		
+		editOtro1.setHint(prefs.getString("tipo1", "OTHER"));
+		editOtro2.setHint(prefs.getString("tipo2", "OTHER"));
+		editOtro3.setHint(prefs.getString("tipo3", "OTHER"));
+		
 		editEfectivo.addTextChangedListener(this);
 		editBanamex.addTextChangedListener(this);
 		editBanorte.addTextChangedListener(this);

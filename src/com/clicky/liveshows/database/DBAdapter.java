@@ -135,13 +135,13 @@ public class DBAdapter {
 		return database.insert(TABLE_EVENTO, null, initialValues);
 	}
 
-	public long createArtista(String nombre){
-		ContentValues initialValues = createContentValuesArtist(nombre,0);
+	public long createArtista(String nombre,int idEvento){
+		ContentValues initialValues = createContentValuesArtist(nombre,idEvento);
 		return database.insert(TABLE_ARTISTA, null, initialValues);
 	}
 
-	public long createFecha(String date){
-		ContentValues initialValues = createContentValuesFecha(date,0);
+	public long createFecha(String date,int idEvento){
+		ContentValues initialValues = createContentValuesFecha(date,idEvento);
 		return database.insert(TABLE_FECHA, null, initialValues);
 	}
 
@@ -258,6 +258,11 @@ public class DBAdapter {
 		ContentValues updateValues = createContentValuesUpdateEvento(venue,capacidad);
 		return database.update(TABLE_EVENTO, updateValues, colIdEvento+" = "+rowId, null)>0;
 	}
+	
+	public boolean updateEvento(int rowId,String event){
+		ContentValues updateValues = createContentValuesUpdateEvento(event);
+		return database.update(TABLE_EVENTO, updateValues, colIdEvento+" = "+rowId, null)>0;
+	}
 	//Borra la tarea
 	public boolean deleteEvento(long rowId) {
 		return database.delete(TABLE_EVENTO, colIdEvento + "=" + rowId, null) > 0;
@@ -275,6 +280,9 @@ public class DBAdapter {
 		return database.delete(TABLE_CORTESIAS, colIdCortesias + " = "+rowId, null)>0;
 	}
 	
+	public boolean deleteAdicional(long rowId){
+		return database.delete(TABLE_ADICIONAL, colIdAdicional + " = "+rowId, null)>0;
+	}
 	public boolean deleteProduct(long rowId){
 		int band =database.delete(TABLE_PRODCUT, colIdProduct + " = "+rowId, null);
 		database.delete(TABLE_ADICIONAL, colProductoIdA+" = "+rowId, null);
@@ -644,6 +652,12 @@ public class DBAdapter {
 		ContentValues values = new ContentValues();
 		values.put(colLugar, lugar);
 		values.put(colCapacidad, capacidad);
+		return values;
+	}
+	
+	private ContentValues createContentValuesUpdateEvento(String evento) {
+		ContentValues values = new ContentValues();
+		values.put(colNombreEvento, evento);
 		return values;
 	}
 	

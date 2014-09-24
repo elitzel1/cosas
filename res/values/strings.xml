@@ -10,6 +10,7 @@
     <string name="action_print">Print</string>
     <string name="action_artist">Add Artist</string>
     <string name="action_venue">Modify Venue</string>
+    <string name="action_event">Change Event Name</string>
     <string name="hello_world">Hello world!</string>
     <string name="name">Live Shows Merchandising</string>
     <string name="action_accept">Accept</string>
@@ -17,7 +18,8 @@
     <string name="cancel">No</string>
 
     <!-- Evento -->
-    <string name="evento_artista">Event: </string>
+    <string name="evento_nombre">Event:</string>
+    <string name="evento_artista">Artist: </string>
     <string name="evento_local">Venue: </string>
     <string name="hint_local">Select a venue</string>
     <string name="evento_capacidad">Capacity:</string>
@@ -63,6 +65,7 @@
     <string name="cantidad_disponible">Amount Available</string>
     <string name="album_name">MerchSys</string>
     <string name="alert_delete">Are you sure you want to delete </string>
+    <string name="alert_delete_adding">Are you sure you want to delete this product\'s last adding?</string>
 
     <!-- Errores -->
     <string name="sin_artista">Write the name of the event</string>
@@ -85,6 +88,8 @@
     <string name="sin_stand">Missing stand name</string>
     <string name="sin_encargado">Missing stand manager\'s name</string>
     <string name="sin_stand_comision">Missing manager\'s commission</string>
+    <string name="e_artista">That artist already exists</string>
+    <string name="e_fecha">That date already exists</string>
 
     <!-- Menu Contextual -->
     <string name="m_eliminar">Delete</string>
@@ -96,6 +101,7 @@
     <string name="m_cortesia">Add Complimentary</string>
     <string name="m_delete_cortesia">Delete Complimentary</string>
     <string name="m_regresar">Return to Warehouse</string>
+    <string name="m_delete_adding">Delete Last Adding</string>
 
     <!-- Stands -->
     <string name="vacio">There are no Stands</string>
@@ -160,6 +166,7 @@
     <string name="d_talla">SIZE: </string>
     <string name="d_precio">PRICE: </string>
     <string name="d_cantidad">AMOUNT: </string>
+    <string name="d_cantidad_stand">IN STAND: </string>
     <string name="d_artista">ARTIST: </string>
     <string name="d_cortesias">COMPLIMENTARIES</string>
     <string name="d_no_cor">No complimentaries</string>
@@ -218,5 +225,8 @@
 	<string name="no_cortesias">This product has no complimentaries</string>
 	<string name="v_actualizado">Venue Updated</string>
 	<string name="v_noval">Capacity not Valid</string>
+	<string name="e_actualizado">Event Name Updated</string>
+	<string name="error_reportes">You haven\'t send all the reports</string>
+	<string name="a_eliminado">Adding deleted</string>
 	
 </resources>

@@ -40,10 +40,14 @@ public class PDF{
 	private BaseFont bfBold;
 	PdfWriter docWriter;
 	PdfContentByte cb;
+	Font font,fontTexto;
 	
 	public PDF(Context context) {
 		this.context = context;
 		initializeFonts();
+		font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,8);
+		fontTexto = FontFactory.getFont(FontFactory.HELVETICA,6);
+		font.setColor(BaseColor.WHITE);
 	}
 	
 	public void addImage(Document document,float x, float y,String name){
@@ -94,9 +98,6 @@ public class PDF{
 		// set table width a percentage of the page width
 		table.setTotalWidth(980f);
 		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
-		font.setColor(BaseColor.WHITE);
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		
 		for(int i = 0; i < headers.length; i++){
@@ -196,19 +197,17 @@ public class PDF{
 		return new double[]{0,table.getTotalHeight()};
 	}
 	
-	public double[] tableVentas(Document document, List<Product> listProd, String[] headers, double totalVenta,int cantInit, float y){
+	public double[] tableVentas(Document document, List<Product> listProd, String[] headers, double totalVenta,int cantInit, float y,
+			String tipo){
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Float priceUs = Float.parseFloat(prefs.getString("divisa", "0"));
 		//list all the products sold to the customer
-		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 1f, 0.7f, 0.65f, 1.1f, 0.6f, 0.6f, 1.1f, 0.75f, 0.8f, 0.9f, 0.9f};
+		float[] columnWidths = {1f, 0.25f, 1f, 1f, 0.5f, 1f, 1f, 0.7f, 0.65f, 1.1f, 0.6f, 0.6f, 1.1f, 0.75f, 0.8f, 0.9f, 0.9f,1.0f,0.85f};
 		//create PDF table with the given widths
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
 		table.setTotalWidth(980f);
 		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
-		font.setColor(BaseColor.WHITE);
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		
 		for(int i = 0; i < headers.length; i++){
@@ -294,6 +293,43 @@ public class PDF{
 			cell.setPhrase(new Phrase(dinero.format(gross/priceUs),fontTexto));
 			table.addCell(cell);
 			
+			String txtAux="";
+			double total = Double.parseDouble(prod.getPrecio()) * prod.getProdNo();
+			double conTax = 0;
+			double fee = 0.0;
+			
+			for(Taxes tax : prod.getTaxes()){
+				double aux = 1 + (tax.getAmount()* 0.01);
+				conTax += truncate(total / aux);
+			}
+			
+			for(Comisiones com : prod.getComisiones()){
+				double cant = 0, aux = 0;
+				if(com.getName().equals(tipo)){
+					if(com.getTipo().equals("After taxes")){
+						cant = conTax;
+					}else if(com.getTipo().equals("Before taxes")){
+						cant = total;
+					}
+					if(com.getIva().equals("%")){
+						aux = truncate(cant * (com.getCantidad() * 0.01));  
+					}else if(com.getIva().equals("$")){
+						aux = com.getCantidad() * prod.getProdNo();
+					}
+					
+					txtAux = ""+com.getCantidad()+com.getIva()+"\n"+com.getTipo();
+					fee = aux;
+						
+					break;
+				}
+			}
+			
+			cell.setPhrase(new Phrase(txtAux,fontTexto));
+			table.addCell(cell);
+			
+			cell.setPhrase(new Phrase(dinero.format(fee),fontTexto));
+			table.addCell(cell);
+			
 			float size = table.getTotalHeight();
 			if(y-size <= 25){
 				table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
@@ -316,9 +352,6 @@ public class PDF{
 		// set table width a percentage of the page width
 		table.setTotalWidth(940f);
 		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
-		font.setColor(BaseColor.WHITE);
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		
 		for(int i = 0; i < headers.length; i++){
@@ -445,14 +478,11 @@ public class PDF{
 	
 	public double[] tableProducts(Document document, List<Product> listProd,String[] headers ,float y){
 		//list all the products sold to the customer
-		float[] columnWidths = {0.7f, 1f, 1.0f, 0.8f, 0.6f, 1f, 1.1f, 1.1f, 1f};
+		float[] columnWidths = {0.7f, 1.1f, 1.0f, 0.8f, 0.5f, 1f, 1f, 1.1f, 1f,0.7f};
 		//create PDF table with the given widths
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
-		table.setTotalWidth(550f);
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		Font fontTexto = FontFactory.getFont(FontFactory.HELVETICA,8);
-		font.setColor(BaseColor.WHITE);
+		table.setTotalWidth(560f);
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		
@@ -515,14 +545,16 @@ public class PDF{
 			cell.setPhrase(new Phrase(df.format(prod.getCantidadStand() * Double.parseDouble(prod.getPrecio())),fontTexto));
 			table.addCell(cell);
 			
+			table.addCell("");
+			
 			float size = table.getTotalHeight();
-			if(y-size <= 25){
-				table.writeSelectedRows(0, -1, 10, y, docWriter.getDirectContent());
+			if(y-size <= 80){
+				table.writeSelectedRows(0, -1, 15, y, docWriter.getDirectContent());
 				return new double[]{1,amount,(i+1)};
 			}
 		}
 		//absolute location to print the PDF table from 
-		table.writeSelectedRows(0, -1, document.leftMargin()-5, y, docWriter.getDirectContent());
+		table.writeSelectedRows(0, -1, 15, y, docWriter.getDirectContent());
 		
 		return new double[]{0,amount,table.getTotalHeight()};
 	}
@@ -532,9 +564,6 @@ public class PDF{
 		PdfPTable table = new PdfPTable(2);
 		// set table width a percentage of the page width
 		table.setTotalWidth(230f);
-		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		font.setColor(BaseColor.WHITE);
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
@@ -583,9 +612,6 @@ public class PDF{
 		// set table width a percentage of the page width
 		table.setTotalWidth(230f);
 		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		font.setColor(BaseColor.WHITE);
-		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.US);
 		df.applyPattern("$#,##0.00");
@@ -614,9 +640,6 @@ public class PDF{
 		PdfPTable table = new PdfPTable(columnWidths);
 		// set table width a percentage of the page width
 		table.setTotalWidth(230f);
-		
-		Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,10);
-		font.setColor(BaseColor.WHITE);
 		
 		BaseColor azul = WebColors.getRGBColor("#347af0");
 		

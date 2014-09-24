@@ -118,8 +118,8 @@ public class Product {
 		this.adicional = adicional;
 	}
 
-	public void setAdicional(String name,int cantidad,int id){
-		this.adicional.add(new Adicionales(name,cantidad,id));
+	public void setAdicional(int adId,String name,int cantidad,int id){
+		this.adicional.add(new Adicionales(adId,name,cantidad,id));
 	}
 	
 	public Adicionales getAdicionalA(int position){

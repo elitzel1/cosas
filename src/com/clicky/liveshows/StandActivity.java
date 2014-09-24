@@ -156,6 +156,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					if(cursorVentas.moveToFirst()){
 						p.setProdNo(cursorVentas.getInt(3));
 					}
+					cursorVentas.close();
 					Cursor cursorImp = dbHelper.fetchImpuestos(comVendedorId);
 					if(cursorImp.moveToFirst()){
 						int idTaxes = cursorImp.getInt(0);
@@ -167,6 +168,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 						comi.setId(idTaxes);
 						comisiones.add(comi);
 					}
+					cursorImp.close();
 					Cursor cursor = dbHelper.fetchProducto(idProd);
 					if(cursor.moveToFirst()){
 						String nombre = cursor.getString(1);
@@ -213,6 +215,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 									}
 								}while(cursorPI.moveToNext());	
 							}
+							cursorPI.close();
 						}
 						p.setNombre(nombre);
 						p.setArtista(artista);
@@ -226,21 +229,24 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					}
 					prodList.add(p);
 				}while(c.moveToNext());
+				c.close();
 				
 				if(stand.isOpened()){
 					Document docPdf = pdf.createPDF("stand_"+stand.getName()+".pdf");
 					
-					String[] headers = {"Amount","Product","Type","Artist","Size","Price","Commission","Total\nCommission","Total\nSale"};
+					String[] headers = {"Amount","Product","Type","Artist","Size","Price","Commission","Total\nCommission"
+							,"Total\nSale","Final\nInventory"};
 					
 					int pag = 1;
 					pdf.createHeadings(580, 10, 8, ""+pag);
 					pdf.addImage(docPdf, 25,770,"live_shows_logo.png");
 					pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
 					String texto = "Stand: "+stand.getName();
-					pdf.createHeadings((520-(texto.length() * 9)), 730, 24, texto);
+					pdf.createHeadings((520-(texto.length() * 9.5f)), 730, 20, texto);
 					double[] dob = pdf.tableProducts(docPdf, prodList, headers,710);
 					int posInit = 710;
 					int mas = (int)dob[0];
+					double totalVenta = 0;
 					double totalVendedor = dob[1];
 					
 					if(mas != 0){
@@ -259,8 +265,13 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 						}while(mas != 0);
 					}
 					
+					for(int i = 0; i< prodList.size();i++){
+						Product p = prodList.get(i);
+						totalVenta += p.getCantidadStand() * Double.parseDouble(p.getPrecio());
+					}
+					
 					float pos = (float) (posInit - dob[2] - 10);
-					if(pos - 41 < 0){
+					if(pos - 90 < 0){
 						docPdf.newPage();
 						pag++;
 						pdf.createHeadings(580, 10, 8, ""+pag);
@@ -268,14 +279,14 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 						pdf.addImage(docPdf, 510,770,"merchsys_logo.png");
 						pos = 730;
 					}
-					pdf.tableNum(docPdf, new String[]{"TOTAL COMMISSION"}, new double[]{totalVendedor}, 150, pos);
+					pdf.tableNum(docPdf, new String[]{"TOTAL SALES","TOTAL COMMISSION"}, new double[]{totalVenta,totalVendedor}, 150, pos);
 					
 					String line1 = "Gerente";
 					String line2 = stand.getEncargado();
-					pdf.addLine(50, 90);
-					pdf.createHeadings(150 - ((line1.length()/2)*9), 78, 14, line1);
-					pdf.addLine(320, 90);
-					pdf.createHeadings(420 - ((line1.length()/2)*9), 78, 14, line2);
+					pdf.addLine(50, 60);
+					pdf.createHeadings(150 - ((line1.length()/2)*9), 44, 14, line1);
+					pdf.addLine(320, 60);
+					pdf.createHeadings(420 - ((line2.length()/2)*9.3f), 44, 14, line2);
 					docPdf.close();
 					
 					File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MerchSys/stand_"+stand.getName()+".pdf");
@@ -522,8 +533,7 @@ public class StandActivity extends Activity implements OnStandNuevo,OnChangeComi
 					Stand first = new Stand(id,nombre, encargado, com,efectivo,banamex,banorte,santander,amex,other1,other2,other3,vendedor,abierto);
 					onStandSeleccionado(first);
 				}
-		}while(cursor.moveToNext());
-		}else{
+			}while(cursor.moveToNext());
 		}
 		cursor.close();
 		dbHelper.close();

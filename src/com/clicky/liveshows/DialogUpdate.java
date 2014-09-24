@@ -48,7 +48,7 @@ public class DialogUpdate extends DialogFragment {
 	private int countC;
 	private int countT;
 	private int iCurrentSelection;
-	private boolean enableSpinner = true; 
+	private boolean hasImage = false; 
 	private int idImagen;
 	private LinearLayout mLinearT;
 	private List<Taxes> list_taxes;
@@ -127,7 +127,7 @@ public class DialogUpdate extends DialogFragment {
 		spinnerTipos.setAdapter(dataAdapter);
 
 		iCurrentSelection = dataAdapter.getPosition(product.getTipo().toUpperCase());
-		if(iCurrentSelection>=0){
+		if(iCurrentSelection >= 0){
 			spinnerTipos.setSelection(iCurrentSelection);
 		}else{
 			editTipo.setText(product.getTipo().toUpperCase());
@@ -137,7 +137,14 @@ public class DialogUpdate extends DialogFragment {
 		if(!product.getPath_imagen().contentEquals("")){
 			setImage(product.getPath_imagen());
 		}else{
-			setImage(iCurrentSelection);
+			if(iCurrentSelection != -1)
+				setImage(iCurrentSelection);
+			else{
+				img.setImageResource(R.drawable.ic_launcher);
+				spinnerTipos.setVisibility(View.INVISIBLE);
+				editTipo.setVisibility(View.VISIBLE);
+				enableTipos = false;
+			}
 		}
 
 		//iCurrentSelection = spinnerTipos.getSelectedItemPosition();
@@ -145,9 +152,8 @@ public class DialogUpdate extends DialogFragment {
 		spinnerTipos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int position, long arg3) {
-				if (iCurrentSelection != position&&enableSpinner){
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				if (iCurrentSelection != position && enableTipos && !hasImage){
 					setImage(position);
 				}
 				iCurrentSelection = position;
@@ -164,16 +170,18 @@ public class DialogUpdate extends DialogFragment {
 
 			@Override
 			public void onClick(View v) {
-				if(enableTipos==false){
-					setImage(iCurrentSelection);
+				if(enableTipos == false){
+					if(!hasImage)
+						setImage(iCurrentSelection);
 					spinnerTipos.setVisibility(View.VISIBLE);
 					view.findViewById(R.id.editTipo).setVisibility(View.GONE);
-					enableTipos=true;
+					enableTipos = true;
 				}else{
-					img.setImageResource(R.drawable.ic_launcher);
+					if(!hasImage)
+						img.setImageResource(R.drawable.ic_launcher);
 					spinnerTipos.setVisibility(View.INVISIBLE);
 					editTipo.setVisibility(View.VISIBLE);
-					enableTipos=false;
+					enableTipos = false;
 				}
 
 
@@ -451,8 +459,8 @@ public class DialogUpdate extends DialogFragment {
 		if(imgFile.exists())
 		{
 			setPic(imgFile.getAbsolutePath());
-			enableSpinner  = false;
-			idImagen=0;
+			hasImage  = true;
+			idImagen = 0;
 			Log.i("ALBUMDIA", ""+imgFile.getAbsolutePath());
 		}
 	}

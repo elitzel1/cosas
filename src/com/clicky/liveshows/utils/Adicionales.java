@@ -1,22 +1,23 @@
 package com.clicky.liveshows.utils;
 
 public class Adicionales {
-	String id;
+	int id;
 	String nombre;
 	int cantidad;
 	int idProd;
 	
 	
-	public Adicionales(String name,int cantidad,int idProd){
+	public Adicionales(int id,String name,int cantidad,int idProd){
+		this.id = id;
 		this.nombre=name;
 		this.cantidad=cantidad;
 		this.idProd=idProd;
 	}
 	
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getNombre() {
