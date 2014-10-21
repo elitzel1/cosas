@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">MerchSys</string>
-    <string name="version">Version 1.0</string>
+    <string name="version">Version 1.0.1</string>
     <string name="copyright">Live Shows Group SA de CV © 2012</string>
     <string name="developed">Developed by</string>
     <string name="action_settings">Preferences</string>

@@ -652,6 +652,7 @@ public class ActivityCierreDia extends Activity implements OnDateSelected{
 				dbHelper.updateAbrirStand(cursorStand.getLong(0));
 			}while(cursorStand.moveToNext());
 		}
+		dbHelper.deleteDia();
 		dbHelper.close();
 		
 		File folder = new File(Environment.getExternalStorageDirectory()+ "/MerchSys");
